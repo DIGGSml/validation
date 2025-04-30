@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>DIGGS CodeSpace Validator</title>
+        <link rel="stylesheet" href="cs_validator.css">
+        <!-- Animation polyfill for older browsers -->
+        <script>
+            // Add fallback for browsers that don't support CSS animations
+            (function () {
+                var lastTime = 0;
+                var vendors = ['webkit', 'moz', 'ms', 'o'];
+                for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+                    window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+                    window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+                }
+                
+                if (!window.requestAnimationFrame) {
+                    window.requestAnimationFrame = function (callback) {
+                        var currTime = new Date().getTime();
+                        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+                        var id = window.setTimeout(function () {
+                            callback(currTime + timeToCall);
+                        },
+                        timeToCall);
+                        lastTime = currTime + timeToCall;
+                        return id;
+                    };
+                }
+                
+                if (!window.cancelAnimationFrame) {
+                    window.cancelAnimationFrame = function (id) {
+                        clearTimeout(id);
+                    };
+                }
+            }());
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>DIGGS CodeSpace Validator</h1>
+            <div class="upload-container">
+                <label for="file-upload">Choose XML File</label>
+                <input type="file" id="file-upload" accept=".xml" onchange="handleFileSelected()" />
+                <div id="filename-display"></div>
+                <button id="validate-button" onclick="validateXML()">Validate</button>
+            </div>
+            <div id="loading">
+                <div class="spinner"></div>
+                <p>Processing... This may take a moment for large files.</p>
+            </div>
+            <div id="error-message" class="error-message"></div>
+            <div id="validation-results">
+                <iframe id="results-frame" style="width:100%; height:600px; border:1px solid #ddd;"></iframe>
+            </div>
+        </div>
+        <script>
+            // Global variables
+            let xmlFileContent = null;
+            let xsltProcessor = null;
+            let xsltDoc = null;
+            let dictionaryCache = {};
+            // Cache for downloaded dictionaries
+            
+            // Load the XSLT stylesheet when the page loads
+            window.onload = function () {
+                loadXSLT();
+                setupDictionaryProxy();
+            };
+            
+            // Set up a proxy for dictionary access
+            function setupDictionaryProxy() {
+                // This function creates a proxy for XML HTTP requests to cache dictionary lookups
+                // It intercepts XMLHttpRequest and caches dictionary responses
+                const originalXHROpen = XMLHttpRequest.prototype.open;
+                XMLHttpRequest.prototype.open = function () {
+                    const url = arguments[1];
+                    
+                    // Check if this is a dictionary URL request
+                    if (typeof url === 'string' &&
+                    (url.includes('.xml') || url.includes('/def/codes/') || url.includes('Dictionary'))) {
+                        
+                        // If we have this in cache, use it
+                        if (dictionaryCache[url]) {
+                            console.log('Using cached dictionary:', url);
+                            
+                            // Override the send method for this request only
+                            const originalSend = this.send;
+                            this.send = function () {
+                                // Simulate a successful response with cached data
+                                Object.defineProperty(this, 'readyState', {
+                                    value: 4, writable: true
+                                });
+                                Object.defineProperty(this, 'status', {
+                                    value: 200, writable: true
+                                });
+                                Object.defineProperty(this, 'responseText', {
+                                    value: dictionaryCache[url], writable: true
+                                });
+                                Object.defineProperty(this, 'responseXML', {
+                                    value: new DOMParser().parseFromString(dictionaryCache[url], 'text/xml'),
+                                    writable: true
+                                });
+                                
+                                // Trigger the onload callback
+                                setTimeout(() => {
+                                    if (this.onload) this.onload();
+                                    if (this.onreadystatechange) this.onreadystatechange();
+                                }, 0);
+                                
+                                // Don't actually send the request
+                                return;
+                            };
+                        } else {
+                            // It's not in cache, so add a listener to cache the response
+                            this.addEventListener('load', function () {
+                                if (this.status === 200) {
+                                    console.log('Caching dictionary:', url);
+                                    dictionaryCache[url] = this.responseText;
+                                }
+                            });
+                        }
+                    }
+                    
+                    // Call the original open method
+                    return originalXHROpen.apply(this, arguments);
+                };
+            }
+            
+            // Load the XSLT stylesheet
+            function loadXSLT() {
+                fetch('cs_validator.xsl').then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load XSLT stylesheet');
+                    }
+                    return response.text();
+                }).then(xsltContent => {
+                    // Parse the XSLT
+                    const parser = new DOMParser();
+                    xsltDoc = parser.parseFromString(xsltContent, 'text/xml');
+                    
+                    // Create XSLT processor
+                    xsltProcessor = new XSLTProcessor();
+                    xsltProcessor.importStylesheet(xsltDoc);
+                    
+                    // Let the user know the validator is ready
+                    document.getElementById('validate-button').disabled = false;
+                    document.getElementById('validate-button').title = "Validator is ready";
+                }).catch(error => {
+                    document.getElementById('error-message').textContent = error.message;
+                    document.getElementById('error-message').style.display = 'block';
+                });
+            }
+            
+            // Handle file selection
+            function handleFileSelected() {
+                const fileInput = document.getElementById('file-upload');
+                const filenameDisplay = document.getElementById('filename-display');
+                const validateButton = document.getElementById('validate-button');
+                
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    filenameDisplay.textContent = `Selected file: ${file.name}`;
+                    validateButton.style.display = 'block';
+                    
+                    // Read the file
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        xmlFileContent = e.target.result;
+                    };
+                    reader.readAsText(file);
+                } else {
+                    filenameDisplay.textContent = '';
+                    validateButton.style.display = 'none';
+                    xmlFileContent = null;
+                }
+            }
+            
+            // Validate the XML
+            function validateXML() {
+                if (!xmlFileContent) {
+                    document.getElementById('error-message').textContent = 'Please select an XML file first';
+                    document.getElementById('error-message').style.display = 'block';
+                    return;
+                }
+                
+                if (!xsltProcessor) {
+                    document.getElementById('error-message').textContent = 'XSLT processor not ready. Please try again in a moment.';
+                    document.getElementById('error-message').style.display = 'block';
+                    return;
+                }
+                
+                // Show loading spinner
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('error-message').style.display = 'none';
+                document.getElementById('validation-results').style.display = 'none';
+                
+                // Use setTimeout to allow the UI to update before processing
+                setTimeout(() => {
+                    try {
+                        // Parse the XML
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(xmlFileContent, 'text/xml');
+                        
+                        // Check for parsing errors
+                        const parserError = xmlDoc.querySelector('parsererror');
+                        if (parserError) {
+                            throw new Error('XML parsing error: ' + parserError.textContent);
+                        }
+                        
+                        // Transform the XML
+                        const resultDoc = xsltProcessor.transformToDocument(xmlDoc);
+                        
+                        // Display the result
+                        const serializer = new XMLSerializer();
+                        const resultHtml = serializer.serializeToString(resultDoc);
+                        
+                        const resultsFrame = document.getElementById('results-frame');
+                        resultsFrame.srcdoc = resultHtml;
+                        
+                        // Hide loading spinner and show results
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('validation-results').style.display = 'block';
+                    }
+                    catch (error) {
+                        // Display error
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('error-message').textContent = error.message;
+                        document.getElementById('error-message').style.display = 'block';
+                    }
+                }, 100);
+            }
+            
+            // Add file drop functionality
+            const dropZone = document.querySelector('.upload-container');
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '#e3f2fd';
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.backgroundColor = '#f8f9fa';
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '#f8f9fa';
+                
+                const fileInput = document.getElementById('file-upload');
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelected();
+            });
+        </script>
+    </body>
+</html>
