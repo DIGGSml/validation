@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uomAggregate xmlns="http://www.energistics.org/energyml/data/uomv1" xmlns:ns0="http://www.w3.org/2001/XMLSchema-instance" ns0:schemaLocation="http://www.energistics.org/energyml/data/uomv1 EnergisticsUnitOfMeasureDictionary_v1.0.xsd">
+	<uomDictionary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.energistics.org/energyml/data/uomv1 https://diggsml.org/schema-dev/energistics/EnergisticsUnitOfMeasureDictionary_V1.0.xsd" version="1.0">
+		<title>Energistics Unit of Measure Dictionary V1.0</title>
+		<unitDimensionSet version="Energistics-UOM-V1.0">
+		</unitDimensionSet>
+		<quantityClassSet version="Energistics-UOM-V1.0">
+		</quantityClassSet>
+		<unitSet version="Energistics-UOM-V1.0">
+		</unitSet>
+		<referenceSet version="Energistics-UOM-V1.0">
+		</referenceSet>
+		<prefixSet version="Energistics-UOM-V1.0">
+		</prefixSet>
+	</uomDictionary>
+</uomAggregate>
