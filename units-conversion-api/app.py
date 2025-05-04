@@ -228,7 +228,6 @@ def convert():
         except ValueError:
             return jsonify({'error': 'Source value must be a valid number'}), 400
         
-        # Rest of your conversion logic remains the same...
         # Fetch dictionary
         root = fetch_units_dictionary()
         
@@ -252,8 +251,9 @@ def convert():
         # Convert from base unit to target unit
         target_value = convert_from_base_unit(base_value, target_params)
         
-        # Determine if conversion is exact
-        is_exact = (source_params["isBase"] or target_params["isBase"] or 
+        # Determine if conversion is exact -true if one of the and clauses is true
+        is_exact = ((source_params["isBase"] and target_params.get("isExact", False)) or
+                   (target_params["isBase"] and source_params.get("isExact", False)) or
                    (source_params.get("isExact", False) and target_params.get("isExact", False)))
         
         # Get quantity class name and base unit
@@ -409,47 +409,5 @@ def health_check():
     """
     return jsonify({'status': 'healthy'})
 
-
-# Example test function
-def test_conversion():
-    """
-    Manual test function to verify conversion logic
-    """
-    try:
-        # Test converting 50 psi to MPa
-        root = fetch_units_dictionary()
-        
-        source_unit = 'psi'
-        target_unit = 'MPa'
-        source_value = 50
-        
-        # Find quantity class
-        quantity_class = units_in_same_quantity_class(root, source_unit, target_unit)
-        quantity_class_name = quantity_class.find('name').text if quantity_class is not None else None
-        print(f'Quantity Class: {quantity_class_name}')
-        
-        # Get conversion parameters
-        source_params = get_conversion_parameters(root, source_unit)
-        target_params = get_conversion_parameters(root, target_unit)
-        
-        print(f'Source Parameters: {source_params}')
-        print(f'Target Parameters: {target_params}')
-        
-        # Convert to base unit
-        base_value = convert_to_base_unit(source_value, source_params)
-        base_unit = quantity_class.find('baseForConversion').text if quantity_class is not None else None
-        print(f'Base Value: {base_value} {base_unit}')
-        
-        # Convert to target unit
-        target_value = convert_from_base_unit(base_value, target_params)
-        print(f'Target Value: {target_value} {target_unit}')
-        
-    except Exception as e:
-        print(f'Test error: {e}')
-
-
 if __name__ == '__main__':
-    # Uncomment to run test function
-    # test_conversion()
-    
     app.run(debug=True, host='0.0.0.0', port=5000)
