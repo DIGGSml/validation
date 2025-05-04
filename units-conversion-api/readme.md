@@ -48,7 +48,7 @@ GET /api/convert?sourceValue=50&sourceUnit=psi&targetUnit=MPa
 
 **Example Request (POST):**
 
-```json
+```
 POST /api/convert
 Content-Type: application/json
 
