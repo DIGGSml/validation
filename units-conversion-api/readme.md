@@ -6,7 +6,7 @@ The DIGGS Units Conversion API provides a standardized way to convert values bet
 
 ## Base URL
 
-```
+``` html
 https://api.example.com
 ```
 
@@ -16,14 +16,14 @@ Replace `api.example.com` with your actual production server address.
 
 All API requests require an API key passed as a header:
 
-```
+``` html
 X-API-Key: your_api_key
 ```
 
 Contact your administrator to obtain an API key.
 
 ## Endpoints
-
+<!--  -->
 ### 1. Convert Units
 
 Convert a value from one unit to another.
@@ -42,7 +42,7 @@ Convert a value from one unit to another.
 
 **Example Request (GET):**
 
-```
+``` html
 GET /api/convert?sourceValue=50&sourceUnit=psi&targetUnit=MPa
 ```
 
@@ -70,7 +70,7 @@ Content-Type: application/json
   "baseValue": 344738,
   "baseUnit": "Pa",
   "isExact": true,
-  "quantityClass": "Pressure"
+  "quantityClass": "pressure"
 }
 ```
 
@@ -110,7 +110,7 @@ Retrieve all available units for a specific quantity class.
 
 **Example Request:**
 
-```
+``` html
 GET /api/units/Pressure
 ```
 
@@ -142,7 +142,7 @@ Get all available quantity classes.
 
 **Example Request:**
 
-```
+```htnk
 GET /api/quantityclasses
 ```
 
@@ -183,7 +183,7 @@ Check the API's operational status.
 
 **Example Request:**
 
-```
+```html
 GET /api/health
 ```
 
@@ -220,7 +220,7 @@ Exceeding these limits will result in a `429 Too Many Requests` response.
 
 This API uses the official DIGGS Units Dictionary located at:
 
-```
+``` html
 https://diggsml.org/def/units/DiggsUomDictionary.xml
 ```
 
@@ -234,6 +234,7 @@ Conversions use the following formulas:
 2. **From base unit**: z = (A - Cy) / (Dy - B)
 
 Where:
+
 - x is the source value
 - y is the value in base units
 - z is the target value
@@ -257,11 +258,13 @@ Error responses include a JSON object with an `error` field containing a descrip
 ### Example 1: Convert Pressure
 
 **Request:**
-```
+
+```html
 GET /api/convert?sourceValue=100&sourceUnit=kPa&targetUnit=psi
 ```
 
 **Response:**
+
 ```json
 {
   "sourceValue": 100,
@@ -278,24 +281,26 @@ GET /api/convert?sourceValue=100&sourceUnit=kPa&targetUnit=psi
 ### Example 2: Convert Temperature
 
 **Request:**
-```
+
+```json
 POST /api/convert
 Content-Type: application/json
 
 {
   "sourceValue": 25,
-  "sourceUnit": "C",
-  "targetUnit": "F"
+  "sourceUnit": "degC",
+  "targetUnit": "degF"
 }
 ```
 
 **Response:**
+
 ```json
 {
   "sourceValue": 25,
-  "sourceUnit": "C",
+  "sourceUnit": "degC",
   "targetValue": 77,
-  "targetUnit": "F",
+  "targetUnit": "degF",
   "baseValue": 298.15,
   "baseUnit": "K",
   "isExact": true,
@@ -306,5 +311,6 @@ Content-Type: application/json
 ## Support
 
 For API support, please contact:
-- Email: support@example.com
+
+- Email: <support@example.com>
 - Phone: (123) 456-7890
