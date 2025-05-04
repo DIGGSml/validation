@@ -70,7 +70,7 @@ Content-Type: application/json
   "baseValue": 344738,
   "baseUnit": "Pa",
   "isExact": true,
-  "quantityClass": "Pressure"
+  "quantityClass": "pressure"
 }
 ```
 
@@ -111,14 +111,14 @@ Retrieve all available units for a specific quantity class.
 **Example Request:**
 
 ```
-GET /api/units/Pressure
+GET /api/units/pressure
 ```
 
 **Example Response:**
 
 ```json
 {
-  "quantityClass": "Pressure",
+  "quantityClass": "pressure",
   "baseUnit": "Pa",
   "units": ["Pa", "kPa", "MPa", "GPa", "bar", "psi", "ksi", "atm"]
 }
@@ -167,7 +167,7 @@ GET /api/quantityclasses
     "baseUnit": "Pa"
   },
   {
-    "name": "Temperature",
+    "name": "thermodynamic temperature",
     "baseUnit": "K"
   }
 ]
