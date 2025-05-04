@@ -54,42 +54,115 @@ def units_in_same_quantity_class(root, source_unit, target_unit):
     Check if source and target units belong to the same quantity class
     Returns the quantity class element if found, None otherwise
     """
-    for quantity_class in root.findall('.//quantityClass'):
-        member_units = [unit.text for unit in quantity_class.findall('memberUnit')]
+    # Determine namespace
+    namespace = ""
+    if "}" in root.tag:
+        namespace = root.tag.split("}")[0] + "}"
+    
+    # Find the quantityClassSet element first
+    quantity_class_set = None
+    for child in root:
+        if child.tag.endswith('quantityClassSet'):
+            quantity_class_set = child
+            break
+    
+    if quantity_class_set is None:
+        logger.warning("Could not find quantityClassSet element")
+        return None
+    
+    # Check each quantity class
+    for quantity_class in quantity_class_set:
+        if not quantity_class.tag.endswith('quantityClass'):
+            continue
+            
+        # Get all memberUnit elements
+        member_units = []
+        for elem in quantity_class:
+            if elem.tag.endswith('memberUnit'):
+                member_units.append(elem.text)
         
+        # Check if both source and target units are in this quantity class
         if source_unit in member_units and target_unit in member_units:
+            logger.info(f"Found compatible quantity class for {source_unit} and {target_unit}")
             return quantity_class
     
+    logger.warning(f"Units {source_unit} and {target_unit} are not in the same quantity class")
     return None
-
 
 def get_conversion_parameters(root, unit_symbol):
     """
     Get conversion parameters for a unit
     Returns a dictionary with parameters or None if unit not found
     """
-    for unit in root.findall('.//unit'):
-        symbol = unit.find('symbol')
-        if symbol is not None and symbol.text == unit_symbol:
+    # Determine namespace
+    namespace = ""
+    if "}" in root.tag:
+        namespace = root.tag.split("}")[0] + "}"
+    
+    # Find the unitSet element first
+    unit_set = None
+    for child in root:
+        if child.tag.endswith('unitSet'):
+            unit_set = child
+            break
+    
+    if unit_set is None:
+        logger.warning("Could not find unitSet element")
+        return None
+    
+    # Check each unit
+    for unit in unit_set:
+        if not unit.tag.endswith('unit'):
+            continue
+            
+        # Get symbol element
+        symbol_text = None
+        for elem in unit:
+            if elem.tag.endswith('symbol'):
+                symbol_text = elem.text
+                break
+                
+        if symbol_text is not None and symbol_text == unit_symbol:
             # Check if this is a base unit
-            is_base = unit.find('isBase') is not None
+            is_base = False
+            for elem in unit:
+                if elem.tag.endswith('isBase'):
+                    is_base = True
+                    break
             
             if is_base:
+                logger.info(f"Unit {unit_symbol} is a base unit")
                 return {"isBase": True}
             
-            # Get conversion parameters
+            # Get conversion parameters with safe defaults
             params = {
                 "isBase": False,
-                "A": float(unit.find('A').text) if unit.find('A') is not None else 0,
-                "B": float(unit.find('B').text) if unit.find('B') is not None else 0,
-                "C": float(unit.find('C').text) if unit.find('C') is not None else 0,
-                "D": float(unit.find('D').text) if unit.find('D') is not None else 0,
-                "isExact": unit.find('isExact').text.lower() == 'true' if unit.find('isExact') is not None else False
+                "A": 0,
+                "B": 0,
+                "C": 0,
+                "D": 0,
+                "isExact": False
             }
+            
+            # Process all elements
+            for elem in unit:
+                tag = elem.tag.split('}')[-1]  # Get tag without namespace
+                if tag == 'A' and elem.text:
+                    params["A"] = float(elem.text)
+                elif tag == 'B' and elem.text:
+                    params["B"] = float(elem.text)
+                elif tag == 'C' and elem.text:
+                    params["C"] = float(elem.text)
+                elif tag == 'D' and elem.text:
+                    params["D"] = float(elem.text)
+                elif tag == 'isExact' and elem.text:
+                    params["isExact"] = elem.text.lower() == 'true'
+            
+            logger.info(f"Found conversion parameters for unit {unit_symbol}: {params}")
             return params
     
+    logger.warning(f"Unit {unit_symbol} not found in dictionary")
     return None
-
 
 def convert_to_base_unit(value, params):
     """
@@ -117,21 +190,30 @@ def convert_from_base_unit(base_value, params):
     if D == 0 or abs(D) < 1e-10:
         # Alternative formula when D=0: z = (A - Cy) / (-B)
         # This simplifies to z = (Cy - A) / B
-        return (A + C * base_value) / B
+        return (A - C * base_value) /(-B)
     
     return (A - C * base_value) / (D * base_value - B)
 
 
-@app.route('/api/convert', methods=['POST'])
+@app.route('/api/convert', methods=['GET', 'POST'])
 def convert():
     """
     Main conversion endpoint
+    Supports both GET and POST requests
     """
     try:
-        data = request.json
+        # Handle both GET and POST requests
+        if request.method == 'POST':
+            data = request.json
+        else:  # GET request
+            data = {
+                'sourceValue': request.args.get('sourceValue'),
+                'sourceUnit': request.args.get('sourceUnit'),
+                'targetUnit': request.args.get('targetUnit')
+            }
         
         # Validate input
-        if not all(k in data for k in ['sourceValue', 'sourceUnit', 'targetUnit']):
+        if not all(k in data and data[k] is not None for k in ['sourceValue', 'sourceUnit', 'targetUnit']):
             return jsonify({
                 'error': 'Missing required parameters. Please provide sourceValue, sourceUnit, and targetUnit'
             }), 400
@@ -146,6 +228,7 @@ def convert():
         except ValueError:
             return jsonify({'error': 'Source value must be a valid number'}), 400
         
+        # Rest of your conversion logic remains the same...
         # Fetch dictionary
         root = fetch_units_dictionary()
         
@@ -174,8 +257,15 @@ def convert():
                    (source_params.get("isExact", False) and target_params.get("isExact", False)))
         
         # Get quantity class name and base unit
-        quantity_class_name = quantity_class.find('name').text
-        base_unit = quantity_class.find('baseForConversion').text
+        quantity_class_name = None
+        base_unit = None
+        
+        # Find the name element and baseForConversion element in the quantity class
+        for elem in quantity_class:
+            if elem.tag.endswith('name'):
+                quantity_class_name = elem.text
+            elif elem.tag.endswith('baseForConversion'):
+                base_unit = elem.text
         
         # Return result
         return jsonify({
@@ -203,22 +293,50 @@ def get_units_for_class(quantity_class_name):
         # Fetch dictionary
         root = fetch_units_dictionary()
         
-        # Find the quantity class
+        # Determine namespace
+        namespace = ""
+        if "}" in root.tag:
+            namespace = root.tag.split("}")[0] + "}"
+        
+        # Find the quantityClassSet element first
+        quantity_class_set = None
+        for child in root:
+            if child.tag.endswith('quantityClassSet'):
+                quantity_class_set = child
+                break
+        
+        if quantity_class_set is None:
+            return jsonify({'error': 'Could not find quantity classes'}), 500
+        
+        # Find the specified quantity class
         found = False
         member_units = []
         base_unit = None
         
-        for quantity_class in root.findall('.//quantityClass'):
-            name = quantity_class.find('name')
-            if name is not None and name.text == quantity_class_name:
+        # Match case-insensitively
+        for quantity_class in quantity_class_set:
+            if not quantity_class.tag.endswith('quantityClass'):
+                continue
+                
+            name_elem = None
+            for elem in quantity_class:
+                if elem.tag.endswith('name'):
+                    name_elem = elem
+                    break
+                    
+            if name_elem is not None and name_elem.text.lower() == quantity_class_name.lower():
                 found = True
-                member_units = [unit.text for unit in quantity_class.findall('memberUnit')]
-                base_for_conversion = quantity_class.find('baseForConversion')
-                if base_for_conversion is not None:
-                    base_unit = base_for_conversion.text
+                
+                # Get all memberUnit elements
+                for elem in quantity_class:
+                    if elem.tag.endswith('memberUnit'):
+                        member_units.append(elem.text)
+                    elif elem.tag.endswith('baseForConversion'):
+                        base_unit = elem.text
                 break
         
         if not found:
+            logger.warning(f"Quantity class '{quantity_class_name}' not found")
             return jsonify({'error': 'Quantity class not found'}), 404
         
         # Return all member units
@@ -244,22 +362,45 @@ def get_quantity_classes():
         
         # Extract quantity class names
         class_data = []
-        for quantity_class in root.findall('.//quantityClass'):
-            name = quantity_class.find('name')
-            base_unit = quantity_class.find('baseForConversion')
-            
-            if name is not None:
-                class_info = {'name': name.text}
-                if base_unit is not None:
-                    class_info['baseUnit'] = base_unit.text
-                class_data.append(class_info)
         
+        # Determine if there's a namespace
+        namespace = ""
+        if "}" in root.tag:
+            namespace = root.tag.split("}")[0] + "}"
+        
+        # Find the quantityClassSet element first (direct child of root)
+        quantity_class_set = None
+        for child in root:
+            if child.tag.endswith('quantityClassSet'):
+                quantity_class_set = child
+                break
+        
+        # If we found the quantityClassSet, look for quantityClass elements
+        if quantity_class_set is not None:
+            for quantity_class in quantity_class_set:
+                if quantity_class.tag.endswith('quantityClass'):
+                    # Get name element
+                    name_elem = None
+                    base_unit_elem = None
+                    
+                    for elem in quantity_class:
+                        if elem.tag.endswith('name'):
+                            name_elem = elem
+                        elif elem.tag.endswith('baseForConversion'):
+                            base_unit_elem = elem
+                    
+                    if name_elem is not None:
+                        class_info = {'name': name_elem.text}
+                        if base_unit_elem is not None:
+                            class_info['baseUnit'] = base_unit_elem.text
+                        class_data.append(class_info)
+        
+        logger.info(f"Returning {len(class_data)} quantity classes")
         return jsonify(class_data)
         
     except Exception as e:
         logger.error(f"Error fetching quantity classes: {e}")
         return jsonify({'error': 'Failed to fetch quantity classes. Please try again later.'}), 500
-
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
