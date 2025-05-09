@@ -43,9 +43,9 @@ The validation report output by the XSLT modules will be a simple table structur
 
 With respect to severity, 
 
-- INFO messages identify issues that suggest review to ensure data integrity, for example that the correct authority is referenced for a codeType term
-- WARNING indicates that validation couldn't be completed, such as when a resoure needed for validation is unavailable
-- ERROR indiates an issue that can affect processing of the XML file, such as incorrect codes for the context, pointers to objects or resources that don't resolve, etc.
+- INFO messages identify issues that suggest review to ensure data integrity, for example that the correct authority is referenced for a codeType term.
+- WARNING indicates that validation couldn't be completed, such as when a resource needed for validation is unavailable.
+- ERROR indicates an issue that can affect processing of the XML file, such as incorrect codes for the context, pointers to objects or resources that don't resolve, etc.
 
 ### Deployment Scheme
   
