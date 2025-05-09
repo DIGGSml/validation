@@ -39,7 +39,7 @@ The validation report output by the XSLT modules will be a simple table structur
 - step - name of the validation step where the failure occurred.
 - elementPath - the xpath of the element or attribute where the failure occurs
 - text - a message explaining the nature of the failure
-- x\source - the xml string where the failure occurred
+- source - the xml string where the failure occurred
 
 With respect to severity, 
 
@@ -89,7 +89,7 @@ For each element in the DIGGS file that has a codeSpace attribute:
 
 #### Schematron validation for simple rule checks
 
-Single element and cross-element schematron rules are being developed using a Google spreadsheet. This module will either access the Google sheet via the gViz API, convert the result from json to xml schema, then process within the XSLT. Alternatively could work from a static sch file generated programmatically. Specific check procedure TBD.
+Single element and cross-element schematron rules are being developed using a Google spreadsheet. This module will either access the Google sheet via the gViz API, convert the result from json to xml schema, then process within the XSLT. Alternatively could work from a static sch file generated programmatically. ***COMPLETED***
 
 #### CRS validation
 
