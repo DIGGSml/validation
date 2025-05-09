@@ -6,4 +6,4 @@ plotly
 lxml
 netCDF4
 xarray
-saxonpy
+saxonche
