@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Diggs xmlns="http://diggsml.org/schema-dev" xmlns:diggs="http://diggsml.org/schema-dev"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:g3.3="http://www.opengis.net/gml/3.3/ce"
-	xmlns:glr="http://www.opengis.net/gml/3.3/lr" xmlns:glrov="http://www.opengis.net/gml/3.3/lrov"
-	xmlns:witsml="http://www.witsml.org/schemas/131"
+	xmlns:g3.3="http://www.opengis.net/gml/3.3/ce" xmlns:glr="http://www.opengis.net/gml/3.3/lr"
+	xmlns:glrov="http://www.opengis.net/gml/3.3/lrov" xmlns:gml="http://www.opengis.net/gml/3.2"
+	xmlns:witsml="http://www.witsml.org/schemas/131" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://diggsml.org/schema-dev https://diggsml.org/schema-dev/Diggs.xsd"
 	gml:id="NTM1YTEwMzUtYmRmZS00NTIxLTk1OWItZjk4NGEwOWRjZDcx">
 	<documentInformation>
@@ -34,7 +33,7 @@
 			<role>
 				<Role>
 					<!-- Fails Check 2 -->
-					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/unkknown.xml#client">Client</rolePerformed>
+					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/unknown.xml#client">Client</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS4BC5-3D4-D63-36F6-2F2F8">
 							<gml:name>Geo-Institute</gml:name>
@@ -46,7 +45,7 @@
 
 			<role>
 				<Role>
-					<!-- Fails Check 3 -->
+					<!-- Fails Check 4 Not a DIGGS Dictionary-->
 					<rolePerformed codeSpace="https://diggsml.org/schema-dev/Dictionary_diggs.xsd#operator">Operator</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS4BC5-3D4-D63-36F6-2F2Fa">
@@ -58,7 +57,7 @@
 
 			<role>
 				<Role>
-					<!-- Fails Check 4 -->
+					<!-- Fails Check 5 Code is not in dictionary -->
 					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#manager">Project Manager</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS1A3C-1956-2088-569A-123E6">
@@ -70,7 +69,7 @@
 
 			<role>
 				<Role>
-					<!-- Fails Check 5 -->
+					<!-- Fails Check 6 Drilling Contractor not allowed in project -->
 					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS1A3C-1956-2088-569A-123E7">
@@ -96,7 +95,7 @@
 			<!--Check 7: Local file check. Should pass validation, codeSpace references a valid local dictionary located within the same directory as the xml instance (as in a zip file) -->
 			<role>
 				<Role>
-					<rolePerformed codeSpace="roles.xml#project_engineer">Project Engineer</rolePerformed>
+					<rolePerformed codeSpace="./roles.xml#project_engineer">Project Engineer</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS5B58-19E-2B05-B408-2492D">
 							<gml:name>Jim Halpert</gml:name>
@@ -271,16 +270,18 @@
 							<gml:posList>0 30.00</gml:posList>
 						</LinearExtent>
 					</casingLocation>
-					<casingOutsideDiameter uom="in">5</casingOutsideDiameter>
+					<!-- Should fail Schematron test -->
+					<casingOutsideDiameter uom="in">-5</casingOutsideDiameter>
 				</Casing>
 			</casing>
 
 			<constructionMethod>
 				<BoreholeConstructionMethod gml:id="DGS76F5-BAE-4BCA-F472-28DE7">
-					<gml:name>4.25&quot;&quot; Hollow stem auger</gml:name>
+					<gml:name>4.25"" Hollow stem auger</gml:name>
 					<role>
 						<Role>
-							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#logger">Logger</rolePerformed>
+							<!-- Fails Check 6. Client cannot be used in borehole context -->
+							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#client">Logger</rolePerformed>
 							<timePerformed>
 								<TimeInterval gml:id="DGS9336-DF1-4311-205-3849C">
 									<start>2015-06-04T18:32:59</start>
@@ -710,8 +711,8 @@
 			<gml:name>A</gml:name>
 			<role>
 				<Role>
-					<!-- This fails check 5 but should not -->
-					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
+					<!-- Fails check 2, URL not in white list -->
+					<rolePerformed codeSpace="https://google.com/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS839E-14B8-3DDB-F1E5-43639">
 							<gml:name>Big Dog Wellers</gml:name>
@@ -831,7 +832,8 @@
 										<Property index="1">
 											<propertyName>N-Value</propertyName>
 											<typeData>long</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n_value">N-Value</propertyClass>
+											<!-- Fails check 6 -->
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#logger">N-Value</propertyClass>
 										</Property>
 									</properties>
 								</PropertyParameters>
@@ -845,7 +847,8 @@
 				<diggs:DrivenPenetrationTest gml:id="SPT_BH-33_7.5">
 					<diggs:penetrationTestType>SPT</diggs:penetrationTestType>
 					<diggs:hammerType>Automatic</diggs:hammerType>
-					<diggs:hammerEfficiency uom="%">70</diggs:hammerEfficiency>
+					<!-- Should fail Schematron test -->
+					<diggs:hammerEfficiency uom="%">170</diggs:hammerEfficiency>
 					<diggs:totalPenetration uom="ft">1.50</diggs:totalPenetration>
 					<diggs:driveSet>
 						<diggs:DriveSet gml:id="ds-2_DGSCE4-864-34AB-1A49-2989D">
@@ -873,102 +876,6 @@
 		</Test>
 	</measurement>
 
-	<measurement>
-		<Monitor gml:id="Water_Levels_PZ-B-03-23">
-			<investigationTarget>Natural Ground</investigationTarget>
-			<!-- Same as above with mandatory investigationTarget -->
-			<projectRef xlink:href="#p1"/>
-			<!-- projectRef is required -->
-			<samplingFeatureRef xlink:href="#DGS99EB-F2F-36FF-F807-3D075"/>
-			<reading>
-				<Reading gml:id="reading1">
-					<responseZoneLocation xlink:href="#DGS819B-509-4AC2-5FD0-1DF9"/>
-					<outcome>
-						<MonitorResult gml:id="Result_Water_Levels_PZ-B-03-23">
-							<timeDomain>
-								<TimePositionList gml:id="TP_Water_Levels_PZ-B-03-23">
-									<timePositionList>
-										<!-- Time instances must be in ISO format (YYYY-MM-DDThh:mm:ss. Whitespace or newlinee separation ok-->
-										2024-11-05T13:00:00 2024-11-05T12:30:00 2024-11-05T12:00:00
-										2024-11-05T11:30:00 2024-11-05T11:00:00 2024-11-05T10:30:00
-										2024-11-05T10:00:00 2024-11-05T09:30:00 2024-11-05T09:00:00
-										2024-11-05T08:30:00 2024-11-05T08:00:00 </timePositionList>
-								</TimePositionList>
-							</timeDomain>
-							<results>
-								<ResultSet>
-									<!-- note there is only one ResultSet for the measurement. -->
-									<parameters>
-										<PropertyParameters gml:id="pp_Water_Levels_PZ-B-03-23_1">
-											<!-- List all of the properties together here -->
-											<properties>
-												<Property index="1"
-												gml:id="prop1_Water_Levels_PZ-B-03-23">
-												<propertyName>Pressure (ft H₂O)</propertyName>
-												<!-- Here better to use propertyName instead of gml:Name for labeling purposes -->
-												<typeData>double</typeData>
-												<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#water_depth">Water Depth</propertyClass>
-												<!-- propertyClass is mandtory and must point to dictionary element -->
-												<uom>ft</uom>
-												</Property>
-												<Property index="2"
-												gml:id="prop2_Water_Levels_PZ-B-03-23">
-												<propertyName>Elevation H₂O (ft)</propertyName>
-												<typeData>double</typeData>
-												<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#water_elev">Water Elevation</propertyClass>
-												<uom>ft</uom>
-												</Property>
-												<Property index="3"
-												gml:id="prop3_Water_Levels_PZ-B-03-23">
-												<propertyName>Temperature (deg F)</propertyName>
-												<typeData>double</typeData>
-												<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#temperature">temperature</propertyClass>
-												<uom>degF</uom>
-												</Property>
-											</properties>
-										</PropertyParameters>
-									</parameters>
-									<dataValues> <!-- Results of all of the properties are listed in a single data block with comma separated values in each tuple - each tuple corresponding to a time instance, in property order based on the property index attribute. -->
-										23.68308498,774.183085,56.97303792
-										23.64465629,774.1446563,57.01296621
-										23.64976568,774.1497657,57.05290732
-										23.63110825,774.1311083,57.05290732
-										23.64053856,774.1405386,57.05290732
-										23.62549012,774.1254901,57.05290732
-										23.63080728,774.1308073,57.05290732
-										23.60688261,774.1068826,57.05290732
-										23.60507681,774.1050768,57.05290732
-										23.62801988,774.1280199,56.93312623
-										23.63483469,774.1348347,56.97303792
-									</dataValues>
-								</ResultSet>
-							</results>
-						</MonitorResult>
-					</outcome>
-
-					<sensor>
-						<Sensor gml:id="PZ-B-03-23">
-							<!-- Here the sensor is the measuring device, which I'm assuming is a pressure transducer. The Piezometer is the Well -->
-							<gml:name>PZ-B-03-23</gml:name>
-							<class>Pressure transducer</class>
-							<detector>
-								<Detector gml:id="wd">
-									<measurand codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#water_depth">Water Depth</measurand>
-								</Detector>
-							</detector>
-							<detector>
-								<Detector gml:id="we">
-									<measurand codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#water_elev">Water Elevation</measurand>
-								</Detector>
-							</detector>
-						</Sensor>
-					</sensor>
-				</Reading>
-			</reading>
-		</Monitor>
-
-
-	</measurement>
 
 	<measurement>
 		<Test gml:id="DGS5D65-DC7-3D1D-8223-12D02">
@@ -1007,7 +914,8 @@
 										<Property index="2" gml:id="DGS4D8D-130D-1435-19AD-D17E">
 											<propertyName>PL</propertyName>
 											<typeData>integer</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#plastic_limit">Plastic Limit</propertyClass>
+											<!-- Fails Check 9 -->
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n60">Plastic Limit</propertyClass>
 										</Property>
 										<Property index="3" gml:id="DGS2F87-7D8-E4F-6B6C-4A3C">
 											<propertyName>PI</propertyName>
@@ -1127,7 +1035,9 @@
 										<Property index="9" gml:id="DGS5948-1F9-37-7A6D-30902">
 											<propertyName>AASHTO Symbol</propertyName>
 											<typeData>string</typeData>
+											<!-- Check 11 fail -->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_symbol">AASHTO Symbol</propertyClass>
+											<uom>%</uom>
 										</Property>
 										<Property index="10" gml:id="DGS755B-393-18AD-846A-11091">
 											<propertyName>AASHTO Group Index</propertyName>
@@ -1166,7 +1076,8 @@
 										</Property>
 										<Property index="17" gml:id="DGSA2B-433-11F7-DC5A-44686">
 											<propertyName>Percent Silt</propertyName>
-											<typeData>double</typeData>
+											<typeData>string</typeData>
+											<!-- Check 10 failure -->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_silt">Percent Silt</propertyClass>
 										</Property>
 										<Property index="18" gml:id="DGS6384-EB3-C91-45B-555D">

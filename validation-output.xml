@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<validationReport>
+   <timestamp>2025-05-09T02:05:48.075957-07:00</timestamp>
+   <fileName>ValidationTest.xml</fileName>
+   <messageSet>
+      <step>DIGGS Structure</step>
+      <continuable>true</continuable>
+   </messageSet>
+   <messageSet>
+      <step>Schema Location</step>
+      <schema-url>https://diggsml.org/schema-dev/Diggs.xsd</schema-url>
+      <continuable>true</continuable>
+   </messageSet>
+   <messageSet>
+      <step>codeSpace Validation</step>
+      <message>
+         <severity>INFO</severity>
+         <elementPath>/Diggs[1]/project[1]/Project[1]/internalIdentifier[1]</elementPath>
+         <text>Check 1
+The value of internalIdentifier cannot be validated as it does not reference a code list dictionary. If codeSpace attribute "OGC" references an authority,be sure that the value "20250110 - DIGGS Challenge" is a valid term controlled by "OGC".</text>
+         <source>
+            <internalIdentifier xmlns="http://diggsml.org/schema-dev" codeSpace="OGC">20250110 - DIGGS Challenge</internalIdentifier>
+         </source>
+      </message>
+      <message>
+         <severity>WARNING</severity>
+         <elementPath>/Diggs[1]/project[1]/Project[1]/role[1]/Role[1]/rolePerformed[1]</elementPath>
+         <text>Check 3
+The code list dictionary at "https://diggsml.org/def/codes/DIGGS/0.1/unknown.xml" could not be accessed.</text>
+         <source>
+            <rolePerformed xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/unknown.xml#client">Client</rolePerformed>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/project[1]/Project[1]/role[2]/Role[1]/rolePerformed[1]</elementPath>
+         <text>Check 4
+The file at "https://diggsml.org/schema-dev/Dictionary_diggs.xsd" 
+ is not a DIGGS dictionary.</text>
+         <source>
+            <rolePerformed xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/schema-dev/Dictionary_diggs.xsd#operator">Operator</rolePerformed>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/project[1]/Project[1]/role[3]/Role[1]/rolePerformed[1]</elementPath>
+         <text>Check 5
+The definition for Project Manager cannot be found. The code "manager" is not in the code list dictionary at https://diggsml.org/def/codes/DIGGS/0.1/roles.xml.</text>
+         <source>
+            <rolePerformed xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#manager">Project Manager</rolePerformed>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/project[1]/Project[1]/role[4]/Role[1]/rolePerformed[1]</elementPath>
+         <text>Check 6
+The ID "drilling_contractor" cannot be used for this context of rolePerformed.
+Its xPath location does not match with allowable xPaths locations.
+Allowable xPath locations are:
+  //diggs:samplingFeature//diggs:rolePerformed
+  //diggs:samplingActivity//diggs:rolePerformed</text>
+         <source>
+            <rolePerformed xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
+         </source>
+      </message>
+      <message>
+         <severity>INFO</severity>
+         <elementPath>/Diggs[1]/project[1]/Project[1]/role[5]/Role[1]/rolePerformed[1]</elementPath>
+         <text>Check 7
+WARNING: The value Lab in rolePerformed does not match any of the codes for the definition referenced in https://diggsml.org/def/codes/DIGGS/0.1/roles.xml. Be sure that Lab is a synonymous term.</text>
+         <source>
+            <rolePerformed xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#laboratory_name">Lab</rolePerformed>
+         </source>
+      </message>
+      <message>
+         <severity>INFO</severity>
+         <elementPath>/Diggs[1]/samplingFeature[1]/Borehole[1]/internalIdentifier[1]</elementPath>
+         <text>Check 1
+The value of internalIdentifier cannot be validated as it does not reference a code list dictionary. If codeSpace attribute "OGC" references an authority,be sure that the value "BH-33" is a valid term controlled by "OGC".</text>
+         <source>
+            <internalIdentifier xmlns="http://diggsml.org/schema-dev" codeSpace="OGC">BH-33</internalIdentifier>
+         </source>
+      </message>
+      <message>
+         <severity>INFO</severity>
+         <elementPath>/Diggs[1]/samplingFeature[1]/Borehole[1]/linearReferencing[1]/LinearSpatialReferenceSystem[1]/gml:identifier[1]</elementPath>
+         <text>Check 1
+The value of gml:identifier cannot be validated as it does not reference a code list dictionary. If codeSpace attribute "G-I" references an authority,be sure that the value "lsr_BH-33-lsr" is a valid term controlled by "G-I".</text>
+         <source>
+            <identifier xmlns="http://www.opengis.net/gml/3.2" codeSpace="G-I">lsr_BH-33-lsr</identifier>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/samplingFeature[1]/Borehole[1]/constructionMethod[1]/BoreholeConstructionMethod[1]/role[1]/Role[1]/rolePerformed[1]</elementPath>
+         <text>Check 6
+The ID "client" cannot be used for this context of rolePerformed.
+Its xPath location does not match with allowable xPaths locations.
+Allowable xPath locations are:
+  //diggs:project//diggs:rolePerformed</text>
+         <source>
+            <rolePerformed xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#client">Logger</rolePerformed>
+         </source>
+      </message>
+      <message>
+         <severity>WARNING</severity>
+         <elementPath>/Diggs[1]/samplingFeature[2]/Well[1]/role[1]/Role[1]/rolePerformed[1]</elementPath>
+         <text>Check 2
+The code list dictionary referenced for rolePerformed at https://google.com/def/codes/DIGGS/0.1/roles.xml is not on the white list of approved URL's. Choose a DIGGS standard resource at https://diggsml.org/def/ or add this URL to the whiteList.xml parameter file (local implementations only).</text>
+         <source>
+            <rolePerformed xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://google.com/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]</elementPath>
+         <text>Check 6
+The ID "logger" cannot be used for this context of propertyClass.
+Its xPath location does not match with allowable xPaths locations.
+Allowable xPath locations are:
+  //diggs:samplingFeature//diggs:rolePerformed
+  //diggs:rolePerformed</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#logger">N-Value</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Liquid Limit requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquid_limit">Liquid Limit</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[2]/propertyClass[1]</elementPath>
+         <text>Check 9
+The propertyClass (N60) is in the wrong context. It instead is used in this/these measurement procedure(s): procedure/diggs:DrivenPenetrationTest.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n60">Plastic Limit</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[3]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Plasticity Index requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#plasticity_index">Plasticity Index</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Liquidity Index requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquidity_index">Liquidity Index</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[6]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Non Plastic requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#non_plastic">Non Plastic</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Coefficient of Uniformity requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_uniformity">Coefficient of Uniformity</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[2]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Coefficient of Curvature requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_curvature">Coefficient of Curvature</propertyClass>
+         </source>
+      </message>d10d30d50d60<message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[9]/propertyClass[1]</elementPath>
+         <text>Check 11
+The definition of this property (AASHTO Symbol) is unitless. The &lt;uom&gt; element should be removed from the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_symbol">AASHTO Symbol</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[10]/propertyClass[1]</elementPath>
+         <text>Check 10
+The typeData value in the document (integer) does not match the dataType specified in the definition (string). The sibling typeData element should match the value defined in the dictionary.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_group_index">AASHTO Group Index</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[11]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property d15 requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d15">d15</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[12]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property d85 requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d85">d85</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[13]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Percent Fines requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_fines">Percent Fines</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[14]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Percent Sand requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_sand">Percent Sand</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[15]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Percent Gravel requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_gravel">Percent Gravel</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[16]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Clay Fraction &lt; 5 Micron requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron">Clay Fraction lt; 5 Micron</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[17]/propertyClass[1]</elementPath>
+         <text>Check 10
+The typeData value in the document (string) does not match the dataType specified in the definition (double). The sibling typeData element should match the value defined in the dictionary.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_silt">Percent Silt</propertyClass>
+         </source>
+      </message>
+      <message>
+         <severity>ERROR</severity>
+         <elementPath>/Diggs[1]/measurement[3]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[18]/propertyClass[1]</elementPath>
+         <text>Check 12
+The definition of property Percent Cobbles requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</text>
+         <source>
+            <propertyClass xmlns="http://diggsml.org/schema-dev"
+                           codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_cobbles">Percent Cobbles</propertyClass>
+         </source>
+      </message>
+   </messageSet>
+</validationReport>
