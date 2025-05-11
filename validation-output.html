@@ -8,456 +8,522 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/dialog/dialog.min.css">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/fold/foldgutter.min.css">
       <style>
-          /* Base styles */
-          body {
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 20px;
-              background-color: #f5f5f5;
-              color: #333;
-              line-height: 1.6;
-          }
-          
-          .container {
-              max-width: 1400px; /* Increased from 1200px to 1400px (+200px) */
-              margin: 0 auto;
-              background-color: white;
-              padding: 20px 30px;
-              border-radius: 8px;
-              box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-          }
-          
-          h1 {
-              color: #2c3e50;
-              text-align: center;
-              margin-bottom: 15px; /* Reduced margin to decrease header height */
-              padding-bottom: 10px; /* Reduced padding to decrease header height */
-              width: 100%; /* Full width to allow centering */
-          }
-          
-          .header-container {
-              position: relative;
-              text-align: center;
-              border-bottom: 2px solid #f0f0f0;
-              padding-bottom: 10px;
-              margin-bottom: 20px;
-              height: 60px; /* Reduced header height by approx 40% */
-          }
-          
-          .header-logo {
-              position: absolute;
-              left: 0;
-              top: 50%;
-              transform: translateY(-50%);
-              width: 150px; /* Logo width as specified */
-          }
-          
-          /* Validation result styles */
-          .info {
-              background-color: #e8f4fc;
-              border-left: 4px solid #3498db;
-          }
-          
-          .warning {
-              background-color: #fef5e7;
-              border-left: 4px solid #f39c12;
-          }
-          
-          .error {
-              background-color: #fdedeb;
-              border-left: 4px solid #e74c3c;
-          }
-          
-          .success {
-              background-color: #e9f7ef;
-              border-left: 4px solid #2ecc71;
-          }
-          
-          /* Summary banner */
-          .summary-banner {
-              padding: 12px;
-              margin: 15px 0;
-              text-align: center;
-              border-radius: 4px;
-              font-weight: bold;
-              font-size: 18px; /* Increased text size */
-          }
-          
-          .summary-banner.success {
-              background-color: #d4efdf; /* Darker shade */
-              border-left: 4px solid #2ecc71;
-          }
-          
-          .summary-banner.info {
-              background-color: #d4e6f1; /* Darker shade */
-              border-left: 4px solid #3498db;
-          }
-          
-          .summary-banner.warning {
-              background-color: #fae5d3; /* Darker shade */
-              border-left: 4px solid #f39c12;
-          }
-          
-          .summary-banner.error {
-              background-color: #f5b7b1; /* Darker shade */
-              border-left: 4px solid #e74c3c;
-          }
-          
-          table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-              font-size: 14px;
-          }
-          
-          .table-container {
-              max-height: 350px; /* Height limit for the table - 70% of editor height (500px) */
-              overflow-y: auto;
-              margin-bottom: 20px;
-          }
-          
-          th,
-          td {
-              padding: 8px;
-              text-align: left;
-              border-bottom: 1px solid #ddd;
-              vertical-align: top;
-          }
-          
-          th {
-              background-color: #f2f2f2;
-              position: sticky;
-              top: 0;
-              z-index: 10;
-          }
-          
-          tr:hover {
-              background-color: rgba(245, 245, 245, 0.5);
-          }
-          
-          .severity-badge {
-              display: inline-block;
-              padding: 4px 8px;
-              border-radius: 4px;
-              font-weight: bold;
-              color: white;
-              margin: 0 3px;
-          }
-          
-          .severity-badge.error {
-              background-color: #e74c3c;
-          }
-          
-          .severity-badge.warning {
-              background-color: #f39c12;
-          }
-          
-          .severity-badge.info {
-              background-color: #3498db;
-          }
-          
-          .source-xml {
-              font-family: monospace;
-              font-size: inherit;
-              white-space: pre-wrap;
-              word-break: break-all;
-              background-color: #f5f5f5;
-              padding: 8px;
-              border-radius: 4px;
-              margin: 0;
-              max-width: 600px;
-              overflow-x: auto;
-          }
-          
-          .controls {
-              display: flex;
-              justify-content: space-between;
-              margin: 15px 0;
-              padding: 10px;
-              background-color: #f8f9fa;
-              border-radius: 4px;
-          }
-          
-          .filter-controls {
-              display: flex;
-              align-items: center;
-          }
-          
-          .export-controls {
-              display: flex;
-              align-items: center;
-          }
-          
-          .export-button {
-              padding: 5px 10px;
-              background-color: #3498db;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              margin-left: 10px;
-          }
-          
-          .export-button:hover {
-              background-color: #2980b9;
-          }
-          
-          .validation-summary {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-top: 15px;
-              padding: 15px;
-              background-color: #f8f9fa;
-              border-radius: 4px;
-              border-left: 4px solid #2c3e50;
-          }
-          
-          .file-info {
-              flex: 1;
-              text-align: left;
-          }
-          
-          .summary-badges {
-              flex: 1;
-              text-align: center;
-          }
-          
-          .timestamp-info {
-              flex: 1;
-              text-align: right;
-          }
-          
-          /* XML Editor styles - Modified for CodeMirror */
-          .editor-container {
-              margin-top: 20px;
-              border: 1px solid #ddd;
-              border-radius: 4px;
-              overflow: hidden;
-          }
-          
-          .editor-header {
-              background-color: #f2f2f2;
-              padding: 10px;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              border-bottom: 1px solid #ddd;
-          }
-          
-          .editor-title {
-              font-weight: bold;
-              margin: 0;
-          }
-          
-          .editor-actions {
-              display: flex;
-              gap: 10px;
-          }
-          
-          .editor-button {
-              padding: 5px 10px;
-              background-color: #3498db;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-          }
-          
-          .editor-button:hover {
-              background-color: #2980b9;
-          }
-          
-          .editor-body {
-              padding: 0;
-              max-height: 0;
-              overflow: hidden;
-              transition: max-height 0.5s ease;
-              position: relative;
-          }
-          
-          .editor-body.open {
-              max-height: 500px;
-              overflow: visible; /* Changed to visible for CodeMirror */
-              display: block;
-          }
-          
-          /* CodeMirror customizations */
-          .CodeMirror {
-              height: 500px;
-              font-family: monospace;
-              font-size: 14px;
-              line-height: 1.5;
-          }
-          
-          /* Make sure CodeMirror is hidden initially with the editor */
-          .editor-body:not(.open) .CodeMirror {
-              display: none;
-          }
-          
-          /* Editor status bar */
-          .editor-statusbar {
-              display: flex;
-              justify-content: space-between;
-              background-color: #f0f0f0;
-              padding: 5px 10px;
-              border-top: 1px solid #ddd;
-              font-size: 12px;
-              color: #666;
-          }
-          
-          /* Highlighted lines */
-          .CodeMirror-activeline-background {
-              
-              background-color: rgba(255, 140, 0, 0.3);
-          
-          .cm-matchhighlight {
-              
-              background-color: rgba(255, 140, 0, 0.3);
-          }
-          
-          .CodeMirror-focused .cm-matchhighlight {
-              
-              background-color: rgba(255, 140, 0, 0.5);          }
-          }
-          
-          /* Element highlight style */
-          .cm-highlight-element {
-              background-color: #ffff99;
-          }
-          
-          /* Custom highlighting for View Element links */
-          .xpath-highlight { 
-                        
-              background-color: #FF8C00
-          }
-          
-          .xpath-link {
-              color: #3498db;
-              text-decoration: underline;
-              cursor: pointer;
-          }
-          
-          .xpath-link:hover {
-              color: #2980b9;
-          }
-          
-          .tooltip {
-              position: relative;
-              display: inline-block;
-          }
-          
-          .tooltip .tooltiptext {
-              visibility: hidden;
-              width: 500px; /* Increased width */
-              max-width: 500px; /* Increased max-width */
-              background-color: #555;
-              color: #fff;
-              text-align: left;
-              border-radius: 6px;
-              padding: 5px 10px;
-              position: absolute;
-              z-index: 50;
-              top: -5px;
-              left: 105%;
-              opacity: 0;
-              transition: opacity 0.3s;
-              white-space: normal; /* Allow text wrapping */
-              word-wrap: break-word; /* Break long words */
-              overflow-wrap: break-word; /* Modern property for breaking long words */
-          }
-          
-          .tooltip:hover .tooltiptext {
-              visibility: visible;
-              opacity: 1;
-          }
-          
-          /* Dialog styles */
-          .dialog-overlay {
-              display: none;
-              position: fixed;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              background-color: rgba(0, 0, 0, 0.5);
-              z-index: 1000;
-              align-items: center;
-              justify-content: center;
-          }
-          
-          .dialog-container {
-              background-color: white;
-              padding: 20px;
-              border-radius: 8px;
-              box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-              width: 500px;
-              max-width: 90%;
-          }
-          
-          .dialog-title {
-              margin-top: 0;
-              margin-bottom: 15px;
-              font-size: 18px;
-              color: #2c3e50;
-          }
-          
-          .dialog-content {
-              margin-bottom: 20px;
-          }
-          
-          .dialog-form-group {
-              margin-bottom: 15px;
-          }
-          
-          .dialog-label {
-              display: block;
-              margin-bottom: 5px;
-              font-weight: bold;
-          }
-          
-          .dialog-input {
-              width: 100%;
-              padding: 8px;
-              border: 1px solid #ddd;
-              border-radius: 4px;
-              box-sizing: border-box;
-          }
-          
-          .dialog-actions {
-              display: flex;
-              justify-content: flex-end;
-              gap: 10px;
-          }
-          
-          .dialog-button {
-              padding: 8px 16px;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-          }
-          
-          .dialog-button-primary {
-              background-color: #3498db;
-              color: white;
-          }
-          
-          .dialog-button-secondary {
-              background-color: #f2f2f2;
-              color: #333;
-          }
-          
-          /* Added for better responsiveness of the editor */
-          @media (max-width: 768px) {
-              .editor-actions {
-                  flex-direction: column;
-                  gap: 5px;
-              }
-              
-              .CodeMirror {
-                  font-size: 12px;
-              }
-          }</style>
+/* Base styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+.header-container {
+    position: relative;
+    text-align: center;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    height: 50px;
+}
+
+.header-logo {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+}
+
+/* Validation result styles - row shading colors */
+.error {
+    background-color: #fdd5d1;
+}
+
+.warning {
+    background-color: #fde5be;
+}
+
+.info {
+    background-color: #d1e7f2;
+}
+
+.success {
+    background-color: #e9f7ef;
+    border-left: 4px solid #2ecc71;
+}
+
+/* Summary banner */
+.summary-banner {
+    padding: 6px;
+    margin: 15px 0;
+    text-align: center;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.summary-banner.success {
+    background-color: #d4efdf;
+    border-left: 4px solid #2ecc71;
+}
+
+.summary-banner.info {
+    background-color: #d4e6f1;
+    border-left: 4px solid #3498db;
+}
+
+.summary-banner.warning {
+    background-color: #fae5d3;
+    border-left: 4px solid #f39c12;
+}
+
+.summary-banner.error {
+    background-color: #f5b7b1;
+    border-left: 4px solid #e74c3c;
+}
+/* Table with fixed layout */
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 20px;
+font-size: 13px; /* Slightly smaller font */
+table-layout: fixed;
+line-height: 1.2; /* Tighter line height */
+}
+
+.table-container {
+max-height: 350px;
+overflow-y: auto;
+margin-bottom: 20px;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+}
+
+table th:nth-child(1), table td:nth-child(1) { width: 80px; }
+table th:nth-child(2), table td:nth-child(2) { width: 100px; }
+table th:nth-child(3), table td:nth-child(3) { width: 150px; }
+table th:nth-child(4), table td:nth-child(4) { width: 650px; }
+table th:nth-child(5), table td:nth-child(5) { width: auto; }
+
+/* Cell styling with reduced spacing */
+th, td {
+padding: 2px 8px; /* Minimal vertical padding */
+text-align: left;
+border-bottom: 1px solid black;
+vertical-align: middle;
+word-wrap: break-word;
+overflow-wrap: break-word;
+line-height: 1.2; /* Tighter line spacing */
+}
+
+/* Message column with preserved line breaks and word wrapping */
+table td:nth-child(4) {
+text-align: left !important; /* Explicitly left-align */
+white-space: pre-wrap;
+word-wrap: break-word;
+overflow-wrap: break-word;
+word-break: break-word;
+text-indent: 0 !important;
+}
+
+/* Headers */
+th {
+background-color: #f2f2f2;
+position: sticky;
+top: 0;
+z-index: 10;
+white-space: nowrap;
+}
+
+table td:nth-child(4) pre.source-xml {
+font-family: sans-serif;
+font-size: inherit;
+white-space: pre-wrap;
+word-wrap: break-word;
+overflow-wrap: break-word;
+word-break: break-word;
+background-color: transparent;
+padding: 0 !important;
+margin: 0 !important;
+border: none;
+border-radius: 0;
+max-width: 100%;
+overflow-x: visible;
+display: block; /* Changed from inline to block */
+box-sizing: border-box;
+text-indent: 0 !important;
+line-height: 1.2;
+
+/* Additional properties to prevent indentation */
+text-align: left !important;
+-webkit-text-indent: 0 !important;
+-moz-text-indent: 0 !important;
+text-decoration: none;
+text-transform: none;
+}
+
+/* Severity badges */
+.severity-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: white;
+    margin: 0 3px;
+}
+
+.severity-badge.error {
+    background-color: #e74c3c;
+}
+
+.severity-badge.warning {
+    background-color: #f39c12;
+}
+
+.severity-badge.info {
+    background-color: #3498db;
+}
+
+/* Source XML in table - sans-serif and transparent background */
+table td pre.source-xml {
+    font-family: sans-serif;
+    font-size: inherit;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    max-width: 100%;
+    overflow-x: visible;
+    display: inline;
+    box-sizing: border-box;
+    text-indent: 0 !important; /* Remove first-line indent */
+}
+
+/* Source XML outside table (editor box) - monospace */
+.source-xml {
+    font-family: monospace;
+    font-size: inherit;
+    white-space: pre-wrap;
+    word-break: break-all;
+    background-color: #f5f5f5; /* Gray background for editor */
+    padding: 8px;
+    border-radius: 4px;
+    margin: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-wrap: break-word;
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.filter-controls {
+    display: flex;
+    align-items: center;
+}
+
+.export-controls {
+    display: flex;
+    align-items: center;
+}
+
+.export-button {
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.export-button:hover {
+    background-color: #2980b9;
+}
+
+.validation-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #2c3e50;
+}
+
+.file-info {
+    flex: 1;
+    text-align: left;
+}
+
+.summary-badges {
+    flex: 1;
+    text-align: center;
+}
+
+.timestamp-info {
+    flex: 1;
+    text-align: right;
+}
+
+/* XML Editor styles */
+.editor-container {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.editor-header {
+    background-color: #f2f2f2;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.editor-title {
+    font-weight: bold;
+    margin: 0;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.editor-button {
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.editor-button:hover {
+    background-color: #2980b9;
+}
+
+.editor-body {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    position: relative;
+}
+
+.editor-body.open {
+    max-height: 500px;
+    overflow: visible;
+    display: block;
+}
+
+/* CodeMirror customizations */
+.CodeMirror {
+    height: 500px;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.editor-body:not(.open) .CodeMirror {
+    display: none;
+}
+
+/* Editor status bar */
+.editor-statusbar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+    border-top: 1px solid #ddd;
+    font-size: 12px;
+    color: #666;
+}
+
+/* CodeMirror highlighting */
+.CodeMirror-activeline-background {
+    background-color: rgba(255, 140, 0, 0.3);
+}
+
+.cm-matchhighlight {
+    background-color: rgba(255, 140, 0, 0.3);
+}
+
+.CodeMirror-focused .cm-matchhighlight {
+    background-color: rgba(255, 140, 0, 0.5);
+}
+
+.cm-highlight-element {
+    background-color: #ffff99;
+}
+
+.xpath-highlight {
+    background-color: #FF8C00;
+}
+
+.xpath-link {
+    color: #3498db;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.xpath-link:hover {
+    color: #2980b9;
+}
+
+/* Tooltip styling with auto width and max-width */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: auto; /* Auto width */
+    max-width: 500px; /* Max width constraint */
+    background-color: #555;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 50;
+    top: -5px;
+    left: 105%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Dialog styles */
+.dialog-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    width: 500px;
+    max-width: 90%;
+}
+
+.dialog-title {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #2c3e50;
+}
+
+.dialog-content {
+    margin-bottom: 20px;
+}
+
+.dialog-form-group {
+    margin-bottom: 15px;
+}
+
+.dialog-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.dialog-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.dialog-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dialog-button-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.dialog-button-secondary {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .editor-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .CodeMirror {
+        font-size: 12px;
+    }
+}
+        </style>
    </head>
    <body>
       <div class="container">
@@ -467,7 +533,7 @@
             <div class="file-info"><strong>File: </strong><span>ValidationTest.xml</span></div>
             <div class="summary-badges"><span class="severity-badge error">24 Errors</span><span class="severity-badge warning">2
                   Warnings</span><span class="severity-badge info">4 Info</span></div>
-            <div class="timestamp-info"><strong>Timestamp: </strong>2025-05-09T08:24:33.817619-07:00</div>
+            <div class="timestamp-info"><strong>Timestamp: </strong>2025-05-10T17:37:18.932434-07:00</div>
          </div>
          <div class="summary-banner error">Result: Fail. Correct errors and rescan.</div>
          <div class="controls">
@@ -863,7 +929,7 @@ The definition of property Percent Gravel requires a unit of measure. Add a &lt;
 The definition of property Clay Fraction &lt; 5 Micron requires a unit of measure. Add a &lt;uom&gt; element to the DIGGS instance.</pre>
                      </td>
                      <td>
-                        <pre class="source-xml">Clay Fraction lt; 5 Micron</pre>
+                        <pre class="source-xml">Clay Fraction &lt; 5 Micron</pre>
                      </td>
                   </tr>
                   <tr class="error">
@@ -1958,7 +2024,7 @@ The definition of property Percent Cobbles requires a unit of measure. Add a &lt
 										&lt;Property index="16" gml:id="DGS78FF-58B-228-63F6-57D7E"&gt;
 											&lt;propertyName&gt;Percent Clay&lt;/propertyName&gt;
 											&lt;typeData&gt;double&lt;/typeData&gt;
-											&lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron"&gt;Clay Fraction lt; 5 Micron&lt;/propertyClass&gt;
+											&lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron"&gt;Clay Fraction &amp;lt; 5 Micron&lt;/propertyClass&gt;
 										&lt;/Property&gt;
 										&lt;Property index="17" gml:id="DGSA2B-433-11F7-DC5A-44686"&gt;
 											&lt;propertyName&gt;Percent Silt&lt;/propertyName&gt;
@@ -2812,7 +2878,7 @@ The definition of property Percent Cobbles requires a unit of measure. Add a &lt
             console.error('Export CSV button not found');
           }
           
-          // Set up XPath links
+          // Set up XPath links - FIXED SELECTOR
           const xpathLinks = document.querySelectorAll('.xpath-link');
           console.log('Found XPath links:', xpathLinks.length);
           

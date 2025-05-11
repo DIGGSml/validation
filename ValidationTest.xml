@@ -1,10 +1,4 @@
-<Diggs xmlns="http://diggsml.org/schema-dev" xmlns:diggs="http://diggsml.org/schema-dev"
-	xmlns:g3.3="http://www.opengis.net/gml/3.3/ce" xmlns:glr="http://www.opengis.net/gml/3.3/lr"
-	xmlns:glrov="http://www.opengis.net/gml/3.3/lrov" xmlns:gml="http://www.opengis.net/gml/3.2"
-	xmlns:witsml="http://www.witsml.org/schemas/131" xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://diggsml.org/schema-dev https://diggsml.org/schema-dev/Diggs.xsd"
-	gml:id="NTM1YTEwMzUtYmRmZS00NTIxLTk1OWItZjk4NGEwOWRjZDcx">
+<Diggs xmlns="http://diggsml.org/schema-dev" xmlns:diggs="http://diggsml.org/schema-dev" xmlns:g3.3="http://www.opengis.net/gml/3.3/ce" xmlns:glr="http://www.opengis.net/gml/3.3/lr" xmlns:glrov="http://www.opengis.net/gml/3.3/lrov" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:witsml="http://www.witsml.org/schemas/131" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://diggsml.org/schema-dev https://diggsml.org/schema-dev/Diggs.xsd" gml:id="NTM1YTEwMzUtYmRmZS00NTIxLTk1OWItZjk4NGEwOWRjZDcx">
 	<documentInformation>
 		<DocumentInformation gml:id="DGS36A3-17AD-1BC-F9D7-37B5A">
 			<creationDate>2025-04-04</creationDate>
@@ -135,18 +129,14 @@
 				</Locality>
 			</locality>
 			<referencePoint>
-				<PointLocation srsDimension="3"
-					srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360"
-					uomLabels="dega dega ft" gml:id="pl-BH-33">
+				<PointLocation srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="pl-BH-33">
 					<gml:pos>-84.247361 33.854467 318.00</gml:pos>
 				</PointLocation>
 			</referencePoint>
 
 
 			<centerLine>
-				<LinearExtent srsDimension="3"
-					srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360"
-					uomLabels="dega dega ft" gml:id="cl-BH-33">
+				<LinearExtent srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="cl-BH-33">
 					<gml:posList>-84.247361 33.854467 318.00 -84.247361 33.854467 278</gml:posList>
 				</LinearExtent>
 			</centerLine>
@@ -181,8 +171,7 @@
 					<backfillLayer>
 						<BackfillLayer gml:id="DGS5D85-2F-AA2-83B3-356D1">
 							<backfillInterval>
-								<LinearExtent gml:id="DGS82DE-485-2BFB-2D7C-4CCB1"
-									srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS82DE-485-2BFB-2D7C-4CCB1" srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>0.00 5.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -192,8 +181,7 @@
 					<backfillLayer>
 						<BackfillLayer gml:id="DGS731D-466-8DD-C962-13976">
 							<backfillInterval>
-								<LinearExtent gml:id="DGS922A-10DA-2500-7C81-1CE30"
-									srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS922A-10DA-2500-7C81-1CE30" srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>5.00 14.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -208,8 +196,7 @@
 								</Remark>
 							</remark>
 							<backfillInterval>
-								<LinearExtent gml:id="DGSA009-13DD-32EC-81B8-16217"
-									srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGSA009-13DD-32EC-81B8-16217" srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>14.00 25.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -219,8 +206,7 @@
 					<backfillLayer>
 						<BackfillLayer gml:id="DGSD28-1372-1829-9940-597CA">
 							<backfillInterval>
-								<LinearExtent gml:id="DGS8AE1-459-2CB-B281-A3E8"
-									srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS8AE1-459-2CB-B281-A3E8" srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>25.00 29.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -235,8 +221,7 @@
 								</Remark>
 							</remark>
 							<backfillInterval>
-								<LinearExtent gml:id="DGS5952-840-2053-3D5B-11A90"
-									srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS5952-840-2053-3D5B-11A90" srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>29.00 35.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -246,8 +231,7 @@
 					<backfillLayer>
 						<BackfillLayer gml:id="DGS13C-14FC-4275-236E-D78C">
 							<backfillInterval>
-								<LinearExtent gml:id="DGS653D-76F-2E76-9696-9F02"
-									srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS653D-76F-2E76-9696-9F02" srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>35.00 40.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -265,8 +249,7 @@
 						</Remark>
 					</remark>
 					<casingLocation>
-						<LinearExtent gml:id="DGS1869-1943-BC1-CCF-5C43E" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS1869-1943-BC1-CCF-5C43E" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>0 30.00</gml:posList>
 						</LinearExtent>
 					</casingLocation>
@@ -322,8 +305,7 @@
 						</Remark>
 					</remark>
 					<location>
-						<LinearExtent gml:id="DGS49B9-33F-2B24-CF21-424E5" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS49B9-33F-2B24-CF21-424E5" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>0.00 30.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -396,8 +378,7 @@
 						</Remark>
 					</remark>
 					<location>
-						<LinearExtent gml:id="DGS28B-13D6-C57-3997-55D16" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS28B-13D6-C57-3997-55D16" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>30.00 40.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -467,8 +448,7 @@
 						</Remark>
 					</remark>
 					<location>
-						<LinearExtent gml:id="DGS6CD2-A28-16DB-278B-D074" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS6CD2-A28-16DB-278B-D074" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>18.00 20.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -482,8 +462,7 @@
 						</Remark>
 					</remark>
 					<location>
-						<LinearExtent gml:id="DGS8F3E-1668-F4C-88BD-1FCB1" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS8F3E-1668-F4C-88BD-1FCB1" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>24.00 25.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -529,8 +508,7 @@
 				<Advancement gml:id="DGS2ED9-9BD-15A0-B377-1F89">
 					<gml:description>1</gml:description>
 					<location>
-						<LinearExtent gml:id="DGS442D-122C-6F1-7B3-11812" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS442D-122C-6F1-7B3-11812" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>0.00 5.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -549,8 +527,7 @@
 				<Advancement gml:id="DGS7F9E-49-3960-A89A-211F6">
 					<gml:description>2</gml:description>
 					<location>
-						<LinearExtent gml:id="DGS89CB-2CB-15A9-651D-C3A6" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS89CB-2CB-15A9-651D-C3A6" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>5.00 10.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -568,8 +545,7 @@
 				<Flush gml:id="DGS75DD-258-2D98-61DD-41919">
 
 					<flushZoneLocation>
-						<LinearExtent gml:id="DGS59AA-15F4-49BF-1044-21F72" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS59AA-15F4-49BF-1044-21F72" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>3.00 6.00</gml:posList>
 						</LinearExtent>
 					</flushZoneLocation>
@@ -583,8 +559,7 @@
 				<Flush gml:id="DGS46E0-1166-36D3-5D0-5D0A6">
 
 					<flushZoneLocation>
-						<LinearExtent gml:id="DGS8EA1-12B3-257C-D92-9AB2" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS8EA1-12B3-257C-D92-9AB2" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>7.00 10.00</gml:posList>
 						</LinearExtent>
 					</flushZoneLocation>
@@ -597,8 +572,7 @@
 				<Flush gml:id="DGS593-1291-321-1CF4-1D849">
 
 					<flushZoneLocation>
-						<LinearExtent gml:id="DGS309C-1128-27F3-884B-389C3" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS309C-1128-27F3-884B-389C3" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>10.00 12.00</gml:posList>
 						</LinearExtent>
 					</flushZoneLocation>
@@ -616,8 +590,7 @@
 					</remark>
 
 					<flushZoneLocation>
-						<LinearExtent gml:id="DGS8552-6D-283D-8539-1583B" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS8552-6D-283D-8539-1583B" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>30.00 35.00</gml:posList>
 						</LinearExtent>
 					</flushZoneLocation>
@@ -631,8 +604,7 @@
 			<holeDiameter>
 				<BoreholeDiameter gml:id="DGS3D27-18DB-42AB-6232-4E510">
 					<diameterLocation>
-						<LinearExtent gml:id="DGS3133-1231-25FC-90A8-554B2" srsName="#lsr-BH-33"
-							srsDimension="1">
+						<LinearExtent gml:id="DGS3133-1231-25FC-90A8-554B2" srsName="#lsr-BH-33" srsDimension="1">
 							<gml:posList>0 40.00</gml:posList>
 						</LinearExtent>
 					</diameterLocation>
@@ -646,8 +618,7 @@
 						<WaterStrikeReading gml:id="DGSA1DF-1D-1796-21F8-46AC2">
 							<dateTime>2015-06-05T06:00:00</dateTime>
 							<waterLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
-									gml:id="DGS35A0-6F1-3709-CDCC-50010">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS35A0-6F1-3709-CDCC-50010">
 									<gml:pos>15.00</gml:pos>
 								</PointLocation>
 							</waterLocation>
@@ -662,8 +633,7 @@
 						<WaterStrikeReading gml:id="DGS3252-A8E-B6A-6E9E-4A64">
 							<dateTime>2015-06-04T13:47:48</dateTime>
 							<waterLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
-									gml:id="DGS9E40-D05-38FB-55FB-62521">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS9E40-D05-38FB-55FB-62521">
 									<gml:pos>19.00</gml:pos>
 								</PointLocation>
 							</waterLocation>
@@ -678,8 +648,7 @@
 						<WaterStrikeReading gml:id="DGS2731-418-416D-F67F-55F2D">
 							<dateTime>2015-06-04T13:50:26</dateTime>
 							<waterLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
-									gml:id="DGS3046-AE-417C-1A8B-14C42">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS3046-AE-417C-1A8B-14C42">
 									<gml:pos>15.00</gml:pos>
 								</PointLocation>
 							</waterLocation>
@@ -694,8 +663,7 @@
 						<WaterStrikeReading gml:id="DGS59E-C7A-2535-B1D2-61833">
 							<dateTime>2015-06-04T23:47:36</dateTime>
 							<waterLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
-									gml:id="DGS1496-1568-79-A9-13886">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS1496-1568-79-A9-13886">
 									<gml:pos>13.00</gml:pos>
 								</PointLocation>
 							</waterLocation>
@@ -728,16 +696,12 @@
 			<investigationTarget>Ground Water</investigationTarget>
 			<projectRef xlink:href="#Project_20250110_-_DIGGS_Challenge"/>
 			<referencePoint>
-				<PointLocation srsDimension="3"
-					srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360"
-					uomLabels="dega dega ft" gml:id="pl-BH-33A">
+				<PointLocation srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="pl-BH-33A">
 					<gml:pos>-84.247361 33.854467 319.00</gml:pos>
 				</PointLocation>
 			</referencePoint>
 			<centerLine>
-				<LinearExtent srsDimension="3"
-					srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360"
-					uomLabels="dega dega ft" gml:id="cl-BH-33A">
+				<LinearExtent srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="cl-BH-33A">
 					<gml:posList>-84.247361 33.854467 319.00 -84.247361 33.854467 294</gml:posList>
 				</LinearExtent>
 			</centerLine>
@@ -746,9 +710,7 @@
 				<Sensor gml:id="DGS6088-1211-392B-EAB5-1D1AD">
 					<gml:name>Piezo-33</gml:name>
 					<referencePoint>
-						<PointLocation srsDimension="3"
-							srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360"
-							uomLabels="dega dega ft" gml:id="ie-BH-33A">
+						<PointLocation srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="ie-BH-33A">
 							<gml:pos>-84.247361 33.854467 319.00</gml:pos>
 						</PointLocation>
 					</referencePoint>
@@ -760,8 +722,7 @@
 					<detector>
 						<Detector gml:id="DGS9347-FAE-E33-1C8D-3FBD0">
 							<detectorLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
-									gml:id="DGS6E76-EF0-2918-C95B-1389E">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS6E76-EF0-2918-C95B-1389E">
 									<gml:pos>25.00</gml:pos>
 								</PointLocation>
 							</detectorLocation>
@@ -780,8 +741,7 @@
 						</Remark>
 					</remark>
 					<openInterval>
-						<LinearExtent gml:id="DGS819B-509-4AC2-5FD0-1DF9" srsDimension="1"
-							srsName="#lsr-BH-33">
+						<LinearExtent gml:id="DGS819B-509-4AC2-5FD0-1DF9" srsDimension="1" srsName="#lsr-BH-33">
 							<gml:posList>15.00 25.00</gml:posList>
 						</LinearExtent>
 					</openInterval>
@@ -797,8 +757,7 @@
 						</Remark>
 					</remark>
 					<casingLocation>
-						<LinearExtent srsName="#lsr-BH-33" srsDimension="1"
-							gml:id="DGS64AA-EDA-18BB-4C4D-185D7">
+						<LinearExtent srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS64AA-EDA-18BB-4C4D-185D7">
 							<gml:posList>-0.50 15.00</gml:posList>
 						</LinearExtent>
 					</casingLocation>
@@ -819,8 +778,7 @@
 			<outcome>
 				<TestResult gml:id="DGS5EC5-308-15D5-D16-612FD">
 					<location>
-						<LinearExtent srsDimension="1" srsName="lsr-BH-33"
-							gml:id="DGS8F74-15A2-12E9-E839-3608A">
+						<LinearExtent srsDimension="1" srsName="lsr-BH-33" gml:id="DGS8F74-15A2-12E9-E839-3608A">
 							<gml:posList>7.5 9.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -896,8 +854,7 @@
 			<outcome>
 				<TestResult gml:id="DGS4C85-33A-3D84-5118-6045C">
 					<location>
-						<PointLocation srsDimension="1" srsName="BH-33-lsr"
-							gml:id="DGS33ED-1371-4DD5-5374-166DB">
+						<PointLocation srsDimension="1" srsName="BH-33-lsr" gml:id="DGS33ED-1371-4DD5-5374-166DB">
 							<gml:pos>2.00</gml:pos>
 						</PointLocation>
 					</location>
@@ -978,8 +935,7 @@
 			<outcome>
 				<TestResult gml:id="DGS12C8-11FF-2525-C1C7-3AB2B">
 					<location>
-						<PointLocation srsDimension="1" srsName="BH-34-lsr"
-							gml:id="DGS828C-607-390F-2A94-57001">
+						<PointLocation srsDimension="1" srsName="BH-34-lsr" gml:id="DGS828C-607-390F-2A94-57001">
 							<gml:pos>22.00</gml:pos>
 						</PointLocation>
 					</location>
@@ -1072,7 +1028,7 @@
 										<Property index="16" gml:id="DGS78FF-58B-228-63F6-57D7E">
 											<propertyName>Percent Clay</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron">Clay Fraction lt; 5 Micron</propertyClass>
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron">Clay Fraction &lt; 5 Micron</propertyClass>
 										</Property>
 										<Property index="17" gml:id="DGSA2B-433-11F7-DC5A-44686">
 											<propertyName>Percent Silt</propertyName>
