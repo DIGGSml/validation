@@ -205,7 +205,7 @@ text-transform: none;
 }
 
 .severity-badge.warning {
-    background-color: #f39c12;
+    background-color: #084ab4;
 }
 
 .severity-badge.info {
