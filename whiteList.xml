@@ -12,6 +12,11 @@
         <pattern>https://diggsml.org</pattern>
         <description>DIGGS Standard resources - schema, code list, CRS, Unit and Authority Dictionaries</description>
     </resource>
+
+    <resource>
+        <pattern>http://diggsml.org</pattern>
+        <description>DIGGS Standard resources - schema, code list, CRS, Unit and Authority Dictionaries</description>
+    </resource>
     
     <resource>
         <pattern>http://www.opengis.net/def</pattern>
