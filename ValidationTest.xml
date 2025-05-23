@@ -19,14 +19,15 @@
 	<project>
 		<Project gml:id="Project_20250110_-_DIGGS_Challenge">
 			<gml:description>Vendor DIGGS Challenge</gml:description>
-			<gml:name>20250110 - DIGGS Challenge</gml:name>
+			<!-- Fails Check 1 -->
+			<gml:name codeSpace="OGC">20250110 - DIGGS Challenge</gml:name>
 
-			<!-- Fails Check 1.-->
+			<!-- internalIdentifier not checked.-->
 			<internalIdentifier codeSpace="OGC">20250110 - DIGGS Challenge</internalIdentifier>
 
 			<role>
 				<Role>
-					<!-- Fails Check 2 -->
+					<!-- Fails Check 3 -->
 					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/unknown.xml#client">Client</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS4BC5-3D4-D63-36F6-2F2F8">
@@ -73,10 +74,9 @@
 				</Role>
 			</role>
 
-			<!-- Check 6. Generates WARNING: The value "Lab" in element rolePerformed is a name that does not match "Laboratory Name" in the referenced Definition. Be sure that "Lab" is a synonymous name. -->
 			<role>
 				<Role>
-					<!-- Fails Check 6 -->
+					<!-- Fails Check 7 The name Lab is not a name for this definigion in the dictionary -->
 					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#laboratory_name">Lab</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS1A3C-1956-2088-569A-123E0">
@@ -110,7 +110,7 @@
 	<samplingFeature>
 		<Borehole gml:id="Location_BH-33">
 			<gml:name>BH-33</gml:name>
-			<!-- Fails Check 1.-->
+			<!-- internalIdentifier not checked.-->
 			<internalIdentifier codeSpace="OGC">BH-33</internalIdentifier>
 			<status>FINAL</status>
 			<remark>
@@ -143,7 +143,7 @@
 
 			<linearReferencing>
 				<LinearSpatialReferenceSystem gml:id="lsr-BH-33">
-					<!-- Fails Check 1.-->
+					<!-- gml:dentifier not checked.-->
 					<gml:identifier codeSpace="G-I">lsr_BH-33-lsr</gml:identifier>
 					<glr:linearElement xlink:href="#cl-BH-33"/>
 					<glr:lrm>
@@ -279,7 +279,6 @@
 					</role>
 					<role>
 						<Role>
-							<!-- This fails Check 5 but should not -->
 							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
 							<businessAssociate>
 								<BusinessAssociate gml:id="DGS5D6E-DE1-1D17-105-30037">
@@ -290,8 +289,8 @@
 					</role>
 					<role>
 						<Role>
-							<!-- This fails check 5 but should not -->
-							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#operator">Operator</rolePerformed>
+							<!-- Fails codeType validation. rolePerformed should reference a code list dictionary. -->
+							<rolePerformed>Operator</rolePerformed>
 							<businessAssociate>
 								<BusinessAssociate gml:id="DGS987F-7CF-1872-6BCF-439F4">
 									<gml:name>Jim Bob</gml:name>
@@ -352,7 +351,6 @@
 					</role>
 					<role>
 						<Role>
-							<!-- This fails check 5 but should not -->
 							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
 							<businessAssociate>
 								<BusinessAssociate gml:id="DGS6803-B44-2FB3-F513-1DED9">
@@ -363,8 +361,7 @@
 					</role>
 					<role>
 						<Role>
-							<!-- This fails check 5 but should not -->
-							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#operator">Operator</rolePerformed>
+							<rolePerformed>Operator</rolePerformed>
 							<businessAssociate>
 								<BusinessAssociate gml:id="DGS26CC-2D8-84-A5CD-5ED29">
 									<gml:name>James Brown</gml:name>
@@ -726,7 +723,7 @@
 									<gml:pos>25.00</gml:pos>
 								</PointLocation>
 							</detectorLocation>
-							<measurand codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#water_elev">Water elevation</measurand>
+							<measurand codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/measurand.xml#water_elev">Water elevation</measurand>
 							<type>EPIE</type>
 						</Detector>
 					</detector>
@@ -790,7 +787,7 @@
 										<Property index="1">
 											<propertyName>N-Value</propertyName>
 											<typeData>long</typeData>
-											<!-- Fails check 6 -->
+											<!-- Fails check 6 Lpgger is not a propertyClass value-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#logger">N-Value</propertyClass>
 										</Property>
 									</properties>
@@ -871,7 +868,7 @@
 										<Property index="2" gml:id="DGS4D8D-130D-1435-19AD-D17E">
 											<propertyName>PL</propertyName>
 											<typeData>integer</typeData>
-											<!-- Fails Check 9 -->
+											<!-- Fails Check 8 N60 is not a property appropriate for an atterberg test-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n60">Plastic Limit</propertyClass>
 										</Property>
 										<Property index="3" gml:id="DGS2F87-7D8-E4F-6B6C-4A3C">
@@ -903,7 +900,7 @@
 				</TestResult>
 			</outcome>
 			<procedure>
-				<diggs:AtterbergLimitsTest gml:id="DGS193B-CED-229B-5C05-27504">
+					<diggs:AtterbergLimitsTest gml:id="DGS193B-CED-229B-5C05-27504">
 					<status>Approved</status>
 					<testProcedureMethod>
 						<Specification gml:id="DGS13F6-190E-40AD-723-2D9F7">
@@ -919,10 +916,68 @@
 						</SoilSpecimen>
 					</specimen>
 					<diggs:percentRetainedNo40/>
-
-
 				</diggs:AtterbergLimitsTest>
 			</procedure>
+		</Test>
+	</measurement>
+	
+	
+	<measurement>
+		<Test gml:id="DGS5D65-DC7-3D1D-8223-12D03">
+			<investigationTarget>Natural Ground</investigationTarget>
+			<projectRef xlink:href="#Project_20250110_-_DIGGS_Challenge"/>
+			<samplingFeatureRef xlink:href="#Location_BH-33"/>
+			<outcome>
+				<TestResult gml:id="DGS4C85-33A-3D84-5118-6045d">
+					<location>
+						<PointLocation srsDimension="1" srsName="BH-33-lsr" gml:id="DGS33ED-1371-4DD5-5374-166Dd">
+							<gml:pos>2.00</gml:pos>
+						</PointLocation>
+					</location>
+					<results>
+						<ResultSet>
+							<parameters>
+								<PropertyParameters gml:id="DGS9518-7F0-1F99-78C-43CB">
+									<properties>
+										<Property index="1">
+											<propertyName>LL</propertyName>
+											<typeData>integer</typeData>
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquid_limit">Liquid Limit</propertyClass>
+										</Property>
+										<Property index="2">
+											<propertyName>PL</propertyName>
+											<typeData>integer</typeData>
+											<!-- This record would fail check 8, but because there is no procedure, it can't validate against a sictionary. Need to pick this up in a measurment check - give general warning about non-procedural measurements. -->
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n60">Plastic Limit</propertyClass>
+										</Property>
+										<Property index="3">
+											<propertyName>PI</propertyName>
+											<typeData>integer</typeData>
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#plasticity_index">Plasticity Index</propertyClass>
+										</Property>
+										<Property index="4">
+											<propertyName>Symbol from plasticity chart</propertyName>
+											<typeData>string</typeData>
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_symbol_425">USCS Symbol Passing 425 Screen</propertyClass>
+										</Property>
+										<Property index="5">
+											<propertyName>LI</propertyName>
+											<typeData>double</typeData>
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquidity_index">Liquidity Index</propertyClass>
+										</Property>
+										<Property index="6">
+											<propertyName>non plastic</propertyName>
+											<typeData>boolean</typeData>
+											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#non_plastic">Non Plastic</propertyClass>
+										</Property>
+									</properties>
+								</PropertyParameters>
+							</parameters>
+							<dataValues cs="," decimal="." ts=" ">,,,,,1</dataValues>
+						</ResultSet>
+					</results>
+				</TestResult>
+			</outcome>
 		</Test>
 	</measurement>
 
@@ -947,6 +1002,7 @@
 										<Property index="1" gml:id="DGS8DA6-C62-1430-D0D4-46B42">
 											<propertyName>Cu</propertyName>
 											<typeData>double</typeData>
+                                            <!-- Fail check 11 Property needs UOM-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_uniformity">Coefficient of Uniformity</propertyClass>
 										</Property>
 										<Property index="2" gml:id="DGS9201-124B-41A9-C3D1-3A0AE">
@@ -991,54 +1047,63 @@
 										<Property index="9" gml:id="DGS5948-1F9-37-7A6D-30902">
 											<propertyName>AASHTO Symbol</propertyName>
 											<typeData>string</typeData>
-											<!-- Check 11 fail -->
+											<!-- Check 10 fail, should not have uom symbol-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_symbol">AASHTO Symbol</propertyClass>
 											<uom>%</uom>
 										</Property>
 										<Property index="10" gml:id="DGS755B-393-18AD-846A-11091">
 											<propertyName>AASHTO Group Index</propertyName>
 											<typeData>integer</typeData>
+                                            <!-- Fails Check 9 wrong data type-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_group_index">AASHTO Group Index</propertyClass>
 										</Property>
 										<Property index="11" gml:id="DGSE9B-121D-43E2-D8EB-196A7">
 											<propertyName>D15</propertyName>
 											<typeData>double</typeData>
+                                            <!-- Fail check 11, needs uom-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d15">d15</propertyClass>
 										</Property>
 										<Property index="12" gml:id="DGS8631-3D2-25D1-12FD-3352B">
 											<propertyName>D85</propertyName>
 											<typeData>double</typeData>
+                                            <!-- Fail check 11, needs uom-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d85">d85</propertyClass>
 										</Property>
 										<Property index="13" gml:id="DGS813A-143C-4237-5B1F-2E45">
 											<propertyName>Percent Fines</propertyName>
 											<typeData>double</typeData>
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_fines">Percent Fines</propertyClass>
+                                            <uom>%</uom>
 										</Property>
 										<Property index="14" gml:id="DGS70D0-C15-4099-C76C-236C3">
 											<propertyName>Percent Sand</propertyName>
 											<typeData>double</typeData>
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_sand">Percent Sand</propertyClass>
+                                            <uom>%</uom>
 										</Property>
 										<Property index="15" gml:id="DGS98A6-B55-16B1-DF48-2CB1B">
 											<propertyName>Percent Gravel</propertyName>
 											<typeData>double</typeData>
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_gravel">Percent Gravel</propertyClass>
+                                            <uom>%</uom>
 										</Property>
 										<Property index="16" gml:id="DGS78FF-58B-228-63F6-57D7E">
 											<propertyName>Percent Clay</propertyName>
 											<typeData>double</typeData>
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron">Clay Fraction &lt; 5 Micron</propertyClass>
+                                            <uom>mm</uom>
 										</Property>
 										<Property index="17" gml:id="DGSA2B-433-11F7-DC5A-44686">
 											<propertyName>Percent Silt</propertyName>
 											<typeData>string</typeData>
-											<!-- Check 10 failure -->
+											<!-- Check 9 failure, wrong data type -->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_silt">Percent Silt</propertyClass>
+                                            <uom>%</uom>
 										</Property>
 										<Property index="18" gml:id="DGS6384-EB3-C91-45B-555D">
 											<propertyName>Percent Cobbles</propertyName>
 											<typeData>double</typeData>
+                                         <!-- Fail check 11, needs uom-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_cobbles">Percent Cobbles</propertyClass>
 										</Property>
 									</properties>

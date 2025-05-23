@@ -1,8 +1,8 @@
-# Validation Repo
+# Validation Repository
 
 ## Introduction
 
- This repository is for the development of scripts to perform complex validation tasks on DIGGS instances as well as unit conversion lookups
+ This repository is for the development of xslt scripts to perform complex validation tasks on DIGGS instances as well as unit conversion lookups. When completed, the scripts are copied to the def/validation repository for deployment.
 
 Many elements of a DIGGS instance can be validated via standard schema validation, but there are many context and structural constraints on the data that can't be validated solely by schema. The goal of this project is to develop rules for more complex content validation tasks. Many of these validation needs are complex, involving progressive validation steps for an element, external dictionary or other file lookups, validating the structure of &lt;dataBlock&gt; string elements for consistency,  validating geometry coordinate structure for dimensional consistency, validating href links, etc.
 
@@ -16,45 +16,49 @@ XSLT transforms are portable and can be applied in:
 
 - Web applications (regardless of backend language - Python, JavaScript, PHP, etc.)
 - Desktop environments using Saxon processors
-- XML editors like Oxygen
+- XML editors like Oxygen or StylusStudio
 - Command-line processing pipelines
 
 ## Overall Approach
 
 ### Schema validation
 
-Schema validation is required before context validation can be done and is not part of this workflow. Schema validation can be accomplished using existing online tools (from Geosetta, Validation Xpress or <https://www.freeformatter.com/xml-validator-xsd.html#google_vignette>), or on the desktop using a commercial XML editor (Oxygen) or open-source validation tools such as Xerces or VS Code with XML Language Support Extension by Red Hat. We could consider providing an XSLT module that could perform schema validation as part of the workflow, but this would likely require the Saxon-EE processor, which is a commercial (for cost) product.
+Schema validation is required before context validation can be done and is not part of this project, but context validation can be part of a pipeline that includes schema validation as a first step. Schema validation can be accomplished using existing online tools (from Geosetta, Validation Xpress or <https://www.freeformatter.com/xml-validator-xsd.html#google_vignette>), or on the desktop using a commercial XML editor (Oxygen) or custom applications that use open-source XML Parser Library such as Xerces, libxmljs2 or lxml. 
 
 ### Accessing external resources
 
-Some context validation will require accessing external resources such as code list dictionaries, CRS definitions, etc. There are security concerns when outside resources are accessed. We propose to address this issue through the use of a parameter file that will contain whitelisted URLs (or URL fragments) that are safe. The DIGGS project will provide a vhiteList.xml file for this purpose that is preloaded with DIGGS and OGC URL fragments that are known to be safe, and that a user can customize for validation using custom resources.
+Some context validation will require accessing external resources such as code list dictionaries, CRS definitions, etc. There are security concerns when outside resources are accessed. We propose to address this issue through the use of a parameter file that will contain whitelisted URLs (or URL fragments) that are safe. The DIGGS project will provide a vhiteList.xml file for this purpose that is preloaded with DIGGS and OGC URL fragments that are known to be safe, and that a user can customize for validation using custom resources. Note: in some environments, such as browser-based applications, CORS restrictions may prevent these XSLT stylesheets from accessing necessary external resources regardless of the white list.
 
-For efficiency, external resources will be cached once loaded by the workflow.
+For efficiency, external resources are cached once loaded by the workflow.
 
-### Output format for XSLT output
+### XSLT validation report
 
-The validation report output by the XSLT modules will be a simple table structure with each record of the table representing a group of messageSet elements. A messageSet is output whenever a line in the XML instance fails validation. Each messageSet element will contain the following elements:
+The validation report output by the XSLT modules consists of a copy of the xml being validated, plus a group of messageSet elements. A messageSet is output whenever a line in the XML instance fails validation. Each messageSet element contains the following elements:
 
-- severity - proposed levels are Error, Warning, and Info
-- step - name of the validation step where the failure occurred.
+- severity - levels are Error, Warning, and Info
+- step - name of the validation step where the failure occurred. Each XSLT module performs one step of the validation.
 - elementPath - the xpath of the element or attribute where the failure occurs
 - text - a message explaining the nature of the failure
-- source - the xml string where the failure occurred
+- source - a serialized copy of the elemnt where the failure occurred
 
-With respect to severity, 
+With respect to severity,
 
 - INFO messages identify issues that suggest review to ensure data integrity, for example that the correct authority is referenced for a codeType term.
-- WARNING indicates that validation couldn't be completed, such as when a resource needed for validation is unavailable.
-- ERROR indicates an issue that can affect processing of the XML file, such as incorrect codes for the context, pointers to objects or resources that don't resolve, etc.
+- WARNING indicates that validation couldn't be completed, such as when a resource needed for validation is unavailable due to white list issues, or where interoperability might be affected.
+- ERROR indicates an issue that can affect processing of the XML file, such as incorrect codes for the context, pointers to valid objects or resources that don't resolve, etc.
 
 ### Deployment Scheme
   
-The suite of validation stylesheets would be hosted and maintained on the DIGGS Github site. Stamdard validation modules will be hosted on web server <https://diggsml.org/validation>, initially on Github pages. A master stylesheet (diggs_validation.xsl) will be configured for "full-suite" validation, along with a whiteList.xml file pre-populated with URL fragments for commonly accessed resources and local files. Both files are intended for user customization (add custom modules, validate with fewer modules, etc.)
+The suite of validation stylesheets will be hosted and maintained at <https://diggsml.org/def/validation>. A master stylesheet (diggs-validation.xsl and a compiled version, diggs-validation.sef.json) is configured for "full-suite" validation. The modules that perform the actual validation will be hosted and maintained at  <https://diggsml.org/def/validation/modules>. Additional resources are:
 
+- a whiteList.xml file pre-populated with URL fragments for commonly accessed resources and local files.
+- a second stylesheet (validation-report-html.xsl and a compiled version, validation-report-html.sef.json), that will convert the XML output from the validation modules to an interacitve report that can be viewed in a browser.
+
+diggs-validaton.xsl and whitelistList are intended for user customization (add custom modules, validate with fewer modules, etc.) when used locally.
 
 ## Proposed XSLT modules
 
-The following XSLT modules are proposed for context validation. Each of these modules can be applied independently, but there will be a master style sheet that can be customized to generate a complete validation workflow. All modules will be written XSLT 3.0 to take advantage of advanced feature, using only features that meet the specification without extension functions. This will allow processing to use free XSLT processors, like Saxon-HE.
+The following XSLT modules are proposed for context validation. As they are developed they will be added to the master diggs-validation.xsl stylesheet. All modules are written in XSLT 3.0 to take advantage of advanced features, using only features that meet the specification without extension functions. This will allow processing to use free XSLT processors, like Saxon-HE.
 
 #### DIGGS structure check
 
@@ -62,51 +66,52 @@ Checks that the XML file contains a Diggs root element and documentInformation e
 
 #### DIGGS Schema Check
 
-Checks that the file has a schemaLocation attribute in the root element, that the target schema file can be accessed and is a DIGGS schema file. Also checks for neamespace consistency between document, schemaLocation, and schema. As another check on file integrity, the master style sheet will prevent execution of subsequent modules if this check fails. ***COMPLETED***
+Checks that the file has a schemaLocation attribute in the root element, that the target schema file can be accessed and is a DIGGS schema file. Also checks for neamespace consistency between document, schemaLocation, and schema. The master style sheet will prevent execution of subsequent modules if this check fails. ***COMPLETED***
 
-#### codeSpace occurrence
+#### CodeType valdation
 
-Checks that elements that have DIGGS standard code list dictionaries defined for them have a codeSpace attribute. Specific check procedure is TBD.
+Checks that codeType elements that have DIGGS standard code list dictionaries defined for them have a codeSpace attribute that references a DIGGS dictioanary located at https://diggsml.org/def/codes. This step relies on a helper xml file at https://diggsml.org/def/validation/definedCodeTypes.xml, which stores
+a list of xpaths to elements that have DIGGS standard code llsts defined for them. This file is generated programmatically using GitHub actions, whenever the DIGGS Standard dictionaries are updated.
 
-#### codeSpace validation
+#### Dictionary validation
   
-For each element in the DIGGS file that has a codeSpace attribute:
+For each element in the DIGGS file that contains a codeSpace attribute, runs through a progressive sequence of checks that:
 
-   1. checks if the codeSpace value is a URL to a dictionary definition. (value starts with http:, https: or file: and contains a # character). Outputs an info message if not. ***COMPLETED***
-   2. If 1 passes, checks codeSpace to see if it passes the whiteList check. Outputs a warning if not. ***COMPLETED***
+   1. checks if the codeSpace value is a URL to a dictionary definition. (value starts with http:, https:, file: or local path (eg ./) and contains a # character). Outputs an info message if not. ***COMPLETED***
+   2. If 1 passes, checks codeSpace to see if it passes the white list check. Outputs a warning if not. ***COMPLETED***
    3. If 2 passes, checks if dictionary file can be accessed. Outputs an error if not. ***COMPLETED***
    4. Uf 3 passes, checks if the resource is a DIGGS dictionary, Outputs an error if not.  ***COMPLETED***
    5. If 4 passes, checks to see that the codeSpace returns a Definition element. Outputs an error if not.  ***COMPLETED***
-   6. If 5 passes, checks that element containing the codeSpace matched sourceElementXpath in the dictionary. Outputs an error if not.  ***COMPLETED***
-   7. If 6 passes, checks that the elment value is a case insensitive match to any of the gml:mame elements in the Definition. Outputs a Warning if not.  ***COMPLETED***
+   6. If 5 passes, checks that element containing the codeSpace matches sourceElementXpath in the dictionary definition. Outputs an error if not.  ***COMPLETED***
+   7. If 6 passes, checks that the element value is a case insensitive match to any of the gml:mame elements in the Definition. Outputs an INFO if not.  ***COMPLETED***
    8. If 7 passes, check that the name of the element that contains the codeSpace is propertyClass. If not, terminate validation (success), else proceed with the remaining steps.  ***COMPLETED***
-   9. Check that conditionalElementXpath from the dictionary exists. This checks that property is used in correct measurement context. Outputs an error if not.  ***COMPLETED***
-   10. If 9 passes, check that the value of the sibling dataType  matches the dataType value from the Dictionary definition. Outputs an error if not.  ***COMPLETED***
+   9. Check that conditionalElementXpath from the dictionary can be found in the DIGGS file. This checks that the property is used in correct measurement context. Pass if it does or if there is no procedure object to test, otherwise report an error.  ***COMPLETED***
+   10. If 9 passes, check that the value of the sibling dataType matches the dataType value from the Dictionary definition. Outputs an error if not.  ***COMPLETED***
    11. If 10 passes, check if quantityClass element exists in the definition. If not, check that there is no sibling uom element; if so, output an error. Terminate with error or if there is no uom where quantityClass is empty, ***COMPLETED***
    12. If 11 passes, check that propertyClass has a sibling uom element. Outputs an error if not.  ***COMPLETED***
-   13. If 12 passes, check that value of uom belongs to the quantityClass value from the Dictionary definition. Outputs an error if not.
+   13. If 12 passes, check that value of uom belongs to the quantityClass value from the Dictionary definition. Outputs an error if not. ***Completed***
    
 
 #### Schematron validation for simple rule checks
 
-Single element and cross-element schematron rules are being developed using a Google spreadsheet. This module will either access the Google sheet via the gViz API, convert the result from json to xml schema, then process within the XSLT. Alternatively could work from a static sch file generated programmatically. ***COMPLETED***
+Single element and cross-element schematron rules are being developed to handle less complex context validations, such as element-specific value range checks or cross-element checks. This module accesses the resultant schematron file and outputs the assertions in the same output format as the other modules.  ***COMPLETED***
 
 #### CRS validation
 
-Schema requires that every geometry object contains a SRSName and SRS Dimension. This check ensures taht srsName references a valid dictionary and that the srsDimension matches the dimension of the CRS. Detailed check procedure TBD.
+Schema requires that every geometry object contains srsName and srsDimension attributes. This check ensures taht srsName references a valid CRS definition and that the srsDimension matches the dimension of the CRS. 
 
 #### xlink:href validation
 
-DIGGS has reference properties that point sto other objects, either in the existing instance or in an internal file. This check will ensure that a referenced object exists and that it is in the proper context. Detailed check procedure TBD.
+DIGGS has reference properties that point sto other objects, either in the existing instance or in an external file. This check will ensure that a referenced object exists and that it is in the proper context.
 
 #### Coordinate validation
 
-DIGGS geometry objects contain coordinate values in either gml:pos or gml:posList properties. The value of these properties is a doubleList with each value in the list representing a single coordinate, with axis order consistent with the CRS. This check will ensure that the number of coordinates is consistent with srsDimension. We may also consider if a check to ensure that coordinate values fall within the scope of teh CRS (this is a lot more work). Detailed check procedure TBD.
+DIGGS geometry objects contain coordinate values in either gml:pos or gml:posList properties. The value of these properties is a doubleList with each value in the list representing a single coordinate, with axis order consistent with the CRS. This check will ensure that the number of coordinates is consistent with srsDimension. Possible to consider a check to ensure that coordinate values fall within the scope of teh CRS.
 
 #### Measurement structure check
 
-DIGGS measurement and time series structures consist of a domain (containing either a geometry or a time object) and a range, which lists observed properties with a dataBlock that hold the results for the properties. The dataBlock holds results in whitespace-separated tuples, with each tuple holding a result value for each observed property, and where each tuple corresponds to a single element in the geometry or time instance. This check will ensure structural integrity of the measurement or time-series object, ensuring that there are the same number of data block tuples as there are domain elements and that each tuple contains the same number of comma-separated values as the number of declared observed properties. Specific check procedure TBD.
+DIGGS measurement and time series structures consist of a domain (containing either a geometry or a time object, and a range (a list of observed properties with a dataBlock that holds the results). The dataBlock reports comma-separated results within whitespace-separated tuples, with each tuple holding a result value for each observed property, and where each tuple corresponds to a single element in the geometry or time instance. This check will ensure structural integrity of the measurement or time-series object, ensuring that there are the same number of data block tuples as there are domain elements, and that each tuple contains the same number of comma-separated values as the number of declared observed properties.
 
 #### Measureent results datatype and values check
 
-This check will ensure that the measurement and time-series results are consistent with the dataType element of the corresponding Property object and that the value of the result is appropriate for the property. This latter check will likely require extending the property dictionary schema to include schematron rules. Specific check procedure TBD.
+This check will ensure that the measurement and time-series results are consistent with the dataType element of the corresponding Property object and that the value of the result is appropriate for the property. This latter check will likely require extending the property dictionary schema to include value constraints for propeterties.

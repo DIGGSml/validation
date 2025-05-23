@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "axios": "^1.9.0",
+    "saxon-js": "^2.7.0",
+    "saxonjs-he": "^3.0.0-beta1",
+    "xmldom": "^0.6.0",
+    "xslt3-he": "^3.0.0-beta1"
+  }
+}
