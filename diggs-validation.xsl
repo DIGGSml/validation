@@ -49,10 +49,18 @@
     <!-- Import dictionary-validation module -->
     <xsl:import href="modules/dictionary-validation.xsl"/>
  
-    <!-- Import schematron-validation module 
+    <!-- Import schematron-validation module     -->
     <xsl:import href="modules/schematron-validation.xsl"/>
-    -->
- 
+    
+    <!-- Import geometry-validation module -->
+    <xsl:import href="modules/geometry-validation.xsl"/>
+
+    <!-- Import CRS-validation module -->
+    <xsl:import href="modules/crs-validation.xsl"/>
+    
+    <!-- Import coordinate-validation.xsl -->
+    <xsl:import href="modules/coordinate-validation.xsl"/>
+    
     <!-- Import other modules here once they are developed -->
     
     <!-- Main template -->
@@ -96,12 +104,28 @@
                         <xsl:with-param name="whiteList" select="$whiteList"/>
                     </xsl:call-template>
                     
-                    <!-- Run schematron validation, passing the whitelist
+                    <!-- Run schematron validation, passing the whitelist ans xoriginalXML -->
                     <xsl:call-template name="schematronValidation">
                         <xsl:with-param name="whiteList" select="$whiteList"/>
+                        <xsl:with-param name="sourceDocument" select="$originalXml"/>
                     </xsl:call-template>
-                     -->
-                   
+                    
+                    <!-- Run geometry validaiton -->
+                    <xsl:call-template name="geometryValidation">
+                        <xsl:with-param name="sourceDocument" select="$originalXml"/>
+                    </xsl:call-template>
+                    
+                    <!-- Run CRS validation -->
+                    <xsl:call-template name="crsValidation">
+                        <xsl:with-param name="whiteList" select="$whiteList"/>
+                        <xsl:with-param name="sourceDocument" select="$originalXml"/>
+                    </xsl:call-template>
+                    
+                    <!-- Run coordinate validation -->
+                    <xsl:call-template name="coordinateValidation">
+                        <xsl:with-param name="sourceDocument" select="$originalXml"/>
+                    </xsl:call-template>
+                        
                     <!-- Other validation modules will be called here as they are developed -->
                 </xsl:if>
             </xsl:if>

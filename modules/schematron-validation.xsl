@@ -1,105 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="3.0"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+<xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:map="http://www.w3.org/2005/xpath-functions/map"
-    xmlns:diggs="http://diggsml.org/schema-dev"
+    xmlns:diggs="http://diggsml.org/schema-dev" 
     xmlns:gml="http://www.opengis.net/gml/3.2"
-    xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-    xmlns:err="http://www.w3.org/2005/xqt-errors"
-    exclude-result-prefixes="xs map diggs gml sch err">
+    xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
+    xmlns:err="http://www.w3.org/2005/xqt-errors" 
+    exclude-result-prefixes="xs map diggs gml svrl err">
     
-    <!-- Main template for schematron validation with parameter declaration -->
+    <!-- Main template for schematron validation -->
     <xsl:template name="schematronValidation">
-        <!-- Declare the whitelist parameter - keeping same parameters as codeSpace for consistency -->
-        <xsl:param name="whiteList" as="node()*"/>
+        <xsl:param name="whiteList"/>
+        <xsl:param name="sourceDocument"/>
         
         <messageSet>
             <step>Schematron Validation</step>
             
-            <!-- Load the schematron file -->
-            <xsl:variable name="schematronURL" select="'modules/diggs_validation_rules.sch'"/>
-            <xsl:variable name="schematronFile" select="diggs:getResource($schematronURL, document-uri(/))"/>
-            
-            <xsl:choose>
-                <xsl:when test="empty($schematronFile)">
-                    <xsl:sequence select="diggs:createMessage(
+            <xsl:try>
+                <!-- Load and compile the Schematron rules -->
+                <xsl:variable name="schematronRulesPath" select="'modules/diggs_schematron_rules.sch'"/>
+                <xsl:variable name="pipelineStylesheetPath" select="'modules/schxslt_2.0/pipeline-for-svrl.xsl'"/>
+                <xsl:variable name="schematronRulesFallback" select="'https://diggsml.org/def/validation/modules/diggs_schematron_rules.sch'"/>
+                <xsl:variable name="pipelineStylesheetFallback" select="'https://diggsml.org/def/validation/modules/schxslt_2.0/pipeline-for-svrl.xsl'"/>
+                
+                <!-- Determine the actual paths to use (primary or fallback) -->
+                <xsl:variable name="actualSchematronPath" select="
+                    if (doc-available($schematronRulesPath)) 
+                    then $schematronRulesPath 
+                    else if (doc-available($schematronRulesFallback)) 
+                    then $schematronRulesFallback 
+                    else ''"/>
+                
+                <xsl:variable name="actualPipelinePath" select="
+                    if (doc-available($pipelineStylesheetPath)) 
+                    then $pipelineStylesheetPath 
+                    else if (doc-available($pipelineStylesheetFallback)) 
+                    then $pipelineStylesheetFallback 
+                    else ''"/>
+                
+                <!-- Check if files are accessible (with fallback) -->
+                <xsl:choose>
+                    <xsl:when test="$actualSchematronPath = ''">
+                        <xsl:sequence select="
+                            diggs:createMessage(
+                            'WARNING',
+                            '/',
+                            concat('Schematron validation could not be performed. The Schematron rules file could not be accessed at either &quot;', $schematronRulesPath, '&quot; or fallback location &quot;', $schematronRulesFallback, '&quot;.'),
+                            $sourceDocument
+                            )"/>
+                    </xsl:when>
+                    <xsl:when test="$actualPipelinePath = ''">
+                        <xsl:sequence select="
+                            diggs:createMessage(
+                            'WARNING',
+                            '/',
+                            concat('Schematron validation could not be performed. The SchXslt pipeline stylesheet could not be accessed at either &quot;', $pipelineStylesheetPath, '&quot; or fallback location &quot;', $pipelineStylesheetFallback, '&quot;.'),
+                            $sourceDocument
+                            )"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!-- Load the Schematron rules and pipeline stylesheet from actual locations -->
+                        <xsl:variable name="schematronDoc" select="doc($actualSchematronPath)"/>
+                        <xsl:variable name="pipelineDoc" select="doc($actualPipelinePath)"/> 
+                        
+                        <!-- Step 1: Transform Schematron rules using SchXslt pipeline -->
+                        <xsl:variable name="compiledSchematron" select="transform(
+                            map {
+                            'source-node': $schematronDoc,
+                            'stylesheet-node': $pipelineDoc
+                            }
+                            )?output"/>
+                        
+                        <!-- Step 2: Apply compiled Schematron to source document -->
+                        <xsl:variable name="svrlResult" select="transform(
+                            map {
+                            'source-node': $sourceDocument,
+                            'stylesheet-node': $compiledSchematron
+                            }
+                            )?output"/>
+                        
+                        <!-- Step 3: Process SVRL output -->
+                        <xsl:call-template name="processSvrlOutput">
+                            <xsl:with-param name="svrlOutput" select="$svrlResult"/>
+                            <xsl:with-param name="sourceDocument" select="$sourceDocument"/>
+                            <xsl:with-param name="whiteList" select="$whiteList"/>
+                        </xsl:call-template>
+                    </xsl:otherwise>
+                </xsl:choose>
+                
+                <xsl:catch>
+                    <!-- If any step fails, create an error message -->
+                    <xsl:sequence select="
+                        diggs:createMessage(
                         'ERROR',
                         '/',
-                        concat('Failed to load the Schematron rules file (', $schematronURL ,').'),
-                        /
+                        concat('Schematron validation failed: ', $err:description),
+                        $sourceDocument
                         )"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <!-- Process specific validation rules - using direct element targeting for clarity -->
-                    <xsl:message>Starting targeted validation for known rules...</xsl:message>
-                    
-                    <!-- Rule 1: Validate hammerEfficiency -->
-                    <xsl:call-template name="validateHammerEfficiency"/>
-                    
-                    <!-- Rule 2: Validate casingOutsideDiameter -->
-                    <xsl:call-template name="validateCasingDiameter"/>
-                    
-                    <!-- More validation templates can be added here as needed -->
-                </xsl:otherwise>
-            </xsl:choose>
+                </xsl:catch>
+            </xsl:try>
         </messageSet>
     </xsl:template>
     
-    <!-- Template to validate hammerEfficiency -->
-    <xsl:template name="validateHammerEfficiency">
-        <xsl:message>Checking hammerEfficiency elements...</xsl:message>
+    
+    
+    <!-- Template to process SVRL output and generate validation messages -->
+    <xsl:template name="processSvrlOutput">
+        <xsl:param name="svrlOutput"/>
+        <xsl:param name="sourceDocument"/>
+        <xsl:param name="whiteList"/>
         
-        <!-- Find all hammerEfficiency elements directly -->
-        <xsl:for-each select="//*[local-name() = 'hammerEfficiency']">
-            <xsl:variable name="nodeValue" select="normalize-space(string(.))"/>
-            <xsl:variable name="numValue" select="number($nodeValue)"/>
-            <xsl:variable name="elementPath" select="diggs:get-path(.)"/>
+        <!-- Process each failed assertion in the SVRL output -->
+        <xsl:for-each select="$svrlOutput//svrl:failed-assert">
+            <xsl:variable name="currentFailedAssert" select="."/>
+            <xsl:variable name="location" select="string(@location)"/>
+            <xsl:variable name="assertionText" select="string(svrl:text)"/>
+                        
+            <!-- Find the preceding fired-rule to get the role -->
+            <xsl:variable name="precedingFiredRule" select="
+                $currentFailedAssert/preceding-sibling::svrl:fired-rule[1]"/>
+            <xsl:variable name="role" select="
+                if ($precedingFiredRule/@role) 
+                then string($precedingFiredRule/@role) 
+                else 'ERROR'"/>
             
-            <xsl:message>Validating hammerEfficiency at <xsl:value-of select="$elementPath"/> with value: <xsl:value-of select="$nodeValue"/></xsl:message>
+            <!-- Convert role to uppercase for message type -->
+            <xsl:variable name="messageType" select="upper-case($role)"/>
             
-            <!-- Test if value is between 0 and 100 -->
-            <xsl:if test="not($numValue &gt;= 0 and $numValue &lt;= 100)">
-                <xsl:message>VALIDATION FAILURE: hammerEfficiency must be between 0 and 100 (value: <xsl:value-of select="$nodeValue"/>)</xsl:message>
-                
-                <!-- Use diggs:createMessage for the error -->
-                <xsl:sequence select="diggs:createMessage(
-                    'ERROR',
+            <!-- Try to find the element in the source document using the cleaned location XPath -->
+            <xsl:variable name="selectedElement" as="element()*">
+                <xsl:evaluate context-item="$sourceDocument" xpath="$location"
+                />
+            </xsl:variable>
+                <xsl:variable name="elementPath" select="diggs:get-path($selectedElement)"/>
+            
+             
+             
+            <!-- Create the message if not whitelisted -->
+
+                <xsl:sequence select="
+                    diggs:createMessage(
+                    $messageType,
                     $elementPath,
-                    concat('Energy efficiency must be between 0 and 100. Current value: ', $nodeValue),
-                    .
+                    $assertionText,
+                    $selectedElement
                     )"/>
-            </xsl:if>
+            
         </xsl:for-each>
+        
     </xsl:template>
     
-    <!-- Template to validate casingOutsideDiameter -->
-    <xsl:template name="validateCasingDiameter">
-        <xsl:message>Checking casingOutsideDiameter elements...</xsl:message>
-        
-        <!-- Find all casingOutsideDiameter elements directly -->
-        <xsl:for-each select="//*[local-name() = 'casingOutsideDiameter']">
-            <xsl:variable name="nodeValue" select="normalize-space(string(.))"/>
-            <xsl:variable name="numValue" select="number($nodeValue)"/>
-            <xsl:variable name="elementPath" select="diggs:get-path(.)"/>
-            
-            <xsl:message>Validating casingOutsideDiameter at <xsl:value-of select="$elementPath"/> with value: <xsl:value-of select="$nodeValue"/></xsl:message>
-            
-            <!-- Test if value is positive -->
-            <xsl:if test="not($numValue &gt; 0)">
-                <xsl:message>VALIDATION FAILURE: casingOutsideDiameter must be positive (value: <xsl:value-of select="$nodeValue"/>)</xsl:message>
-                
-                <!-- Use diggs:createMessage for the error -->
-                <xsl:sequence select="diggs:createMessage(
-                    'ERROR',
-                    $elementPath,
-                    concat('casingOutsideDiameter must be positive. Current value: ', $nodeValue),
-                    .
-                    )"/>
-            </xsl:if>
-        </xsl:for-each>
-    </xsl:template>
-    
-    <!-- Additional validation templates can be added here -->
-    <!-- For example, to validate plunge, totalMeasuredDepth, etc. -->
 </xsl:stylesheet>

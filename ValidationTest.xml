@@ -129,7 +129,8 @@
 				</Locality>
 			</locality>
 			<referencePoint>
-				<PointLocation srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="pl-BH-33">
+                <!-- CRS URL has bad EPSG code in first component, will return a CRS definition error -->
+				<PointLocation srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/14326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="pl-BH-33">
 					<gml:pos>-84.247361 33.854467 318.00</gml:pos>
 				</PointLocation>
 			</referencePoint>
@@ -137,7 +138,8 @@
 
 			<centerLine>
 				<LinearExtent srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="cl-BH-33">
-					<gml:posList>-84.247361 33.854467 318.00 -84.247361 33.854467 278</gml:posList>
+					<!-- Fails coordinage validation - has one extra coordinate value -->
+					<gml:posList>-84.247361 33.854467 318.00 -84.247361 33.854467 278 17</gml:posList>
 				</LinearExtent>
 			</centerLine>
 
@@ -164,7 +166,7 @@
 				</TimeInterval>
 			</whenConstructed>
 			<totalMeasuredDepth uom="ft">40.00</totalMeasuredDepth>
-			<boreholeType>BH</boreholeType>
+			<boreholeType codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/boreholeType.xml#BH">Borehole</boreholeType>
 
 			<backfill>
 				<Backfill gml:id="DGS81E4-1DA-3037-AB63-44C71">
@@ -181,8 +183,9 @@
 					<backfillLayer>
 						<BackfillLayer gml:id="DGS731D-466-8DD-C962-13976">
 							<backfillInterval>
-								<LinearExtent gml:id="DGS922A-10DA-2500-7C81-1CE30" srsName="#lsr-BH-33" srsDimension="1">
-									<gml:posList>5.00 14.00</gml:posList>
+								<LinearExtent gml:id="DGS922A-10DA-2500-7C81-1CE30">
+                                    <!-- srs attributes should be in parent object rather than gml:posList = INFO -->
+									<gml:posList srsName="#lsr-BH-33" srsDimension="1">5.00 14.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
 							<backfillMaterial>Bentonite</backfillMaterial>
@@ -249,7 +252,8 @@
 						</Remark>
 					</remark>
 					<casingLocation>
-						<LinearExtent gml:id="DGS1869-1943-BC1-CCF-5C43E" srsName="#lsr-BH-33" srsDimension="1">
+						<!-- LinearExtent element is missing srsName attribute -->
+						<LinearExtent gml:id="DGS1869-1943-BC1-CCF-5C43E" srsDimension="1">
 							<gml:posList>0 30.00</gml:posList>
 						</LinearExtent>
 					</casingLocation>
@@ -693,12 +697,14 @@
 			<investigationTarget>Ground Water</investigationTarget>
 			<projectRef xlink:href="#Project_20250110_-_DIGGS_Challenge"/>
 			<referencePoint>
-				<PointLocation srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="pl-BH-33A">
+                <!-- Points to a CRS dictionary, but not to a CRS definition -->
+				<PointLocation srsDimension="3" srsName="https://diggsml.org/def/crs/DIGGS/0.1/compoundCRS.xml" uomLabels="dega dega ft" gml:id="pl-BH-33A">
 					<gml:pos>-84.247361 33.854467 319.00</gml:pos>
 				</PointLocation>
 			</referencePoint>
 			<centerLine>
-				<LinearExtent srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="cl-BH-33A">
+                <!-- This references DIGGS CRS dictionary and should return CRS definition with no errors -->
+				<LinearExtent srsDimension="3" srsName="http://diggsml.org/def/crs/DIGGS/0.1/compoundCRS.xml#diggs-crs-4326_5703" uomLabels="dega dega m" gml:id="cl-BH-33A">
 					<gml:posList>-84.247361 33.854467 319.00 -84.247361 33.854467 294</gml:posList>
 				</LinearExtent>
 			</centerLine>
@@ -758,7 +764,8 @@
 							<gml:posList>-0.50 15.00</gml:posList>
 						</LinearExtent>
 					</casingLocation>
-					<casingInsideDiameter uom="in">2</casingInsideDiameter>
+					<casingOutsideDiameter uom="cm">4</casingOutsideDiameter>
+					<casingInsideDiameter uom="in">3</casingInsideDiameter>
 					<casingMaterial>PVC</casingMaterial>
 				</Casing>
 			</wellCasing>
@@ -775,7 +782,7 @@
 			<outcome>
 				<TestResult gml:id="DGS5EC5-308-15D5-D16-612FD">
 					<location>
-						<LinearExtent srsDimension="1" srsName="lsr-BH-33" gml:id="DGS8F74-15A2-12E9-E839-3608A">
+						<LinearExtent srsDimension="1" srsName="#lsr-BH-33" gml:id="DGS8F74-15A2-12E9-E839-3608A">
 							<gml:posList>7.5 9.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -851,7 +858,8 @@
 			<outcome>
 				<TestResult gml:id="DGS4C85-33A-3D84-5118-6045C">
 					<location>
-						<PointLocation srsDimension="1" srsName="BH-33-lsr" gml:id="DGS33ED-1371-4DD5-5374-166DB">
+                        <!-- LSRS ID is incorrect. Will return a CRS not valid error. -->
+						<PointLocation srsDimension="1" srsName="#BH-33-lsr" gml:id="DGS33ED-1371-4DD5-5374-166DB">
 							<gml:pos>2.00</gml:pos>
 						</PointLocation>
 					</location>
@@ -900,7 +908,7 @@
 				</TestResult>
 			</outcome>
 			<procedure>
-					<diggs:AtterbergLimitsTest gml:id="DGS193B-CED-229B-5C05-27504">
+				<diggs:AtterbergLimitsTest gml:id="DGS193B-CED-229B-5C05-27504">
 					<status>Approved</status>
 					<testProcedureMethod>
 						<Specification gml:id="DGS13F6-190E-40AD-723-2D9F7">
@@ -920,8 +928,8 @@
 			</procedure>
 		</Test>
 	</measurement>
-	
-	
+
+
 	<measurement>
 		<Test gml:id="DGS5D65-DC7-3D1D-8223-12D03">
 			<investigationTarget>Natural Ground</investigationTarget>
@@ -930,7 +938,7 @@
 			<outcome>
 				<TestResult gml:id="DGS4C85-33A-3D84-5118-6045d">
 					<location>
-						<PointLocation srsDimension="1" srsName="BH-33-lsr" gml:id="DGS33ED-1371-4DD5-5374-166Dd">
+						<PointLocation srsDimension="1" srsName="#lsr-BH-33" gml:id="DGS33ED-1371-4DD5-5374-166Dd">
 							<gml:pos>2.00</gml:pos>
 						</PointLocation>
 					</location>
@@ -990,6 +998,7 @@
 			<outcome>
 				<TestResult gml:id="DGS12C8-11FF-2525-C1C7-3AB2B">
 					<location>
+                        <!-- LSRS ID does not contain #. Will fail on whitelist check. -->
 						<PointLocation srsDimension="1" srsName="BH-34-lsr" gml:id="DGS828C-607-390F-2A94-57001">
 							<gml:pos>22.00</gml:pos>
 						</PointLocation>
@@ -1002,7 +1011,7 @@
 										<Property index="1" gml:id="DGS8DA6-C62-1430-D0D4-46B42">
 											<propertyName>Cu</propertyName>
 											<typeData>double</typeData>
-                                            <!-- Fail check 11 Property needs UOM-->
+											<!-- Fail check 11 Property needs UOM-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_uniformity">Coefficient of Uniformity</propertyClass>
 										</Property>
 										<Property index="2" gml:id="DGS9201-124B-41A9-C3D1-3A0AE">
@@ -1054,56 +1063,56 @@
 										<Property index="10" gml:id="DGS755B-393-18AD-846A-11091">
 											<propertyName>AASHTO Group Index</propertyName>
 											<typeData>integer</typeData>
-                                            <!-- Fails Check 9 wrong data type-->
+											<!-- Fails Check 9 wrong data type-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_group_index">AASHTO Group Index</propertyClass>
 										</Property>
 										<Property index="11" gml:id="DGSE9B-121D-43E2-D8EB-196A7">
 											<propertyName>D15</propertyName>
 											<typeData>double</typeData>
-                                            <!-- Fail check 11, needs uom-->
+											<!-- Fail check 11, needs uom-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d15">d15</propertyClass>
 										</Property>
 										<Property index="12" gml:id="DGS8631-3D2-25D1-12FD-3352B">
 											<propertyName>D85</propertyName>
 											<typeData>double</typeData>
-                                            <!-- Fail check 11, needs uom-->
+											<!-- Fail check 11, needs uom-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d85">d85</propertyClass>
 										</Property>
 										<Property index="13" gml:id="DGS813A-143C-4237-5B1F-2E45">
 											<propertyName>Percent Fines</propertyName>
 											<typeData>double</typeData>
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_fines">Percent Fines</propertyClass>
-                                            <uom>%</uom>
+											<uom>%</uom>
 										</Property>
 										<Property index="14" gml:id="DGS70D0-C15-4099-C76C-236C3">
 											<propertyName>Percent Sand</propertyName>
 											<typeData>double</typeData>
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_sand">Percent Sand</propertyClass>
-                                            <uom>%</uom>
+											<uom>%</uom>
 										</Property>
 										<Property index="15" gml:id="DGS98A6-B55-16B1-DF48-2CB1B">
 											<propertyName>Percent Gravel</propertyName>
 											<typeData>double</typeData>
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_gravel">Percent Gravel</propertyClass>
-                                            <uom>%</uom>
+											<uom>%</uom>
 										</Property>
 										<Property index="16" gml:id="DGS78FF-58B-228-63F6-57D7E">
 											<propertyName>Percent Clay</propertyName>
 											<typeData>double</typeData>
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron">Clay Fraction &lt; 5 Micron</propertyClass>
-                                            <uom>mm</uom>
+											<uom>mm</uom>
 										</Property>
 										<Property index="17" gml:id="DGSA2B-433-11F7-DC5A-44686">
 											<propertyName>Percent Silt</propertyName>
 											<typeData>string</typeData>
 											<!-- Check 9 failure, wrong data type -->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_silt">Percent Silt</propertyClass>
-                                            <uom>%</uom>
+											<uom>%</uom>
 										</Property>
 										<Property index="18" gml:id="DGS6384-EB3-C91-45B-555D">
 											<propertyName>Percent Cobbles</propertyName>
 											<typeData>double</typeData>
-                                         <!-- Fail check 11, needs uom-->
+											<!-- Fail check 11, needs uom-->
 											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_cobbles">Percent Cobbles</propertyClass>
 										</Property>
 									</properties>
