@@ -85,7 +85,7 @@ For each element in the DIGGS file that contains a codeSpace attribute, runs thr
    6. If 5 passes, checks that element containing the codeSpace matches sourceElementXpath in the dictionary definition. Outputs an error if not.  ***COMPLETED***
    7. If 6 passes, checks that the element value is a case insensitive match to any of the gml:mame elements in the Definition. Outputs an INFO if not.  ***COMPLETED***
    8. If 7 passes, check that the name of the element that contains the codeSpace is propertyClass. If not, terminate validation (success), else proceed with the remaining steps.  ***COMPLETED***
-   9. Check that conditionalElementXpath from the dictionary can be found in the DIGGS file. This checks that the property is used in correct measurement context. Pass if it does or if there is no procedure object to test, otherwise report an error.  ***COMPLETED***
+   9. Check that conditionalElementXpath from the dictionary can be found in the DIGGS file. This checks that the property is used in correct measurement context (eg.liquid limit is reported for an Atterberg procedure and not for a particle size test). Pass if it does or if there is no procedure object to test, otherwise report an error.  ***COMPLETED***
    10. If 9 passes, check that the value of the sibling dataType matches the dataType value from the Dictionary definition. Outputs an error if not.  ***COMPLETED***
    11. If 10 passes, check if quantityClass element exists in the definition. If not, check that there is no sibling uom element; if so, output an error. Terminate with error or if there is no uom where quantityClass is empty, ***COMPLETED***
    12. If 11 passes, check that propertyClass has a sibling uom element. Outputs an error if not.  ***COMPLETED***
