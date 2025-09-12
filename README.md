@@ -98,7 +98,7 @@ Single element and cross-element schematron rules are being developed to handle 
 
 #### Geometry validation
 
-Schema requires that every geometry object contains srsName and srsDimension attributes. This check ensures taht srsName and srsDimension attributes are declared for each top-level geometry object ***COMPLETED***
+Schema requires that every geometry object contains srsName and srsDimension attributes. This check ensures that srsName and srsDimension attributes are declared for each top-level geometry object ***COMPLETED***
 
 #### CRS validation
 
