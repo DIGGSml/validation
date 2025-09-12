@@ -52,7 +52,7 @@ With respect to severity,
 The suite of validation stylesheets will be hosted and maintained at <https://diggsml.org/def/validation>. A master stylesheet (diggs-validation.xsl) is configured for "full-suite" validation. The modules that perform the actual validation will be hosted and maintained at  <https://diggsml.org/def/validation/modules>. Additional resources are:
 
 - a whiteList.xml file pre-populated with URL fragments for commonly accessed resources and local files.
-- a second stylesheet (validation-report-html.xsl), that will convert the XML output from the validation modules to an interacitve report that can be viewed in a browser.
+- a second stylesheet (validation-report-html.xsl), that will convert the XML output from the validation modules to an interactive report that can be viewed in a browser.
 
 diggs-validaton.xsl and whitelist.xml are intended for user customization (add custom modules, validate with fewer modules, etc.) when used locally.
 
