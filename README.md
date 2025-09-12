@@ -4,7 +4,7 @@
 
  This repository is for the development of xslt scripts to perform complex validation tasks on DIGGS instances as well as unit conversion lookups. When completed, the scripts are copied to the def/validation repository for deployment.
 
-Many elements of a DIGGS instance can be validated via standard syntactice and schema validation, but there are many context and structural constraints on the data that can't be validated solely by schema (semantic validation). The goal of this project is to develop rules for more complex semantic validation tasks. Many of these validation needs are complex, involving progressive validation steps for an element, external dictionary or other file lookups, validating the structure of &lt;dataBlock&gt; string elements for consistency,  validating geometry coordinate structure for dimensional consistency, validating href links, etc. Failure to perform semantic validation of DIGGS files may cause processing applications to fail to properly ingest and process DIGGS instances.
+Many elements of a DIGGS instance can be validated via standard syntactic and schema validation, but there are many context and structural constraints on the data that can't be validated solely by schema (semantic validation). The goal of this project is to develop rules for more complex semantic validation tasks. Many of these validation needs are complex, involving progressive validation steps for an element, external dictionary or other file lookups, validating the structure of &lt;dataBlock&gt; string elements for consistency,  validating geometry coordinate structure for dimensional consistency, validating href links, etc. Failure to perform semantic validation of DIGGS files may cause processing applications to fail to properly ingest and process DIGGS instances.
 
 To address the issue of semantic validation, this project's goal is to develop a normative set of XSLT transform modules that will take DIGGS instance files and output messages in a simple XML format via a workflow chain. This output can then be displayed in a browser (through another XSL style sheet) or otherwise processed by applications. The advantage of this approach is that the DIGGS project will be able to:
 
@@ -39,7 +39,7 @@ The validation report output by the XSLT modules consists of a copy of the DIGGS
 - step - name of the validation step where the failure occurred. Each XSLT module performs one step of the validation.
 - elementPath - the xpath of the element or attribute where the failure occurs
 - text - a message explaining the nature of the failure
-- source - a serialized copy of the elemnt where the failure occurred
+- source - a serialized copy of the element where the failure occurred
 
 With respect to severity,
 
