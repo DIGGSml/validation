@@ -62,7 +62,7 @@ The following XSLT modules are proposed for semantic validation. As they are dev
 
 #### DIGGS structure check
 
-Checks that the XML file contains a Diggs root element and documentInformation element with one DocumentElement object. While this workflow does not do full schema validation, this checks basic structural integriity of the file before proceeding. Failure in passing this check terminates additonal module checks in the master stylesheet. ***COMPLETED***
+Checks that the XML file contains a Diggs root element and documentInformation element with one DocumentInformation object. While this workflow does not do full schema validation, this checks basic structural integriity of the file before proceeding. Failure in passing this check terminates additonal module checks in the master stylesheet. ***COMPLETED***
 
 #### DIGGS Schema Check
 

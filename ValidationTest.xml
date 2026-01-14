@@ -1,4 +1,10 @@
-<Diggs xmlns="http://diggsml.org/schema-dev" xmlns:diggs="http://diggsml.org/schema-dev" xmlns:g3.3="http://www.opengis.net/gml/3.3/ce" xmlns:glr="http://www.opengis.net/gml/3.3/lr" xmlns:glrov="http://www.opengis.net/gml/3.3/lrov" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:witsml="http://www.witsml.org/schemas/131" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://diggsml.org/schema-dev https://diggsml.org/schema-dev/Diggs.xsd" gml:id="NTM1YTEwMzUtYmRmZS00NTIxLTk1OWItZjk4NGEwOWRjZDcx">
+<Diggs xmlns="http://diggsml.org/schemas/3" xmlns:diggs="http://diggsml.org/schemas/3"
+	xmlns:g3.3="http://www.opengis.net/gml/3.3/ce" xmlns:glr="http://www.opengis.net/gml/3.3/lr"
+	xmlns:glrov="http://www.opengis.net/gml/3.3/lrov" xmlns:gml="http://www.opengis.net/gml/3.2"
+	xmlns:witsml="http://www.witsml.org/schemas/131" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://diggsml.org/schemas/3 https://diggsml.org/schema-dev/Diggs.xsd"
+	gml:id="NTM1YTEwMzUtYmRmZS00NTIxLTk1OWItZjk4NGEwOWRjZDcx">
 	<documentInformation>
 		<DocumentInformation gml:id="DGS36A3-17AD-1BC-F9D7-37B5A">
 			<creationDate>2025-04-04</creationDate>
@@ -28,7 +34,9 @@
 			<role>
 				<Role>
 					<!-- Fails Check 3 -->
-					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/unknown.xml#client">Client</rolePerformed>
+					<rolePerformed
+						codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/unknown.xml#client"
+						>Client</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS4BC5-3D4-D63-36F6-2F2F8">
 							<gml:name>Geo-Institute</gml:name>
@@ -41,7 +49,9 @@
 			<role>
 				<Role>
 					<!-- Fails Check 4 Not a DIGGS Dictionary-->
-					<rolePerformed codeSpace="https://diggsml.org/schema-dev/Dictionary_diggs.xsd#operator">Operator</rolePerformed>
+					<rolePerformed
+						codeSpace="https://diggsml.org/schema-dev/Dictionary_diggs.xsd#operator"
+						>Operator</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS4BC5-3D4-D63-36F6-2F2Fa">
 							<gml:name>Geo-Institute</gml:name>
@@ -53,7 +63,9 @@
 			<role>
 				<Role>
 					<!-- Fails Check 5 Code is not in dictionary -->
-					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#manager">Project Manager</rolePerformed>
+					<rolePerformed
+						codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#manager"
+						>Project Manager</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS1A3C-1956-2088-569A-123E6">
 							<gml:name>Big Dog Drillers</gml:name>
@@ -65,7 +77,9 @@
 			<role>
 				<Role>
 					<!-- Fails Check 6 Drilling Contractor not allowed in project -->
-					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
+					<rolePerformed
+						codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor"
+						>Drilling Contractor</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS1A3C-1956-2088-569A-123E7">
 							<gml:name>Big Dog Drillers</gml:name>
@@ -77,7 +91,9 @@
 			<role>
 				<Role>
 					<!-- Fails Check 7 The name Lab is not a name for this definigion in the dictionary -->
-					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#laboratory_name">Lab</rolePerformed>
+					<rolePerformed
+						codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#laboratory_name"
+						>Lab</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS1A3C-1956-2088-569A-123E0">
 							<gml:name>Big Dog Drillers</gml:name>
@@ -89,7 +105,8 @@
 			<!--Check 7: Local file check. Should pass validation, codeSpace references a valid local dictionary located within the same directory as the xml instance (as in a zip file) -->
 			<role>
 				<Role>
-					<rolePerformed codeSpace="./roles.xml#project_engineer">Project Engineer</rolePerformed>
+					<rolePerformed codeSpace="./roles.xml#project_engineer">Project
+						Engineer</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS5B58-19E-2B05-B408-2492D">
 							<gml:name>Jim Halpert</gml:name>
@@ -129,17 +146,22 @@
 				</Locality>
 			</locality>
 			<referencePoint>
-                <!-- CRS URL has bad EPSG code in first component, will return a CRS definition error -->
-				<PointLocation srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/14326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="pl-BH-33">
+				<!-- CRS URL has bad EPSG code in first component, will return a CRS definition error -->
+				<PointLocation srsDimension="3"
+					srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/14326%262=http://www.opengis.net/def/crs/EPSG/0/6360"
+					uomLabels="dega dega ft" gml:id="pl-BH-33">
 					<gml:pos>-84.247361 33.854467 318.00</gml:pos>
 				</PointLocation>
 			</referencePoint>
 
 
 			<centerLine>
-				<LinearExtent srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="cl-BH-33">
+				<LinearExtent srsDimension="3"
+					srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360"
+					uomLabels="dega dega ft" gml:id="cl-BH-33">
 					<!-- Fails coordinage validation - has one extra coordinate value -->
-					<gml:posList>-84.247361 33.854467 318.00 -84.247361 33.854467 278 17</gml:posList>
+					<gml:posList>-84.247361 33.854467 318.00 -84.247361 33.854467 278
+						17</gml:posList>
 				</LinearExtent>
 			</centerLine>
 
@@ -166,14 +188,16 @@
 				</TimeInterval>
 			</whenConstructed>
 			<totalMeasuredDepth uom="ft">40.00</totalMeasuredDepth>
-			<boreholeType codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/boreholeType.xml#BH">Borehole</boreholeType>
+			<boreholeType 
+				codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/boreholeType.xml#BH">Borehole</boreholeType>
 
 			<backfill>
 				<Backfill gml:id="DGS81E4-1DA-3037-AB63-44C71">
 					<backfillLayer>
 						<BackfillLayer gml:id="DGS5D85-2F-AA2-83B3-356D1">
 							<backfillInterval>
-								<LinearExtent gml:id="DGS82DE-485-2BFB-2D7C-4CCB1" srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS82DE-485-2BFB-2D7C-4CCB1"
+									srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>0.00 5.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -184,8 +208,9 @@
 						<BackfillLayer gml:id="DGS731D-466-8DD-C962-13976">
 							<backfillInterval>
 								<LinearExtent gml:id="DGS922A-10DA-2500-7C81-1CE30">
-                                    <!-- srs attributes should be in parent object rather than gml:posList = INFO -->
-									<gml:posList srsName="#lsr-BH-33" srsDimension="1">5.00 14.00</gml:posList>
+									<!-- srs attributes should be in parent object rather than gml:posList = INFO -->
+									<gml:posList srsName="#lsr-BH-33" srsDimension="1">5.00
+										14.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
 							<backfillMaterial>Bentonite</backfillMaterial>
@@ -199,7 +224,8 @@
 								</Remark>
 							</remark>
 							<backfillInterval>
-								<LinearExtent gml:id="DGSA009-13DD-32EC-81B8-16217" srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGSA009-13DD-32EC-81B8-16217"
+									srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>14.00 25.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -209,7 +235,8 @@
 					<backfillLayer>
 						<BackfillLayer gml:id="DGSD28-1372-1829-9940-597CA">
 							<backfillInterval>
-								<LinearExtent gml:id="DGS8AE1-459-2CB-B281-A3E8" srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS8AE1-459-2CB-B281-A3E8"
+									srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>25.00 29.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -224,7 +251,8 @@
 								</Remark>
 							</remark>
 							<backfillInterval>
-								<LinearExtent gml:id="DGS5952-840-2053-3D5B-11A90" srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS5952-840-2053-3D5B-11A90"
+									srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>29.00 35.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -234,7 +262,8 @@
 					<backfillLayer>
 						<BackfillLayer gml:id="DGS13C-14FC-4275-236E-D78C">
 							<backfillInterval>
-								<LinearExtent gml:id="DGS653D-76F-2E76-9696-9F02" srsName="#lsr-BH-33" srsDimension="1">
+								<LinearExtent gml:id="DGS653D-76F-2E76-9696-9F02"
+									srsName="#lsr-BH-33" srsDimension="1">
 									<gml:posList>35.00 40.00</gml:posList>
 								</LinearExtent>
 							</backfillInterval>
@@ -268,7 +297,9 @@
 					<role>
 						<Role>
 							<!-- Fails Check 6. Client cannot be used in borehole context -->
-							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#client">Logger</rolePerformed>
+							<rolePerformed
+								codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#client"
+								>Logger</rolePerformed>
 							<timePerformed>
 								<TimeInterval gml:id="DGS9336-DF1-4311-205-3849C">
 									<start>2015-06-04T18:32:59</start>
@@ -283,7 +314,9 @@
 					</role>
 					<role>
 						<Role>
-							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
+							<rolePerformed
+								codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor"
+								>Drilling Contractor</rolePerformed>
 							<businessAssociate>
 								<BusinessAssociate gml:id="DGS5D6E-DE1-1D17-105-30037">
 									<gml:name>Big Dog Drillers</gml:name>
@@ -308,7 +341,8 @@
 						</Remark>
 					</remark>
 					<location>
-						<LinearExtent gml:id="DGS49B9-33F-2B24-CF21-424E5" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS49B9-33F-2B24-CF21-424E5" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>0.00 30.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -340,7 +374,9 @@
 					<gml:name>NQ</gml:name>
 					<role>
 						<Role>
-							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#logger">Logger</rolePerformed>
+							<rolePerformed
+								codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#logger"
+								>Logger</rolePerformed>
 							<timePerformed>
 								<TimeInterval gml:id="DGSDC2-C93-6E-6BB1-4BF27">
 									<start>2015-06-04T18:32:59</start>
@@ -355,7 +391,9 @@
 					</role>
 					<role>
 						<Role>
-							<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
+							<rolePerformed
+								codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#drilling_contractor"
+								>Drilling Contractor</rolePerformed>
 							<businessAssociate>
 								<BusinessAssociate gml:id="DGS6803-B44-2FB3-F513-1DED9">
 									<gml:name>Big Dog Drillers</gml:name>
@@ -379,7 +417,8 @@
 						</Remark>
 					</remark>
 					<location>
-						<LinearExtent gml:id="DGS28B-13D6-C57-3997-55D16" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS28B-13D6-C57-3997-55D16" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>30.00 40.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -449,7 +488,8 @@
 						</Remark>
 					</remark>
 					<location>
-						<LinearExtent gml:id="DGS6CD2-A28-16DB-278B-D074" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS6CD2-A28-16DB-278B-D074" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>18.00 20.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -463,7 +503,8 @@
 						</Remark>
 					</remark>
 					<location>
-						<LinearExtent gml:id="DGS8F3E-1668-F4C-88BD-1FCB1" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS8F3E-1668-F4C-88BD-1FCB1" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>24.00 25.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -509,7 +550,8 @@
 				<Advancement gml:id="DGS2ED9-9BD-15A0-B377-1F89">
 					<gml:description>1</gml:description>
 					<location>
-						<LinearExtent gml:id="DGS442D-122C-6F1-7B3-11812" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS442D-122C-6F1-7B3-11812" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>0.00 5.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -528,7 +570,8 @@
 				<Advancement gml:id="DGS7F9E-49-3960-A89A-211F6">
 					<gml:description>2</gml:description>
 					<location>
-						<LinearExtent gml:id="DGS89CB-2CB-15A9-651D-C3A6" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS89CB-2CB-15A9-651D-C3A6" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>5.00 10.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -546,7 +589,8 @@
 				<Flush gml:id="DGS75DD-258-2D98-61DD-41919">
 
 					<flushZoneLocation>
-						<LinearExtent gml:id="DGS59AA-15F4-49BF-1044-21F72" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS59AA-15F4-49BF-1044-21F72" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>3.00 6.00</gml:posList>
 						</LinearExtent>
 					</flushZoneLocation>
@@ -560,7 +604,8 @@
 				<Flush gml:id="DGS46E0-1166-36D3-5D0-5D0A6">
 
 					<flushZoneLocation>
-						<LinearExtent gml:id="DGS8EA1-12B3-257C-D92-9AB2" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS8EA1-12B3-257C-D92-9AB2" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>7.00 10.00</gml:posList>
 						</LinearExtent>
 					</flushZoneLocation>
@@ -573,7 +618,8 @@
 				<Flush gml:id="DGS593-1291-321-1CF4-1D849">
 
 					<flushZoneLocation>
-						<LinearExtent gml:id="DGS309C-1128-27F3-884B-389C3" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS309C-1128-27F3-884B-389C3" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>10.00 12.00</gml:posList>
 						</LinearExtent>
 					</flushZoneLocation>
@@ -591,7 +637,8 @@
 					</remark>
 
 					<flushZoneLocation>
-						<LinearExtent gml:id="DGS8552-6D-283D-8539-1583B" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS8552-6D-283D-8539-1583B" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>30.00 35.00</gml:posList>
 						</LinearExtent>
 					</flushZoneLocation>
@@ -605,7 +652,8 @@
 			<holeDiameter>
 				<BoreholeDiameter gml:id="DGS3D27-18DB-42AB-6232-4E510">
 					<diameterLocation>
-						<LinearExtent gml:id="DGS3133-1231-25FC-90A8-554B2" srsName="#lsr-BH-33" srsDimension="1">
+						<LinearExtent gml:id="DGS3133-1231-25FC-90A8-554B2" srsName="#lsr-BH-33"
+							srsDimension="1">
 							<gml:posList>0 40.00</gml:posList>
 						</LinearExtent>
 					</diameterLocation>
@@ -619,7 +667,8 @@
 						<WaterStrikeReading gml:id="DGSA1DF-1D-1796-21F8-46AC2">
 							<dateTime>2015-06-05T06:00:00</dateTime>
 							<waterLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS35A0-6F1-3709-CDCC-50010">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
+									gml:id="DGS35A0-6F1-3709-CDCC-50010">
 									<gml:pos>15.00</gml:pos>
 								</PointLocation>
 							</waterLocation>
@@ -634,7 +683,8 @@
 						<WaterStrikeReading gml:id="DGS3252-A8E-B6A-6E9E-4A64">
 							<dateTime>2015-06-04T13:47:48</dateTime>
 							<waterLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS9E40-D05-38FB-55FB-62521">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
+									gml:id="DGS9E40-D05-38FB-55FB-62521">
 									<gml:pos>19.00</gml:pos>
 								</PointLocation>
 							</waterLocation>
@@ -649,7 +699,8 @@
 						<WaterStrikeReading gml:id="DGS2731-418-416D-F67F-55F2D">
 							<dateTime>2015-06-04T13:50:26</dateTime>
 							<waterLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS3046-AE-417C-1A8B-14C42">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
+									gml:id="DGS3046-AE-417C-1A8B-14C42">
 									<gml:pos>15.00</gml:pos>
 								</PointLocation>
 							</waterLocation>
@@ -664,7 +715,8 @@
 						<WaterStrikeReading gml:id="DGS59E-C7A-2535-B1D2-61833">
 							<dateTime>2015-06-04T23:47:36</dateTime>
 							<waterLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS1496-1568-79-A9-13886">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
+									gml:id="DGS1496-1568-79-A9-13886">
 									<gml:pos>13.00</gml:pos>
 								</PointLocation>
 							</waterLocation>
@@ -681,7 +733,9 @@
 			<role>
 				<Role>
 					<!-- Fails check 2, URL not in white list -->
-					<rolePerformed codeSpace="https://google.com/def/codes/DIGGS/0.1/roles.xml#drilling_contractor">Drilling Contractor</rolePerformed>
+					<rolePerformed
+						codeSpace="https://google.com/def/codes/DIGGS/0.1/roles.xml#drilling_contractor"
+						>Drilling Contractor</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS839E-14B8-3DDB-F1E5-43639">
 							<gml:name>Big Dog Wellers</gml:name>
@@ -691,20 +745,26 @@
 			</role>
 			<remark>
 				<Remark>
-					<content>Transducer measures hydrostatic pressure but is calibrated to output water level elevation. See calibration audit trail to view calibration history. </content>
+					<content>Transducer measures hydrostatic pressure but is calibrated to output
+						water level elevation. See calibration audit trail to view calibration
+						history. </content>
 				</Remark>
 			</remark>
 			<investigationTarget>Ground Water</investigationTarget>
 			<projectRef xlink:href="#Project_20250110_-_DIGGS_Challenge"/>
 			<referencePoint>
-                <!-- Points to a CRS dictionary, but not to a CRS definition -->
-				<PointLocation srsDimension="3" srsName="https://diggsml.org/def/crs/DIGGS/0.1/compoundCRS.xml" uomLabels="dega dega ft" gml:id="pl-BH-33A">
+				<!-- Points to a CRS dictionary, but not to a CRS definition -->
+				<PointLocation srsDimension="3"
+					srsName="https://diggsml.org/def/crs/DIGGS/0.1/compoundCRS.xml"
+					uomLabels="dega dega ft" gml:id="pl-BH-33A">
 					<gml:pos>-84.247361 33.854467 319.00</gml:pos>
 				</PointLocation>
 			</referencePoint>
 			<centerLine>
-                <!-- This references DIGGS CRS dictionary and should return CRS definition with no errors -->
-				<LinearExtent srsDimension="3" srsName="http://diggsml.org/def/crs/DIGGS/0.1/compoundCRS.xml#diggs-crs-4326_5703" uomLabels="dega dega m" gml:id="cl-BH-33A">
+				<!-- This references DIGGS CRS dictionary and should return CRS definition with no errors -->
+				<LinearExtent srsDimension="3"
+					srsName="http://diggsml.org/def/crs/DIGGS/0.1/compoundCRS.xml#diggs-crs-4326_5703"
+					uomLabels="dega dega m" gml:id="cl-BH-33A">
 					<gml:posList>-84.247361 33.854467 319.00 -84.247361 33.854467 294</gml:posList>
 				</LinearExtent>
 			</centerLine>
@@ -713,7 +773,9 @@
 				<Sensor gml:id="DGS6088-1211-392B-EAB5-1D1AD">
 					<gml:name>Piezo-33</gml:name>
 					<referencePoint>
-						<PointLocation srsDimension="3" srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360" uomLabels="dega dega ft" gml:id="ie-BH-33A">
+						<PointLocation srsDimension="3"
+							srsName="https://www.opengis.net/def/crs-compound?1=http://www.opengis.net/def/crs/EPSG/0/4326%262=http://www.opengis.net/def/crs/EPSG/0/6360"
+							uomLabels="dega dega ft" gml:id="ie-BH-33A">
 							<gml:pos>-84.247361 33.854467 319.00</gml:pos>
 						</PointLocation>
 					</referencePoint>
@@ -725,11 +787,14 @@
 					<detector>
 						<Detector gml:id="DGS9347-FAE-E33-1C8D-3FBD0">
 							<detectorLocation>
-								<PointLocation srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS6E76-EF0-2918-C95B-1389E">
+								<PointLocation srsName="#lsr-BH-33" srsDimension="1"
+									gml:id="DGS6E76-EF0-2918-C95B-1389E">
 									<gml:pos>25.00</gml:pos>
 								</PointLocation>
 							</detectorLocation>
-							<measurand codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/measurand.xml#water_elev">Water elevation</measurand>
+							<measurand
+								codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/measurand.xml#water_elev"
+								>Water elevation</measurand>
 							<type>EPIE</type>
 						</Detector>
 					</detector>
@@ -744,7 +809,8 @@
 						</Remark>
 					</remark>
 					<openInterval>
-						<LinearExtent gml:id="DGS819B-509-4AC2-5FD0-1DF9" srsDimension="1" srsName="#lsr-BH-33">
+						<LinearExtent gml:id="DGS819B-509-4AC2-5FD0-1DF9" srsDimension="1"
+							srsName="#lsr-BH-33">
 							<gml:posList>15.00 25.00</gml:posList>
 						</LinearExtent>
 					</openInterval>
@@ -760,7 +826,8 @@
 						</Remark>
 					</remark>
 					<casingLocation>
-						<LinearExtent srsName="#lsr-BH-33" srsDimension="1" gml:id="DGS64AA-EDA-18BB-4C4D-185D7">
+						<LinearExtent srsName="#lsr-BH-33" srsDimension="1"
+							gml:id="DGS64AA-EDA-18BB-4C4D-185D7">
 							<gml:posList>-0.50 15.00</gml:posList>
 						</LinearExtent>
 					</casingLocation>
@@ -782,7 +849,8 @@
 			<outcome>
 				<TestResult gml:id="DGS5EC5-308-15D5-D16-612FD">
 					<location>
-						<LinearExtent srsDimension="1" srsName="#lsr-BH-33" gml:id="DGS8F74-15A2-12E9-E839-3608A">
+						<LinearExtent srsDimension="1" srsName="#lsr-BH-33"
+							gml:id="DGS8F74-15A2-12E9-E839-3608A">
 							<gml:posList>7.5 9.00</gml:posList>
 						</LinearExtent>
 					</location>
@@ -795,7 +863,9 @@
 											<propertyName>N-Value</propertyName>
 											<typeData>long</typeData>
 											<!-- Fails check 6 Lpgger is not a propertyClass value-->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#logger">N-Value</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#logger"
+												>N-Value</propertyClass>
 										</Property>
 									</properties>
 								</PropertyParameters>
@@ -844,7 +914,9 @@
 			<gml:name/>
 			<role>
 				<Role>
-					<rolePerformed codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#laboratory_name">Laboratory Name</rolePerformed>
+					<rolePerformed
+						codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/roles.xml#laboratory_name"
+						>Laboratory Name</rolePerformed>
 					<businessAssociate>
 						<BusinessAssociate gml:id="DGS9365-971-5BB-9FC1-29B58">
 							<gml:name>Dataforensics</gml:name>
@@ -858,8 +930,9 @@
 			<outcome>
 				<TestResult gml:id="DGS4C85-33A-3D84-5118-6045C">
 					<location>
-                        <!-- LSRS ID is incorrect. Will return a CRS not valid error. -->
-						<PointLocation srsDimension="1" srsName="#BH-33-lsr" gml:id="DGS33ED-1371-4DD5-5374-166DB">
+						<!-- LSRS ID is incorrect. Will return a CRS not valid error. -->
+						<PointLocation srsDimension="1" srsName="#BH-33-lsr"
+							gml:id="DGS33ED-1371-4DD5-5374-166DB">
 							<gml:pos>2.00</gml:pos>
 						</PointLocation>
 					</location>
@@ -871,33 +944,46 @@
 										<Property index="1" gml:id="DGS708A-10EC-22F0-E62-5396A">
 											<propertyName>LL</propertyName>
 											<typeData>integer</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquid_limit">Liquid Limit</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquid_limit"
+												>Liquid Limit</propertyClass>
 										</Property>
 										<Property index="2" gml:id="DGS4D8D-130D-1435-19AD-D17E">
 											<propertyName>PL</propertyName>
 											<typeData>integer</typeData>
 											<!-- Fails Check 8 N60 is not a property appropriate for an atterberg test-->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n60">Plastic Limit</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n60"
+												>Plastic Limit</propertyClass>
 										</Property>
 										<Property index="3" gml:id="DGS2F87-7D8-E4F-6B6C-4A3C">
 											<propertyName>PI</propertyName>
 											<typeData>integer</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#plasticity_index">Plasticity Index</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#plasticity_index"
+												>Plasticity Index</propertyClass>
 										</Property>
 										<Property index="4" gml:id="DGS3384-EC3-1665-90DB-481A7">
-											<propertyName>Symbol from plasticity chart</propertyName>
+											<propertyName>Symbol from plasticity
+												chart</propertyName>
 											<typeData>string</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_symbol_425">USCS Symbol Passing 425 Screen</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_symbol_425"
+												>USCS Symbol Passing 425 Screen</propertyClass>
 										</Property>
 										<Property index="5" gml:id="DGS8779-1274-7C9-CC49-406AE">
 											<propertyName>LI</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquidity_index">Liquidity Index</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquidity_index"
+												>Liquidity Index</propertyClass>
 										</Property>
 										<Property index="6" gml:id="DGSD26-1823-3D31-7BF8-2E482">
 											<propertyName>non plastic</propertyName>
 											<typeData>boolean</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#non_plastic">Non Plastic</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#non_plastic"
+												>Non Plastic</propertyClass>
 										</Property>
 									</properties>
 								</PropertyParameters>
@@ -938,7 +1024,8 @@
 			<outcome>
 				<TestResult gml:id="DGS4C85-33A-3D84-5118-6045d">
 					<location>
-						<PointLocation srsDimension="1" srsName="#lsr-BH-33" gml:id="DGS33ED-1371-4DD5-5374-166Dd">
+						<PointLocation srsDimension="1" srsName="#lsr-BH-33"
+							gml:id="DGS33ED-1371-4DD5-5374-166Dd">
 							<gml:pos>2.00</gml:pos>
 						</PointLocation>
 					</location>
@@ -950,33 +1037,46 @@
 										<Property index="1">
 											<propertyName>LL</propertyName>
 											<typeData>integer</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquid_limit">Liquid Limit</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquid_limit"
+												>Liquid Limit</propertyClass>
 										</Property>
 										<Property index="2">
 											<propertyName>PL</propertyName>
 											<typeData>integer</typeData>
 											<!-- This record would fail check 8, but because there is no procedure, it can't validate against a sictionary. Need to pick this up in a measurment check - give general warning about non-procedural measurements. -->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n60">Plastic Limit</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#n60"
+												>Plastic Limit</propertyClass>
 										</Property>
 										<Property index="3">
 											<propertyName>PI</propertyName>
 											<typeData>integer</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#plasticity_index">Plasticity Index</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#plasticity_index"
+												>Plasticity Index</propertyClass>
 										</Property>
 										<Property index="4">
-											<propertyName>Symbol from plasticity chart</propertyName>
+											<propertyName>Symbol from plasticity
+												chart</propertyName>
 											<typeData>string</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_symbol_425">USCS Symbol Passing 425 Screen</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_symbol_425"
+												>USCS Symbol Passing 425 Screen</propertyClass>
 										</Property>
 										<Property index="5">
 											<propertyName>LI</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquidity_index">Liquidity Index</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#liquidity_index"
+												>Liquidity Index</propertyClass>
 										</Property>
 										<Property index="6">
 											<propertyName>non plastic</propertyName>
 											<typeData>boolean</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#non_plastic">Non Plastic</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#non_plastic"
+												>Non Plastic</propertyClass>
 										</Property>
 									</properties>
 								</PropertyParameters>
@@ -998,8 +1098,9 @@
 			<outcome>
 				<TestResult gml:id="DGS12C8-11FF-2525-C1C7-3AB2B">
 					<location>
-                        <!-- LSRS ID does not contain #. Will fail on whitelist check. -->
-						<PointLocation srsDimension="1" srsName="BH-34-lsr" gml:id="DGS828C-607-390F-2A94-57001">
+						<!-- LSRS ID does not contain #. Will fail on whitelist check. -->
+						<PointLocation srsDimension="1" srsName="BH-34-lsr"
+							gml:id="DGS828C-607-390F-2A94-57001">
 							<gml:pos>22.00</gml:pos>
 						</PointLocation>
 					</location>
@@ -1012,108 +1113,145 @@
 											<propertyName>Cu</propertyName>
 											<typeData>double</typeData>
 											<!-- Fail check 11 Property needs UOM-->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_uniformity">Coefficient of Uniformity</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_uniformity"
+												>Coefficient of Uniformity</propertyClass>
 										</Property>
 										<Property index="2" gml:id="DGS9201-124B-41A9-C3D1-3A0AE">
 											<propertyName>Cc</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_curvature">Coefficient of Curvature</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_curvature"
+												>Coefficient of Curvature</propertyClass>
 										</Property>
 										<Property index="3" gml:id="DGSA6AA-666-4B12-ED9D-2EA06">
 											<propertyName>D10</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d10">d10</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d10"
+												>d10</propertyClass>
 											<uom>mm</uom>
 										</Property>
 										<Property index="4" gml:id="DGS3B2C-D19-41C5-36B4-FB">
 											<propertyName>D30</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d30">d30</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d30"
+												>d30</propertyClass>
 											<uom>mm</uom>
 										</Property>
 										<Property index="5" gml:id="DGS9D4B-1193-23A7-15F4-3EED0">
 											<propertyName>D50</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d50">d50</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d50"
+												>d50</propertyClass>
 											<uom>mm</uom>
 										</Property>
 										<Property index="6" gml:id="DGS1FAA-1277-D20-E4B6-62361">
 											<propertyName>D60</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d60">d60</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d60"
+												>d60</propertyClass>
 											<uom>mm</uom>
 										</Property>
 										<Property index="7" gml:id="DGS82B1-8AC-2ED1-8051-2FCE0">
 											<propertyName>USCS</propertyName>
 											<typeData>string</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_symbol">USCS Group Symbol</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_symbol"
+												>USCS Group Symbol</propertyClass>
 										</Property>
 										<Property index="8" gml:id="DGS44A1-840-3815-E395-1AC43">
 											<propertyName>USCS Group Name</propertyName>
 											<typeData>string</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_group_name">USCS Group Name</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#uscs_group_name"
+												>USCS Group Name</propertyClass>
 										</Property>
 										<Property index="9" gml:id="DGS5948-1F9-37-7A6D-30902">
 											<propertyName>AASHTO Symbol</propertyName>
 											<typeData>string</typeData>
 											<!-- Check 10 fail, should not have uom symbol-->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_symbol">AASHTO Symbol</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_symbol"
+												>AASHTO Symbol</propertyClass>
 											<uom>%</uom>
 										</Property>
 										<Property index="10" gml:id="DGS755B-393-18AD-846A-11091">
 											<propertyName>AASHTO Group Index</propertyName>
 											<typeData>integer</typeData>
 											<!-- Fails Check 9 wrong data type-->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_group_index">AASHTO Group Index</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#aashto_group_index"
+												>AASHTO Group Index</propertyClass>
 										</Property>
 										<Property index="11" gml:id="DGSE9B-121D-43E2-D8EB-196A7">
 											<propertyName>D15</propertyName>
 											<typeData>double</typeData>
 											<!-- Fail check 11, needs uom-->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d15">d15</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d15"
+												>d15</propertyClass>
 										</Property>
 										<Property index="12" gml:id="DGS8631-3D2-25D1-12FD-3352B">
 											<propertyName>D85</propertyName>
 											<typeData>double</typeData>
 											<!-- Fail check 11, needs uom-->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d85">d85</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#d85"
+												>d85</propertyClass>
 										</Property>
 										<Property index="13" gml:id="DGS813A-143C-4237-5B1F-2E45">
 											<propertyName>Percent Fines</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_fines">Percent Fines</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_fines"
+												>Percent Fines</propertyClass>
 											<uom>%</uom>
 										</Property>
 										<Property index="14" gml:id="DGS70D0-C15-4099-C76C-236C3">
 											<propertyName>Percent Sand</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_sand">Percent Sand</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_sand"
+												>Percent Sand</propertyClass>
 											<uom>%</uom>
 										</Property>
 										<Property index="15" gml:id="DGS98A6-B55-16B1-DF48-2CB1B">
 											<propertyName>Percent Gravel</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_gravel">Percent Gravel</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_gravel"
+												>Percent Gravel</propertyClass>
 											<uom>%</uom>
 										</Property>
 										<Property index="16" gml:id="DGS78FF-58B-228-63F6-57D7E">
 											<propertyName>Percent Clay</propertyName>
 											<typeData>double</typeData>
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron">Clay Fraction &lt; 5 Micron</propertyClass>
+											<!-- Fails Check 12. Incorrect uom for the property -->
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#clay_percent_5_micron"
+												>Clay Fraction &lt; 5 Micron</propertyClass>
 											<uom>mm</uom>
 										</Property>
 										<Property index="17" gml:id="DGSA2B-433-11F7-DC5A-44686">
 											<propertyName>Percent Silt</propertyName>
 											<typeData>string</typeData>
 											<!-- Check 9 failure, wrong data type -->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_silt">Percent Silt</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_silt"
+												>Percent Silt</propertyClass>
 											<uom>%</uom>
 										</Property>
 										<Property index="18" gml:id="DGS6384-EB3-C91-45B-555D">
 											<propertyName>Percent Cobbles</propertyName>
 											<typeData>double</typeData>
 											<!-- Fail check 11, needs uom-->
-											<propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_cobbles">Percent Cobbles</propertyClass>
+											<propertyClass
+												codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#percent_cobbles"
+												>Percent Cobbles</propertyClass>
 										</Property>
 									</properties>
 								</PropertyParameters>

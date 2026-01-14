@@ -7,7 +7,7 @@
   <xsl:template match="/">
     <html>
       <head>
-        <title>DIGGS Validation Report</title>
+        <title>DIGGS Semantic Validation Report</title>
         <!-- Add CodeMirror CSS -->
         <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css"/>
@@ -493,7 +493,7 @@ background-color: var(--color-highlight-bg) !important;
           <div class="header-container">
             <img src="https://diggsml.org/def/img/diggs-logo.png" alt="DIGGS Logo"
               class="header-logo"/>
-            <h1>DIGGS Validation Report</h1>
+            <h1>DIGGS Semantic Validation Report</h1>
           </div>
 
           <!-- Summary statistics -->
