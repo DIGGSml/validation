@@ -4,7 +4,7 @@
 
  This repository is for the development of xslt scripts to perform complex validation tasks on DIGGS instances as well as unit conversion lookups. When completed, the scripts are copied to the def/validation repository for deployment.
 
-Many elements of a DIGGS instance can be validated via standard syntactice and schema validation, but there are many context and structural constraints on the data that can't be validated solely by schema (semantic validation). The goal of this project is to develop rules for more complex semantic validation tasks. Many of these validation needs are complex, involving progressive validation steps for an element, external dictionary or other file lookups, validating the structure of &lt;dataBlock&gt; string elements for consistency,  validating geometry coordinate structure for dimensional consistency, validating href links, etc. Failure to perform semantic validation of DIGGS files may cause processing applications to fail to properly ingest and process DIGGS instances.
+Many elements of a DIGGS instance can be validated via standard syntactic and schema validation, but there are many context and structural constraints on the data that can't be validated solely by schema (semantic validation). The goal of this project is to develop rules for more complex semantic validation tasks. Many of these validation needs are complex, involving progressive validation steps for an element, external dictionary or other file lookups, validating the structure of &lt;dataBlock&gt; string elements for consistency,  validating geometry coordinate structure for dimensional consistency, validating href links, etc. Failure to perform semantic validation of DIGGS files may cause processing applications to fail to properly ingest and process DIGGS instances.
 
 To address the issue of semantic validation, this project's goal is to develop a normative set of XSLT transform modules that will take DIGGS instance files and output messages in a simple XML format via a workflow chain. This output can then be displayed in a browser (through another XSL style sheet) or otherwise processed by applications. The advantage of this approach is that the DIGGS project will be able to:
 
@@ -39,7 +39,7 @@ The validation report output by the XSLT modules consists of a copy of the DIGGS
 - step - name of the validation step where the failure occurred. Each XSLT module performs one step of the validation.
 - elementPath - the xpath of the element or attribute where the failure occurs
 - text - a message explaining the nature of the failure
-- source - a serialized copy of the elemnt where the failure occurred
+- source - a serialized copy of the element where the failure occurred
 
 With respect to severity,
 
@@ -52,7 +52,7 @@ With respect to severity,
 The suite of validation stylesheets will be hosted and maintained at <https://diggsml.org/def/validation>. A master stylesheet (diggs-validation.xsl) is configured for "full-suite" validation. The modules that perform the actual validation will be hosted and maintained at  <https://diggsml.org/def/validation/modules>. Additional resources are:
 
 - a whiteList.xml file pre-populated with URL fragments for commonly accessed resources and local files.
-- a second stylesheet (validation-report-html.xsl), that will convert the XML output from the validation modules to an interacitve report that can be viewed in a browser.
+- a second stylesheet (validation-report-html.xsl), that will convert the XML output from the validation modules to an interactive report that can be viewed in a browser.
 
 diggs-validaton.xsl and whitelist.xml are intended for user customization (add custom modules, validate with fewer modules, etc.) when used locally.
 
@@ -98,7 +98,7 @@ Single element and cross-element schematron rules are being developed to handle 
 
 #### Geometry validation
 
-Schema requires that every geometry object contains srsName and srsDimension attributes. This check ensures taht srsName and srsDimension attributes are declared for each top-level geometry object ***COMPLETED***
+Schema requires that every geometry object contains srsName and srsDimension attributes. This check ensures that srsName and srsDimension attributes are declared for each top-level geometry object ***COMPLETED***
 
 #### CRS validation
 
