@@ -654,15 +654,47 @@
                 <xsl:variable name="crsDefinition" select="$sourceDocument//*[@*[local-name() = 'id'] = $fragmentId]"/>
                 
                 <xsl:choose>
-                    <xsl:when test="$crsDefinition and (local-name($crsDefinition) = 'LinearSpatialReferenceSystem' or local-name($crsDefinition) = 'VectorLinearSpatialReferenceSystem')">
-                        <crsDefinition>
-                            <xsl:copy-of select="$crsDefinition"/>
-                        </crsDefinition>
-                        <message></message>
+                    <xsl:when test="$crsDefinition">
+                        <xsl:variable name="elementName" select="local-name($crsDefinition)"/>
+                        <xsl:variable name="elementNamespace" select="namespace-uri($crsDefinition)"/>
+                        
+                        <!-- Check if element is a valid CRS definition -->
+                        <!-- Valid if: LinearSpatialReferenceSystem, VectorLinearSpatialReferenceSystem, or any element ending with "CRS" -->
+                        <xsl:variable name="isValidCRS" as="xs:boolean">
+                            <xsl:choose>
+                                <!-- DIGGS linear reference systems -->
+                                <xsl:when test="$elementName = 'LinearSpatialReferenceSystem' or $elementName = 'VectorLinearSpatialReferenceSystem'">
+                                    <xsl:sequence select="true()"/>
+                                </xsl:when>
+                                <!-- Any element ending with "CRS" from GML or DIGGS namespace -->
+                                <xsl:when test="substring($elementName, string-length($elementName) - 2) = 'CRS'">
+                                    <xsl:sequence select="
+                                        contains($elementNamespace, 'opengis.net/gml') or 
+                                        contains($elementNamespace, 'diggsml.org')
+                                        "/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:sequence select="false()"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:variable>
+                        
+                        <xsl:choose>
+                            <xsl:when test="$isValidCRS">
+                                <crsDefinition>
+                                    <xsl:copy-of select="$crsDefinition"/>
+                                </crsDefinition>
+                                <message></message>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <crsDefinition></crsDefinition>
+                                <message><xsl:value-of select="concat('The element referenced by &quot;', $inputURI, '&quot; (&lt;', $elementName, '&gt;) is not a valid CRS definition. Expected a LinearSpatialReferenceSystem, VectorLinearSpatialReferenceSystem, or an element ending with &quot;CRS&quot; from the GML or DIGGS namespace.')"/></message>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
                         <crsDefinition></crsDefinition>
-                        <message><xsl:value-of select="concat('The CRS definition at &quot;', $inputURI, '&quot; is not valid')"/></message>
+                        <message><xsl:value-of select="concat('No element with id=&quot;', $fragmentId, '&quot; found in the document.')"/></message>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
