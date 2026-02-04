@@ -22,6 +22,19 @@ NS_3 = {
     'eml': 'http://www.energistics.org/energyml/data/commonv2'
 }
 
+# Namespace prefix mapping: maps XML namespace prefixes to our namespace labels
+# This allows us to convert XSD references like "diggs:SomeType" to qualified keys like "diggs:SomeType"
+NS_PREFIX_TO_LABEL = {
+    'diggs': 'diggs',
+    'diggs_geo': 'diggs_geo',
+    'eml': 'eml',
+    'witsml': 'witsml',
+    'gml': 'gml',
+    'glr': 'glr',
+    'glrov': 'glrov',
+    'xs': 'xs',  # XML Schema built-in types
+}
+
 def parse_schema(filepath, namespaces):
     try:
         tree = ET.parse(filepath)
@@ -62,9 +75,26 @@ def get_all_simpletypes(schemas, namespaces):
     return all_simpletypes
 
 def clean_type_name(name):
+    """Convert XSD type reference to qualified name format
+    
+    Handles references like:
+    - "diggs:SomeType" -> "diggs:SomeType"
+    - "eml:LengthMeasure" -> "eml:LengthMeasure"
+    - "gml:AbstractFeatureType" -> "gml:AbstractFeatureType"
+    - "xs:string" -> "xs:string"
+    - "SomeType" -> "SomeType" (no namespace)
+    """
     if not name:
         return ''
-    name = name.replace('diggs:', '')
+    
+    # If already has a prefix, normalize it using our mapping
+    if ':' in name:
+        prefix, local_name = name.split(':', 1)
+        # Map the prefix to our label (usually identical, but handles edge cases)
+        label = NS_PREFIX_TO_LABEL.get(prefix, prefix)
+        return f"{label}:{local_name}"
+    
+    # No prefix - return as-is
     return name
 
 def get_base_type_name(complex_type, namespaces):
@@ -171,7 +201,16 @@ def extract_local_attributes(complex_type, all_attrs, namespaces):
     return attributes
 
 def resolve_content_model(type_name, all_types, all_attrs, namespaces, visited=None, depth=0):
-    """Recursively resolve the complete content model"""
+    """Recursively resolve the complete content model
+    
+    Args:
+        type_name: Qualified type name like "diggs:AbstractFeature" or "eml:LengthMeasure"
+        all_types: Dictionary with qualified names as keys
+        all_attrs: Dictionary of attributes
+        namespaces: Namespace dict for XPath queries
+        visited: Set of visited types (for cycle detection)
+        depth: Recursion depth (for limiting)
+    """
     if visited is None:
         visited = set()
     
@@ -183,13 +222,14 @@ def resolve_content_model(type_name, all_types, all_attrs, namespaces, visited=N
     
     visited.add(type_name)
     
+    # Skip XML Schema built-in types
     if type_name.startswith('xs:') or not type_name:
         return {}, {}
     
-    lookup_name = type_name.replace('gml:', '').replace('diggs:', '')
-    
-    complex_type = all_types.get(lookup_name)
+    # Look up type with qualified name (e.g., "diggs:AbstractFeature")
+    complex_type = all_types.get(type_name)
     if complex_type is None:
+        # Type not found - might be from external schema we don't have
         return {}, {}
     
     base_type_name = get_base_type_name(complex_type, namespaces)

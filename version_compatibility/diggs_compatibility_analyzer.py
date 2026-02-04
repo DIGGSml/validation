@@ -48,8 +48,6 @@ class DIGGSCompatibilityAnalyzer:
         self.new_types = {}
         self.new_attrs = {}
         self.new_simpletypes = {}
-        self.type_to_namespace = {}
-        self.simpletype_to_namespace = {}
         
     def detect_version(self, directory: Path) -> str:
         """Detect DIGGS version from schema files in directory"""
@@ -135,7 +133,8 @@ class DIGGSCompatibilityAnalyzer:
         if not schema_files:
             raise ValueError(f"No .xsd files found in {directory}")
         
-        schemas = []
+        # Track schemas with their namespace labels
+        schemas_with_ns = []
         
         for xsd_file in schema_files:
             # Extract namespace from schema's targetNamespace attribute
@@ -144,29 +143,36 @@ class DIGGSCompatibilityAnalyzer:
             
             schema = parse_schema(str(xsd_file), namespace_dict)
             if schema is not None:
-                schemas.append(schema)
-                
-                # Track which namespace each complexType comes from
-                for ct in schema.findall('.//xs:complexType', namespace_dict):
-                    name = ct.get('name')
-                    if name:
-                        self.type_to_namespace[name] = ns_label
-                
-                # Track which namespace each simpleType comes from
-                for st in schema.findall('.//xs:simpleType', namespace_dict):
-                    name = st.get('name')
-                    if name:
-                        self.simpletype_to_namespace[name] = ns_label
-                
+                schemas_with_ns.append((schema, ns_label))
                 print(f"  ✓ {relative_path} ({ns_label})")
         
-        all_types = get_all_types(schemas, namespace_dict)
-        all_attrs = get_all_attributes(schemas, namespace_dict)
-        all_simpletypes = get_all_simpletypes(schemas, namespace_dict)
+        # Collect types with qualified names
+        all_types = {}
+        all_simpletypes = {}
+        
+        for schema, ns_label in schemas_with_ns:
+            # Collect complexTypes with namespace prefix
+            for ct in schema.findall('.//xs:complexType', namespace_dict):
+                name = ct.get('name')
+                if name:
+                    # Use qualified name as key
+                    qualified_name = f"{ns_label}:{name}"
+                    all_types[qualified_name] = ct
+            
+            # Collect simpleTypes with namespace prefix
+            for st in schema.findall('.//xs:simpleType', namespace_dict):
+                name = st.get('name')
+                if name:
+                    qualified_name = f"{ns_label}:{name}"
+                    all_simpletypes[qualified_name] = st
+        
+        # Attributes don't need namespace qualification (they're referenced differently)
+        schemas_only = [s for s, ns in schemas_with_ns]
+        all_attrs = get_all_attributes(schemas_only, namespace_dict)
         
         print(f"  Total: {len(all_types)} complexTypes, {len(all_simpletypes)} simpleTypes, {len(all_attrs)} attributes")
         
-        return schemas, all_types, all_attrs, all_simpletypes
+        return schemas_with_ns, all_types, all_attrs, all_simpletypes
     
     def _extract_namespace_label(self, xsd_file: Path) -> str:
         """Extract namespace label from schema's targetNamespace attribute"""
@@ -209,20 +215,34 @@ class DIGGSCompatibilityAnalyzer:
             return 'unknown'
     
     def normalize_type_name(self, type_name: str) -> str:
-        """Remove namespace prefixes and normalize type names"""
+        """Normalize type names - preserves namespace prefixes
+        
+        Uses clean_type_name from fixed_resolver to ensure consistent format
+        """
         if not type_name:
             return ''
-        if ':' in type_name:
-            type_name = type_name.split(':', 1)[1]
-        return type_name
+        from fixed_resolver import clean_type_name
+        return clean_type_name(type_name)
     
     def is_builtin_type(self, type_name: str) -> bool:
         """Check if type is an XML Schema built-in type"""
-        normalized = self.normalize_type_name(type_name)
+        if not type_name:
+            return False
+        
+        # Check if it's an xs: prefixed type
+        if type_name.startswith('xs:'):
+            return True
+        
+        # Check bare name for common built-ins
+        if ':' in type_name:
+            bare_name = type_name.split(':', 1)[1]
+        else:
+            bare_name = type_name
+            
         builtins = ['string', 'double', 'float', 'integer', 'int', 'long', 'short', 
                    'byte', 'boolean', 'decimal', 'date', 'dateTime', 'time', 
                    'anyURI', 'QName', 'anyType', 'anySimpleType']
-        return normalized in builtins
+        return bare_name in builtins
     
     def check_type_content_compatibility(self, old_type: str, new_type: str, 
                                          depth: int = 0) -> Tuple[bool, str]:
@@ -393,11 +413,15 @@ class DIGGSCompatibilityAnalyzer:
         """Format cardinality as (min..max)"""
         return f"({min_occ}..{max_occ})"
     
-    def compare_type(self, name: str, mapped_name: Optional[str] = None) -> Dict:
-        """Compare a single type between old and new versions"""
+    def compare_type(self, qualified_name: str, mapped_name: Optional[str] = None) -> Dict:
+        """Compare a single type between old and new versions
+        
+        Args:
+            qualified_name: Qualified name like "diggs:AbstractFeature" or "eml:LengthMeasure"
+            mapped_name: Optional mapped/renamed qualified name in new version
+        """
         result = {
-            'name': name,
-            'source_namespace': self.type_to_namespace.get(name, 'diggs'),
+            'name': qualified_name,  # Now includes namespace prefix
             'type_removed': '',
             'base_changed': '',
             'structure_changes': '',
@@ -410,8 +434,8 @@ class DIGGSCompatibilityAnalyzer:
             'compatible': 'Yes'
         }
         
-        ct_old = self.old_types.get(name)
-        ct_new = self.new_types.get(mapped_name if mapped_name else name)
+        ct_old = self.old_types.get(qualified_name)
+        ct_new = self.new_types.get(mapped_name if mapped_name else qualified_name)
         
         if ct_new is None:
             result['type_removed'] = 'Yes'
@@ -423,7 +447,7 @@ class DIGGSCompatibilityAnalyzer:
         
         if mapped_name:
             result['type_removed'] = f'Renamed to: {mapped_name}'
-            result['notes'] = f'Type renamed from {name} to {mapped_name}'
+            result['notes'] = f'Type renamed from {qualified_name} to {mapped_name}'
         
         # Compare base types
         base_old = get_base_type_name(ct_old, NS_26)
@@ -435,10 +459,10 @@ class DIGGSCompatibilityAnalyzer:
         
         # Resolve content models
         cm_old_elements, cm_old_attrs = resolve_content_model(
-            name, self.old_types, self.old_attrs, NS_26
+            qualified_name, self.old_types, self.old_attrs, NS_26
         )
         cm_new_elements, cm_new_attrs = resolve_content_model(
-            mapped_name if mapped_name else name, self.new_types, self.new_attrs, NS_3
+            mapped_name if mapped_name else qualified_name, self.new_types, self.new_attrs, NS_3
         )
         
         names_old = set(cm_old_elements.keys())
@@ -531,11 +555,15 @@ class DIGGSCompatibilityAnalyzer:
         
         return result
     
-    def compare_simpletype(self, name: str, mapped_name: Optional[str] = None) -> Dict:
-        """Compare a simple type between old and new versions"""
+    def compare_simpletype(self, qualified_name: str, mapped_name: Optional[str] = None) -> Dict:
+        """Compare a simple type between old and new versions
+        
+        Args:
+            qualified_name: Qualified name like "diggs:SomeSimpleType" or "eml:UnitlessMeasure"
+            mapped_name: Optional mapped/renamed qualified name in new version
+        """
         result = {
-            'name': name,
-            'source_namespace': self.simpletype_to_namespace.get(name, 'diggs'),
+            'name': qualified_name,  # Now includes namespace prefix
             'type_removed': '',
             'base_changed': '',
             'restriction_changed': '',
@@ -543,8 +571,8 @@ class DIGGSCompatibilityAnalyzer:
             'compatible': 'Yes'
         }
         
-        st_old = self.old_simpletypes.get(name)
-        st_new = self.new_simpletypes.get(mapped_name if mapped_name else name)
+        st_old = self.old_simpletypes.get(qualified_name)
+        st_new = self.new_simpletypes.get(mapped_name if mapped_name else qualified_name)
         
         if st_new is None:
             result['type_removed'] = 'Yes'
@@ -556,7 +584,7 @@ class DIGGSCompatibilityAnalyzer:
         
         if mapped_name:
             result['type_removed'] = f'Renamed to: {mapped_name}'
-            result['notes'] = f'SimpleType renamed from {name} to {mapped_name}'
+            result['notes'] = f'SimpleType renamed from {qualified_name} to {mapped_name}'
         
         # For simple types, we check if the base type or restrictions changed
         # Use xml.etree.ElementTree (standard library) for serialization
@@ -599,48 +627,52 @@ class DIGGSCompatibilityAnalyzer:
         print(f"\nComparing {len(self.old_types)} types...")
         results = []
         
-        for i, name in enumerate(sorted(self.old_types.keys()), 1):
+        for i, qualified_name in enumerate(sorted(self.old_types.keys()), 1):
             if i % 100 == 0:
                 print(f"  Progress: {i}/{len(self.old_types)}")
             
-            # Try to find mapping with namespace prefix first, then without
-            mapped_name = None
-            namespace = self.type_to_namespace.get(name, '')
+            # qualified_name is already in format "namespace:typename"
+            # Try exact match in mappings first
+            mapped_name = self.type_mappings.get(qualified_name)
             
-            # If the type has a non-diggs namespace, try with prefix
-            if namespace and namespace not in ['diggs', 'diggs_geo']:
-                qualified_name = f"{namespace}:{name}"
-                mapped_name = self.type_mappings.get(qualified_name)
-            
-            # If not found with prefix, try without
+            # If not found, try bare name for backward compatibility
             if not mapped_name:
-                mapped_name = self.type_mappings.get(name)
+                bare_name = qualified_name.split(':')[-1]
+                mapped_name = self.type_mappings.get(bare_name)
+                # If found with bare name, qualify it with same namespace as target
+                if mapped_name and ':' not in mapped_name:
+                    # Extract namespace from old qualified name
+                    ns_prefix = qualified_name.split(':')[0]
+                    # Check if target exists with same namespace
+                    potential_new = f"{ns_prefix}:{mapped_name}"
+                    if potential_new in self.new_types:
+                        mapped_name = potential_new
             
-            result = self.compare_type(name, mapped_name)
+            result = self.compare_type(qualified_name, mapped_name)
             results.append(result)
         
         # Compare simpleTypes
         print(f"\nComparing {len(self.old_simpletypes)} simpleTypes...")
         simpletype_results = []
         
-        for i, name in enumerate(sorted(self.old_simpletypes.keys()), 1):
+        for i, qualified_name in enumerate(sorted(self.old_simpletypes.keys()), 1):
             if i % 100 == 0:
                 print(f"  Progress: {i}/{len(self.old_simpletypes)}")
             
-            # Try to find mapping with namespace prefix first, then without
-            mapped_name = None
-            namespace = self.simpletype_to_namespace.get(name, '')
+            # Try exact match in mappings first
+            mapped_name = self.type_mappings.get(qualified_name)
             
-            # If the type has a non-diggs namespace, try with prefix
-            if namespace and namespace not in ['diggs', 'diggs_geo']:
-                qualified_name = f"{namespace}:{name}"
-                mapped_name = self.type_mappings.get(qualified_name)
-            
-            # If not found with prefix, try without
+            # If not found, try bare name for backward compatibility
             if not mapped_name:
-                mapped_name = self.type_mappings.get(name)
+                bare_name = qualified_name.split(':')[-1]
+                mapped_name = self.type_mappings.get(bare_name)
+                if mapped_name and ':' not in mapped_name:
+                    ns_prefix = qualified_name.split(':')[0]
+                    potential_new = f"{ns_prefix}:{mapped_name}"
+                    if potential_new in self.new_simpletypes:
+                        mapped_name = potential_new
             
-            result = self.compare_simpletype(name, mapped_name)
+            result = self.compare_simpletype(qualified_name, mapped_name)
             simpletype_results.append(result)
         
         # Clear cache to free memory
@@ -671,7 +703,7 @@ class DIGGSCompatibilityAnalyzer:
         ws.title = "ComplexTypes"
         
         headers = [
-            'Complex Type Name', 'Source Namespace', 'Type Removed',
+            'Complex Type Name', 'Type Removed',
             'BaseType Changed To', 'Element Order Changed', 'New Element/Attr',
             'Missing Element/Attr', 'Element/Attr Cardinality Expanded',
             'Element/Attr Cardinality Restricted', 'Element/Attr Type Changed',
@@ -686,40 +718,39 @@ class DIGGSCompatibilityAnalyzer:
             cell.alignment = Alignment(wrap_text=True, vertical='top')
         
         for row_idx, r in enumerate(results, 2):
-            ws.cell(row_idx, 1).value = r['name']
-            ws.cell(row_idx, 2).value = r['source_namespace']
-            ws.cell(row_idx, 3).value = r['type_removed']
-            ws.cell(row_idx, 4).value = r['base_changed']
-            ws.cell(row_idx, 5).value = r['structure_changes']
-            ws.cell(row_idx, 6).value = '\n'.join(r['new_elements'][:10])
-            ws.cell(row_idx, 7).value = '\n'.join(r['missing_elements'][:10])
-            ws.cell(row_idx, 8).value = '\n'.join(r['expanded_cardinality'][:10])
-            ws.cell(row_idx, 9).value = '\n'.join(r['restricted_cardinality'][:10])
-            ws.cell(row_idx, 10).value = '\n'.join(r['type_changes'][:10])
-            ws.cell(row_idx, 11).value = r['notes']
-            ws.cell(row_idx, 12).value = r['compatible']
+            ws.cell(row_idx, 1).value = r['name']  # Now includes namespace prefix
+            ws.cell(row_idx, 2).value = r['type_removed']
+            ws.cell(row_idx, 3).value = r['base_changed']
+            ws.cell(row_idx, 4).value = r['structure_changes']
+            ws.cell(row_idx, 5).value = '\n'.join(r['new_elements'][:10])
+            ws.cell(row_idx, 6).value = '\n'.join(r['missing_elements'][:10])
+            ws.cell(row_idx, 7).value = '\n'.join(r['expanded_cardinality'][:10])
+            ws.cell(row_idx, 8).value = '\n'.join(r['restricted_cardinality'][:10])
+            ws.cell(row_idx, 9).value = '\n'.join(r['type_changes'][:10])
+            ws.cell(row_idx, 10).value = r['notes']
+            ws.cell(row_idx, 11).value = r['compatible']
             
-            compat_cell = ws.cell(row_idx, 12)
+            compat_cell = ws.cell(row_idx, 11)
             if r['compatible'] == 'No':
                 compat_cell.fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
             else:
                 compat_cell.fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
             
-            for col in range(1, 13):
+            for col in range(1, 12):
                 ws.cell(row_idx, col).alignment = Alignment(wrap_text=True, vertical='top')
         
-        ws.column_dimensions['A'].width = 40
-        ws.column_dimensions['B'].width = 15
-        ws.column_dimensions['C'].width = 25
-        ws.column_dimensions['D'].width = 35
+        ws.column_dimensions['A'].width = 50  # Wider for qualified names
+        ws.column_dimensions['B'].width = 25
+        ws.column_dimensions['B'].width = 25
+        ws.column_dimensions['C'].width = 35
+        ws.column_dimensions['D'].width = 30
         ws.column_dimensions['E'].width = 30
         ws.column_dimensions['F'].width = 30
         ws.column_dimensions['G'].width = 30
         ws.column_dimensions['H'].width = 30
-        ws.column_dimensions['I'].width = 30
-        ws.column_dimensions['J'].width = 40
-        ws.column_dimensions['K'].width = 50
-        ws.column_dimensions['L'].width = 18
+        ws.column_dimensions['I'].width = 40
+        ws.column_dimensions['J'].width = 50
+        ws.column_dimensions['K'].width = 18
         ws.freeze_panes = 'A2'
         
         # Sheet 2: Type Lists
@@ -727,28 +758,40 @@ class DIGGSCompatibilityAnalyzer:
         
         ws2.cell(1, 1).value = f"{self.old_version} Types NOT in {self.new_version}"
         ws2.cell(1, 1).font = Font(bold=True, size=14)
-        ws2.cell(1, 3).value = f"{self.new_version} Types NOT in {self.old_version}"
-        ws2.cell(1, 3).font = Font(bold=True, size=14)
+        ws2.cell(1, 2).value = f"{self.new_version} Types NOT in {self.old_version}"
+        ws2.cell(1, 2).font = Font(bold=True, size=14)
         
-        old_names = set(self.old_types.keys())
-        new_names = set(self.new_types.keys())
+        old_names = set(self.old_types.keys())  # Already qualified
+        new_names = set(self.new_types.keys())  # Already qualified
         
         # Build sets of renamed types (to exclude from lists)
         # Old types that were mapped to new types (renamed, not truly removed)
         mapped_old_types = set()
         for old_type, new_type in self.type_mappings.items():
-            # Strip namespace prefix if present to get bare name
-            bare_old = old_type.split(':')[-1] if ':' in old_type else old_type
-            if bare_old in old_names:
-                mapped_old_types.add(bare_old)
+            # old_type might be qualified (eml:X) or bare (X)
+            # Check if it exists in old_names (which are qualified)
+            if old_type in old_names:
+                mapped_old_types.add(old_type)
+            else:
+                # Try to find it by bare name
+                bare_old = old_type.split(':')[-1]
+                for qualified_old in old_names:
+                    if qualified_old.endswith(':' + bare_old) or qualified_old == bare_old:
+                        mapped_old_types.add(qualified_old)
+                        break
         
         # New types that are targets of mappings (renamed from old, not truly new)
         mapped_to_new_types = set()
         for old_type, new_type in self.type_mappings.items():
-            # Strip namespace prefix if present to get bare name
-            bare_new = new_type.split(':')[-1] if ':' in new_type else new_type
-            if bare_new in new_names:
-                mapped_to_new_types.add(bare_new)
+            if new_type in new_names:
+                mapped_to_new_types.add(new_type)
+            else:
+                # Try to find it by bare name
+                bare_new = new_type.split(':')[-1]
+                for qualified_new in new_names:
+                    if qualified_new.endswith(':' + bare_new) or qualified_new == bare_new:
+                        mapped_to_new_types.add(qualified_new)
+                        break
         
         # Filter out renamed types - only show truly removed/new types
         old_not_in_new = sorted((old_names - new_names) - mapped_old_types)
@@ -756,75 +799,65 @@ class DIGGSCompatibilityAnalyzer:
         
         ws2.cell(2, 1).value = f"Count: {len(old_not_in_new)} (excludes renamed types)"
         ws2.cell(2, 1).font = Font(bold=True)
-        for idx, name in enumerate(old_not_in_new, 3):
-            ws2.cell(idx, 1).value = name
-            ws2.cell(idx, 2).value = self.type_to_namespace.get(name, '')
+        for idx, qualified_name in enumerate(old_not_in_new, 3):
+            ws2.cell(idx, 1).value = qualified_name
         
-        ws2.cell(2, 3).value = f"Count: {len(new_not_in_old)} (excludes renamed types)"
-        ws2.cell(2, 3).font = Font(bold=True)
-        for idx, name in enumerate(new_not_in_old, 3):
-            # Add namespace prefix for new types
-            namespace = self.type_to_namespace.get(name, '')
-            if namespace and namespace not in ['diggs', 'diggs_geo']:
-                qualified_name = f"{namespace}:{name}"
-            else:
-                qualified_name = name
-            ws2.cell(idx, 3).value = qualified_name
-            ws2.cell(idx, 4).value = namespace
+        ws2.cell(2, 2).value = f"Count: {len(new_not_in_old)} (excludes renamed types)"
+        ws2.cell(2, 2).font = Font(bold=True)
+        for idx, qualified_name in enumerate(new_not_in_old, 3):
+            ws2.cell(idx, 2).value = qualified_name
         
         ws2.column_dimensions['A'].width = 50
-        ws2.column_dimensions['B'].width = 15
-        ws2.column_dimensions['C'].width = 50
-        ws2.column_dimensions['D'].width = 15
+        ws2.column_dimensions['B'].width = 50
         
         # Add simpleTypes section
-        ws2.cell(1, 6).value = f"{self.old_version} SimpleTypes NOT in {self.new_version}"
-        ws2.cell(1, 6).font = Font(bold=True, size=14)
-        ws2.cell(1, 8).value = f"{self.new_version} SimpleTypes NOT in {self.old_version}"
-        ws2.cell(1, 8).font = Font(bold=True, size=14)
+        ws2.cell(1, 4).value = f"{self.old_version} SimpleTypes NOT in {self.new_version}"
+        ws2.cell(1, 4).font = Font(bold=True, size=14)
+        ws2.cell(1, 5).value = f"{self.new_version} SimpleTypes NOT in {self.old_version}"
+        ws2.cell(1, 5).font = Font(bold=True, size=14)
         
-        old_st_names = set(self.old_simpletypes.keys())
-        new_st_names = set(self.new_simpletypes.keys())
+        old_st_names = set(self.old_simpletypes.keys())  # Already qualified
+        new_st_names = set(self.new_simpletypes.keys())  # Already qualified
         
         # Build sets of renamed simpleTypes (to exclude from lists)
         mapped_old_simpletypes = set()
         for old_type, new_type in self.type_mappings.items():
-            bare_old = old_type.split(':')[-1] if ':' in old_type else old_type
-            if bare_old in old_st_names:
-                mapped_old_simpletypes.add(bare_old)
+            if old_type in old_st_names:
+                mapped_old_simpletypes.add(old_type)
+            else:
+                bare_old = old_type.split(':')[-1]
+                for qualified_old in old_st_names:
+                    if qualified_old.endswith(':' + bare_old) or qualified_old == bare_old:
+                        mapped_old_simpletypes.add(qualified_old)
+                        break
         
         mapped_to_new_simpletypes = set()
         for old_type, new_type in self.type_mappings.items():
-            bare_new = new_type.split(':')[-1] if ':' in new_type else new_type
-            if bare_new in new_st_names:
-                mapped_to_new_simpletypes.add(bare_new)
+            if new_type in new_st_names:
+                mapped_to_new_simpletypes.add(new_type)
+            else:
+                bare_new = new_type.split(':')[-1]
+                for qualified_new in new_st_names:
+                    if qualified_new.endswith(':' + bare_new) or qualified_new == bare_new:
+                        mapped_to_new_simpletypes.add(qualified_new)
+                        break
         
         # Filter out renamed simpleTypes
         old_st_not_in_new = sorted((old_st_names - new_st_names) - mapped_old_simpletypes)
         new_st_not_in_old = sorted((new_st_names - old_st_names) - mapped_to_new_simpletypes)
         
-        ws2.cell(2, 6).value = f"Count: {len(old_st_not_in_new)} (excludes renamed types)"
-        ws2.cell(2, 6).font = Font(bold=True)
-        for idx, name in enumerate(old_st_not_in_new, 3):
-            ws2.cell(idx, 6).value = name
-            ws2.cell(idx, 7).value = self.simpletype_to_namespace.get(name, '')
+        ws2.cell(2, 4).value = f"Count: {len(old_st_not_in_new)} (excludes renamed types)"
+        ws2.cell(2, 4).font = Font(bold=True)
+        for idx, qualified_name in enumerate(old_st_not_in_new, 3):
+            ws2.cell(idx, 4).value = qualified_name
         
-        ws2.cell(2, 8).value = f"Count: {len(new_st_not_in_old)} (excludes renamed types)"
-        ws2.cell(2, 8).font = Font(bold=True)
-        for idx, name in enumerate(new_st_not_in_old, 3):
-            # Add namespace prefix for new simpleTypes
-            namespace = self.simpletype_to_namespace.get(name, '')
-            if namespace and namespace not in ['diggs', 'diggs_geo']:
-                qualified_name = f"{namespace}:{name}"
-            else:
-                qualified_name = name
-            ws2.cell(idx, 8).value = qualified_name
-            ws2.cell(idx, 9).value = namespace
+        ws2.cell(2, 5).value = f"Count: {len(new_st_not_in_old)} (excludes renamed types)"
+        ws2.cell(2, 5).font = Font(bold=True)
+        for idx, qualified_name in enumerate(new_st_not_in_old, 3):
+            ws2.cell(idx, 5).value = qualified_name
         
-        ws2.column_dimensions['F'].width = 50
-        ws2.column_dimensions['G'].width = 15
-        ws2.column_dimensions['H'].width = 50
-        ws2.column_dimensions['I'].width = 15
+        ws2.column_dimensions['D'].width = 50
+        ws2.column_dimensions['E'].width = 50
         
         # Sheet 3: Type Mappings Applied
         ws3 = wb.create_sheet('Type Mappings')
@@ -846,7 +879,7 @@ class DIGGSCompatibilityAnalyzer:
         ws4 = wb.create_sheet('SimpleTypes')
         
         st_headers = [
-            'Simple Type Name', 'Source Namespace', 'Type Removed',
+            'Simple Type Name', 'Type Removed',
             'Base/Restriction Changed', 'Notes', 'Backward Compatible'
         ]
         
@@ -858,28 +891,26 @@ class DIGGSCompatibilityAnalyzer:
             cell.alignment = Alignment(wrap_text=True, vertical='top')
         
         for row_idx, r in enumerate(simpletype_results, 2):
-            ws4.cell(row_idx, 1).value = r['name']
-            ws4.cell(row_idx, 2).value = r['source_namespace']
-            ws4.cell(row_idx, 3).value = r['type_removed']
-            ws4.cell(row_idx, 4).value = r['restriction_changed']
-            ws4.cell(row_idx, 5).value = r['notes']
-            ws4.cell(row_idx, 6).value = r['compatible']
+            ws4.cell(row_idx, 1).value = r['name']  # Now includes namespace prefix
+            ws4.cell(row_idx, 2).value = r['type_removed']
+            ws4.cell(row_idx, 3).value = r['restriction_changed']
+            ws4.cell(row_idx, 4).value = r['notes']
+            ws4.cell(row_idx, 5).value = r['compatible']
             
-            compat_cell = ws4.cell(row_idx, 6)
+            compat_cell = ws4.cell(row_idx, 5)
             if r['compatible'] == 'No':
                 compat_cell.fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
             else:
                 compat_cell.fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
             
-            for col in range(1, 7):
+            for col in range(1, 6):
                 ws4.cell(row_idx, col).alignment = Alignment(wrap_text=True, vertical='top')
         
         ws4.column_dimensions['A'].width = 50
-        ws4.column_dimensions['B'].width = 15
+        ws4.column_dimensions['B'].width = 25
         ws4.column_dimensions['C'].width = 25
-        ws4.column_dimensions['D'].width = 25
-        ws4.column_dimensions['E'].width = 50
-        ws4.column_dimensions['F'].width = 18
+        ws4.column_dimensions['D'].width = 50
+        ws4.column_dimensions['E'].width = 18
         ws4.freeze_panes = 'A2'
         
         wb.save(output_file)
