@@ -559,10 +559,11 @@ class DIGGSCompatibilityAnalyzer:
             result['notes'] = f'SimpleType renamed from {name} to {mapped_name}'
         
         # For simple types, we check if the base type or restrictions changed
-        # This is a simplified check - full validation would require deeper analysis
-        from lxml import etree
-        old_str = etree.tostring(st_old, encoding='unicode') if st_old is not None else ''
-        new_str = etree.tostring(st_new, encoding='unicode') if st_new is not None else ''
+        # Use xml.etree.ElementTree (standard library) for serialization
+        import xml.etree.ElementTree as ET
+        
+        old_str = ET.tostring(st_old, encoding='unicode') if st_old is not None else ''
+        new_str = ET.tostring(st_new, encoding='unicode') if st_new is not None else ''
         
         if old_str != new_str:
             result['restriction_changed'] = 'Yes'
