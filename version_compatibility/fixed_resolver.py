@@ -50,6 +50,17 @@ def get_all_attributes(schemas, namespaces):
                     all_attrs[name] = attr
     return all_attrs
 
+def get_all_simpletypes(schemas, namespaces):
+    """Collect all simpleType definitions from schemas"""
+    all_simpletypes = {}
+    for schema in schemas:
+        if schema is not None:
+            for st in schema.findall('.//xs:simpleType', namespaces):
+                name = st.get('name')
+                if name:
+                    all_simpletypes[name] = st
+    return all_simpletypes
+
 def clean_type_name(name):
     if not name:
         return ''

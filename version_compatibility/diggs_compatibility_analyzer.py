@@ -20,7 +20,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 
 # Import the schema resolver utilities
 from fixed_resolver import (
-    parse_schema, get_all_types, get_all_attributes,
+    parse_schema, get_all_types, get_all_attributes, get_all_simpletypes,
     resolve_content_model, get_base_type_name,
     NS_26, NS_3
 )
@@ -44,9 +44,12 @@ class DIGGSCompatibilityAnalyzer:
         self.new_schemas = []
         self.old_types = {}
         self.old_attrs = {}
+        self.old_simpletypes = {}
         self.new_types = {}
         self.new_attrs = {}
+        self.new_simpletypes = {}
         self.type_to_namespace = {}
+        self.simpletype_to_namespace = {}
         
     def detect_version(self, directory: Path) -> str:
         """Detect DIGGS version from schema files in directory"""
@@ -124,7 +127,7 @@ class DIGGSCompatibilityAnalyzer:
         """Recursively find all .xsd files in directory"""
         return sorted(directory.rglob('*.xsd'))
     
-    def load_schemas(self, directory: Path, namespace_dict: dict) -> Tuple[List, Dict, Dict]:
+    def load_schemas(self, directory: Path, namespace_dict: dict) -> Tuple[List, Dict, Dict, Dict]:
         """Load all schemas from directory"""
         print(f"\nLoading schemas from: {directory}")
         
@@ -143,20 +146,27 @@ class DIGGSCompatibilityAnalyzer:
             if schema is not None:
                 schemas.append(schema)
                 
-                # Track which namespace each type comes from
+                # Track which namespace each complexType comes from
                 for ct in schema.findall('.//xs:complexType', namespace_dict):
                     name = ct.get('name')
                     if name:
                         self.type_to_namespace[name] = ns_label
                 
+                # Track which namespace each simpleType comes from
+                for st in schema.findall('.//xs:simpleType', namespace_dict):
+                    name = st.get('name')
+                    if name:
+                        self.simpletype_to_namespace[name] = ns_label
+                
                 print(f"  ✓ {relative_path} ({ns_label})")
         
         all_types = get_all_types(schemas, namespace_dict)
         all_attrs = get_all_attributes(schemas, namespace_dict)
+        all_simpletypes = get_all_simpletypes(schemas, namespace_dict)
         
-        print(f"  Total: {len(all_types)} complexTypes, {len(all_attrs)} attributes")
+        print(f"  Total: {len(all_types)} complexTypes, {len(all_simpletypes)} simpleTypes, {len(all_attrs)} attributes")
         
-        return schemas, all_types, all_attrs
+        return schemas, all_types, all_attrs, all_simpletypes
     
     def _extract_namespace_label(self, xsd_file: Path) -> str:
         """Extract namespace label from schema's targetNamespace attribute"""
@@ -521,6 +531,45 @@ class DIGGSCompatibilityAnalyzer:
         
         return result
     
+    def compare_simpletype(self, name: str, mapped_name: Optional[str] = None) -> Dict:
+        """Compare a simple type between old and new versions"""
+        result = {
+            'name': name,
+            'source_namespace': self.simpletype_to_namespace.get(name, 'diggs'),
+            'type_removed': '',
+            'base_changed': '',
+            'restriction_changed': '',
+            'notes': '',
+            'compatible': 'Yes'
+        }
+        
+        st_old = self.old_simpletypes.get(name)
+        st_new = self.new_simpletypes.get(mapped_name if mapped_name else name)
+        
+        if st_new is None:
+            result['type_removed'] = 'Yes'
+            result['compatible'] = 'No'
+            result['notes'] = 'SimpleType not found in new version'
+            return result
+        
+        result['type_removed'] = 'No'
+        
+        if mapped_name:
+            result['type_removed'] = f'Renamed to: {mapped_name}'
+            result['notes'] = f'SimpleType renamed from {name} to {mapped_name}'
+        
+        # For simple types, we check if the base type or restrictions changed
+        # This is a simplified check - full validation would require deeper analysis
+        from lxml import etree
+        old_str = etree.tostring(st_old, encoding='unicode') if st_old is not None else ''
+        new_str = etree.tostring(st_new, encoding='unicode') if st_new is not None else ''
+        
+        if old_str != new_str:
+            result['restriction_changed'] = 'Yes'
+            result['notes'] += '; Restriction or base type changed' if result['notes'] else 'Restriction or base type changed'
+        
+        return result
+    
     def analyze(self) -> List[Dict]:
         """Run the full compatibility analysis"""
         print("="*80)
@@ -538,10 +587,10 @@ class DIGGSCompatibilityAnalyzer:
         self.type_mappings = self.load_mappings()
         
         # Load schemas
-        self.old_schemas, self.old_types, self.old_attrs = self.load_schemas(
+        self.old_schemas, self.old_types, self.old_attrs, self.old_simpletypes = self.load_schemas(
             self.old_dir, NS_26
         )
-        self.new_schemas, self.new_types, self.new_attrs = self.load_schemas(
+        self.new_schemas, self.new_types, self.new_attrs, self.new_simpletypes = self.load_schemas(
             self.new_dir, NS_3
         )
         
@@ -553,9 +602,45 @@ class DIGGSCompatibilityAnalyzer:
             if i % 100 == 0:
                 print(f"  Progress: {i}/{len(self.old_types)}")
             
-            mapped_name = self.type_mappings.get(name)
+            # Try to find mapping with namespace prefix first, then without
+            mapped_name = None
+            namespace = self.type_to_namespace.get(name, '')
+            
+            # If the type has a non-diggs namespace, try with prefix
+            if namespace and namespace not in ['diggs', 'diggs_geo']:
+                qualified_name = f"{namespace}:{name}"
+                mapped_name = self.type_mappings.get(qualified_name)
+            
+            # If not found with prefix, try without
+            if not mapped_name:
+                mapped_name = self.type_mappings.get(name)
+            
             result = self.compare_type(name, mapped_name)
             results.append(result)
+        
+        # Compare simpleTypes
+        print(f"\nComparing {len(self.old_simpletypes)} simpleTypes...")
+        simpletype_results = []
+        
+        for i, name in enumerate(sorted(self.old_simpletypes.keys()), 1):
+            if i % 100 == 0:
+                print(f"  Progress: {i}/{len(self.old_simpletypes)}")
+            
+            # Try to find mapping with namespace prefix first, then without
+            mapped_name = None
+            namespace = self.simpletype_to_namespace.get(name, '')
+            
+            # If the type has a non-diggs namespace, try with prefix
+            if namespace and namespace not in ['diggs', 'diggs_geo']:
+                qualified_name = f"{namespace}:{name}"
+                mapped_name = self.type_mappings.get(qualified_name)
+            
+            # If not found with prefix, try without
+            if not mapped_name:
+                mapped_name = self.type_mappings.get(name)
+            
+            result = self.compare_simpletype(name, mapped_name)
+            simpletype_results.append(result)
         
         # Clear cache to free memory
         self.type_compat_cache.clear()
@@ -572,9 +657,9 @@ class DIGGSCompatibilityAnalyzer:
         print(f"  Renamed: {renamed}")
         print(f"  Removed: {removed} ({100*removed/len(results):.1f}%)")
         
-        return results
+        return results, simpletype_results
     
-    def generate_excel_report(self, results: List[Dict], output_file: str):
+    def generate_excel_report(self, results: List[Dict], simpletype_results: List[Dict], output_file: str):
         """Generate Excel workbook with analysis results"""
         print(f"\nGenerating Excel report: {output_file}")
         
@@ -681,6 +766,46 @@ class DIGGSCompatibilityAnalyzer:
         ws3.column_dimensions['A'].width = 50
         ws3.column_dimensions['B'].width = 50
         
+        # Sheet 4: SimpleTypes comparison
+        ws4 = wb.create_sheet('SimpleTypes')
+        
+        st_headers = [
+            'Simple Type Name', 'Source Namespace', 'Type Removed',
+            'Base/Restriction Changed', 'Notes', 'Backward Compatible'
+        ]
+        
+        for col, header in enumerate(st_headers, 1):
+            cell = ws4.cell(1, col)
+            cell.value = header
+            cell.font = Font(bold=True, color='FFFFFF')
+            cell.fill = PatternFill(start_color='366092', end_color='366092', fill_type='solid')
+            cell.alignment = Alignment(wrap_text=True, vertical='top')
+        
+        for row_idx, r in enumerate(simpletype_results, 2):
+            ws4.cell(row_idx, 1).value = r['name']
+            ws4.cell(row_idx, 2).value = r['source_namespace']
+            ws4.cell(row_idx, 3).value = r['type_removed']
+            ws4.cell(row_idx, 4).value = r['restriction_changed']
+            ws4.cell(row_idx, 5).value = r['notes']
+            ws4.cell(row_idx, 6).value = r['compatible']
+            
+            compat_cell = ws4.cell(row_idx, 6)
+            if r['compatible'] == 'No':
+                compat_cell.fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
+            else:
+                compat_cell.fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
+            
+            for col in range(1, 7):
+                ws4.cell(row_idx, col).alignment = Alignment(wrap_text=True, vertical='top')
+        
+        ws4.column_dimensions['A'].width = 50
+        ws4.column_dimensions['B'].width = 15
+        ws4.column_dimensions['C'].width = 25
+        ws4.column_dimensions['D'].width = 25
+        ws4.column_dimensions['E'].width = 50
+        ws4.column_dimensions['F'].width = 18
+        ws4.freeze_panes = 'A2'
+        
         wb.save(output_file)
         print(f"  ✓ Report saved: {output_file}")
 
@@ -746,10 +871,10 @@ Type mappings file format (tab-separated):
         )
         
         # Run analysis
-        results = analyzer.analyze()
+        results, simpletype_results = analyzer.analyze()
         
         # Generate report
-        analyzer.generate_excel_report(results, args.output)
+        analyzer.generate_excel_report(results, simpletype_results, args.output)
         
         print("\n" + "="*80)
         print("✓ Analysis complete!")
