@@ -733,23 +733,98 @@ class DIGGSCompatibilityAnalyzer:
         old_names = set(self.old_types.keys())
         new_names = set(self.new_types.keys())
         
-        old_not_in_new = sorted(old_names - new_names)
-        new_not_in_old = sorted(new_names - old_names)
+        # Build sets of renamed types (to exclude from lists)
+        # Old types that were mapped to new types (renamed, not truly removed)
+        mapped_old_types = set()
+        for old_type, new_type in self.type_mappings.items():
+            # Strip namespace prefix if present to get bare name
+            bare_old = old_type.split(':')[-1] if ':' in old_type else old_type
+            if bare_old in old_names:
+                mapped_old_types.add(bare_old)
         
-        ws2.cell(2, 1).value = f"Count: {len(old_not_in_new)}"
+        # New types that are targets of mappings (renamed from old, not truly new)
+        mapped_to_new_types = set()
+        for old_type, new_type in self.type_mappings.items():
+            # Strip namespace prefix if present to get bare name
+            bare_new = new_type.split(':')[-1] if ':' in new_type else new_type
+            if bare_new in new_names:
+                mapped_to_new_types.add(bare_new)
+        
+        # Filter out renamed types - only show truly removed/new types
+        old_not_in_new = sorted((old_names - new_names) - mapped_old_types)
+        new_not_in_old = sorted((new_names - old_names) - mapped_to_new_types)
+        
+        ws2.cell(2, 1).value = f"Count: {len(old_not_in_new)} (excludes renamed types)"
         ws2.cell(2, 1).font = Font(bold=True)
         for idx, name in enumerate(old_not_in_new, 3):
             ws2.cell(idx, 1).value = name
             ws2.cell(idx, 2).value = self.type_to_namespace.get(name, '')
         
-        ws2.cell(2, 3).value = f"Count: {len(new_not_in_old)}"
+        ws2.cell(2, 3).value = f"Count: {len(new_not_in_old)} (excludes renamed types)"
         ws2.cell(2, 3).font = Font(bold=True)
         for idx, name in enumerate(new_not_in_old, 3):
-            ws2.cell(idx, 3).value = name
+            # Add namespace prefix for new types
+            namespace = self.type_to_namespace.get(name, '')
+            if namespace and namespace not in ['diggs', 'diggs_geo']:
+                qualified_name = f"{namespace}:{name}"
+            else:
+                qualified_name = name
+            ws2.cell(idx, 3).value = qualified_name
+            ws2.cell(idx, 4).value = namespace
         
         ws2.column_dimensions['A'].width = 50
         ws2.column_dimensions['B'].width = 15
         ws2.column_dimensions['C'].width = 50
+        ws2.column_dimensions['D'].width = 15
+        
+        # Add simpleTypes section
+        ws2.cell(1, 6).value = f"{self.old_version} SimpleTypes NOT in {self.new_version}"
+        ws2.cell(1, 6).font = Font(bold=True, size=14)
+        ws2.cell(1, 8).value = f"{self.new_version} SimpleTypes NOT in {self.old_version}"
+        ws2.cell(1, 8).font = Font(bold=True, size=14)
+        
+        old_st_names = set(self.old_simpletypes.keys())
+        new_st_names = set(self.new_simpletypes.keys())
+        
+        # Build sets of renamed simpleTypes (to exclude from lists)
+        mapped_old_simpletypes = set()
+        for old_type, new_type in self.type_mappings.items():
+            bare_old = old_type.split(':')[-1] if ':' in old_type else old_type
+            if bare_old in old_st_names:
+                mapped_old_simpletypes.add(bare_old)
+        
+        mapped_to_new_simpletypes = set()
+        for old_type, new_type in self.type_mappings.items():
+            bare_new = new_type.split(':')[-1] if ':' in new_type else new_type
+            if bare_new in new_st_names:
+                mapped_to_new_simpletypes.add(bare_new)
+        
+        # Filter out renamed simpleTypes
+        old_st_not_in_new = sorted((old_st_names - new_st_names) - mapped_old_simpletypes)
+        new_st_not_in_old = sorted((new_st_names - old_st_names) - mapped_to_new_simpletypes)
+        
+        ws2.cell(2, 6).value = f"Count: {len(old_st_not_in_new)} (excludes renamed types)"
+        ws2.cell(2, 6).font = Font(bold=True)
+        for idx, name in enumerate(old_st_not_in_new, 3):
+            ws2.cell(idx, 6).value = name
+            ws2.cell(idx, 7).value = self.simpletype_to_namespace.get(name, '')
+        
+        ws2.cell(2, 8).value = f"Count: {len(new_st_not_in_old)} (excludes renamed types)"
+        ws2.cell(2, 8).font = Font(bold=True)
+        for idx, name in enumerate(new_st_not_in_old, 3):
+            # Add namespace prefix for new simpleTypes
+            namespace = self.simpletype_to_namespace.get(name, '')
+            if namespace and namespace not in ['diggs', 'diggs_geo']:
+                qualified_name = f"{namespace}:{name}"
+            else:
+                qualified_name = name
+            ws2.cell(idx, 8).value = qualified_name
+            ws2.cell(idx, 9).value = namespace
+        
+        ws2.column_dimensions['F'].width = 50
+        ws2.column_dimensions['G'].width = 15
+        ws2.column_dimensions['H'].width = 50
+        ws2.column_dimensions['I'].width = 15
         
         # Sheet 3: Type Mappings Applied
         ws3 = wb.create_sheet('Type Mappings')
