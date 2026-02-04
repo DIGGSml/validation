@@ -1,8 +1,8 @@
-# DIGGS v2.6 to v3.0 Type Mappings
-# Format: OldTypeName<TAB>NewTypeName
-# Lines starting with # are comments and will be ignored
-
-# User-provided type mappings
+# DIGGS v2.6 to v3.0 Type Mappings	
+# Format: OldTypeName<TAB>NewTypeName	
+# Lines starting with # are comments and will be ignored	
+	
+# User-provided type mappings	
 ContinuousGroutInjectionPropertyType	ContinuousGroutInjectionPropType
 Val0-100MeasureType	AbundanceMeasureType
 AreaPerTimeMeasureType	AreaPerTimeMeasureType
@@ -36,56 +36,56 @@ GroutingTimeSeriesBaseType	TemporalResultType
 InjectionTimeSeriesBaseType	TemporalResultType
 VolumeOrMassLossMeasure	VolumeOrMassLossMeasureType
 WaterContentType	WaterContentMeasureType
-
-# WITSML type mappings (v2.6 used external WITSML types, v3.0 internalized them)
-AziRef	AziRefEnumType
-ChannelDerivation	ChannelDerivationEnumType
-ChannelState	ChannelStateEnumType
-Cost	CostType
-MeasurementType	xs:double
-
-# EML measure type mappings (v2.6 used external EML types, v3.0 internalized them)
-AngularVelocityMeasure	AngularVelocityMeasureType
-AngularVelocityMeasureExt	AngularVelocityMeasureType
-AreaMeasure	AreaMeasureType
-AreaPerAreaMeasure	AreaPerAreaMeasureType
-DimensionlessMeasure	DimensionlessMeasureType
-DynamicViscosityMeasure	DynamicViscosityMeasureType
-DynamicViscosityMeasureExt	DynamicViscosityMeasureType
-ElectricPotentialDifferenceMeasureExt	ElectricPotentialDifferenceMeasureType
-EnergyPerVolumeMeasure	EnergyPerVolumeMeasureType
-ForceMeasure	ForceMeasureType
-ForceMeasureExt	ForceMeasureType
-ForcePerForceMeasureExt	ForcePerForceMeasureType
-ForcePerLengthMeasure	ForcePerLengthMeasureType
-ForcePerVolumeMeasure	ForcePerVolumeMeasureType
-ForcePerVolumeMeasureExt	ForcePerVolumeMeasureType
-GenericMeasure	GenericMeasureType
-LengthMeasure	LengthMeasureType
-LengthMeasureExt	LengthMeasureType
-LengthPerLengthMeasure	LengthPerLengthMeasureType
-MassMeasure	MassMeasureType
-MassPerMassMeasure	MassPerMassMeasureType
-MassPerVolumeMeasure	MassPerVolumeMeasureType
-MomentOfForceMeasure	MomentOfForceMeasureType
-MomentOfForceMeasureExt	MomentOfForceMeasureType
-PermeabilityRockMeasure	PermeabilityRockMeasureType
-PlaneAngleMeasure	PlaneAngleMeasureType
-PowerMeasure	PowerMeasureType
-PressureMeasure	PressureMeasureType
-PressureMeasureExt	PressureMeasureType
-PressurePerPressureMeasureExt	PressurePerPressureMeasureType
-ReciprocalPressureMeasureExt	ReciprocalPressureMeasureType
-ReciprocalTimeMeasure	ReciprocalTimeMeasureType
-ThermodynamicTemperatureMeasure	ThermodynamicTemperatureMeasureType
-ThermodynamicTemperatureMeasureExt	ThermodynamicTemperatureMeasureType
-TimeMeasure	TimeMeasureType
-UnitlessMeasure	DimensionlessMeasureType
-VolumeMeasure	VolumeMeasureType
-VolumeMeasureExt	VolumeMeasureType
-VolumePerLengthMeasure	VolumePerLengthMeasureType
-VolumePerTimeMeasure	VolumePerTimeMeasureType
-VolumePerTimeMeasureExt	VolumePerTimeMeasureType
-VolumePerVolumeMeasure	VolumePerVolumeMeasureType
-VolumePerVolumeMeasureExt	VolumePerVolumeMeasureType
-generalMeasureType	GenericMeasureType
+	
+"# WITSML type mappings (v2.6 used external WITSML types, v3.0 internalized them)"	
+witsml:AziRef	AziRefEnumType
+witsml:ChannelDerivation	ChannelDerivationEnumType
+witsml:ChannelState	ChannelStateEnumType
+witsml:Cost	CostType
+witsml:MeasurementType	xs:double
+	
+"# EML measure type mappings (v2.6 used external EML types, v3.0 internalized them)"	
+eml:AngularVelocityMeasure	AngularVelocityMeasureType
+eml:AngularVelocityMeasureExt	AngularVelocityMeasureType
+eml:AreaMeasure	AreaMeasureType
+eml:AreaPerAreaMeasure	AreaPerAreaMeasureType
+eml:DimensionlessMeasure	DimensionlessMeasureType
+eml:DynamicViscosityMeasure	DynamicViscosityMeasureType
+eml:DynamicViscosityMeasureExt	DynamicViscosityMeasureType
+eml:ElectricPotentialDifferenceMeasureExt	ElectricPotentialDifferenceMeasureType
+eml:EnergyPerVolumeMeasure	EnergyPerVolumeMeasureType
+eml:ForceMeasure	ForceMeasureType
+eml:ForceMeasureExt	ForceMeasureType
+eml:ForcePerForceMeasureExt	ForcePerForceMeasureType
+eml:ForcePerLengthMeasure	ForcePerLengthMeasureType
+eml:ForcePerVolumeMeasure	ForcePerVolumeMeasureType
+eml:ForcePerVolumeMeasureExt	ForcePerVolumeMeasureType
+eml:GenericMeasure	GenericMeasureType
+eml:LengthMeasure	LengthMeasureType
+eml:LengthMeasureExt	LengthMeasureType
+eml:LengthPerLengthMeasure	LengthPerLengthMeasureType
+eml:MassMeasure	MassMeasureType
+eml:MassPerMassMeasure	MassPerMassMeasureType
+eml:MassPerVolumeMeasure	MassPerVolumeMeasureType
+eml:MomentOfForceMeasure	MomentOfForceMeasureType
+eml:MomentOfForceMeasureExt	MomentOfForceMeasureType
+eml:PermeabilityRockMeasure	PermeabilityRockMeasureType
+eml:PlaneAngleMeasure	PlaneAngleMeasureType
+eml:PowerMeasure	PowerMeasureType
+eml:PressureMeasure	PressureMeasureType
+eml:PressureMeasureExt	PressureMeasureType
+eml:PressurePerPressureMeasureExt	PressurePerPressureMeasureType
+eml:ReciprocalPressureMeasureExt	ReciprocalPressureMeasureType
+eml:ReciprocalTimeMeasure	ReciprocalTimeMeasureType
+eml:ThermodynamicTemperatureMeasure	ThermodynamicTemperatureMeasureType
+eml:ThermodynamicTemperatureMeasureExt	ThermodynamicTemperatureMeasureType
+eml:TimeMeasure	TimeMeasureType
+eml:UnitlessMeasure	DimensionlessMeasureType
+eml:VolumeMeasure	VolumeMeasureType
+eml:VolumeMeasureExt	VolumeMeasureType
+eml:VolumePerLengthMeasure	VolumePerLengthMeasureType
+eml:VolumePerTimeMeasure	VolumePerTimeMeasureType
+eml:VolumePerTimeMeasureExt	VolumePerTimeMeasureType
+eml:VolumePerVolumeMeasure	VolumePerVolumeMeasureType
+eml:VolumePerVolumeMeasureExt	VolumePerVolumeMeasureType
+eml:generalMeasureType	GenericMeasureType

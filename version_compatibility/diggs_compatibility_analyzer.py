@@ -25,9 +25,6 @@ from fixed_resolver import (
     NS_26, NS_3
 )
 
-# Version detection regex
-VERSION_PATTERN = re.compile(r'version\s*=\s*["\']([^"\']+)["\']')
-
 
 class DIGGSCompatibilityAnalyzer:
     """Main analyzer class for DIGGS schema compatibility checking"""
@@ -55,13 +52,22 @@ class DIGGSCompatibilityAnalyzer:
         """Detect DIGGS version from schema files in directory"""
         versions = set()
         
+        # Pattern to find schema element's version attribute (not XML declaration)
+        schema_version_pattern = re.compile(
+            r'<schema[^>]+version\s*=\s*["\']([^"\']+)["\']',
+            re.IGNORECASE | re.DOTALL
+        )
+        
         for xsd_file in directory.rglob('*.xsd'):
             try:
                 with open(xsd_file, 'r', encoding='utf-8') as f:
-                    content = f.read(2000)  # Read first 2KB
-                    match = VERSION_PATTERN.search(content)
+                    content = f.read(5000)  # Read first 5KB to ensure we get schema element
+                    match = schema_version_pattern.search(content)
                     if match:
-                        versions.add(match.group(1))
+                        version = match.group(1)
+                        # Skip if it looks like XML declaration version (1.0, 1.1)
+                        if version not in ['1.0', '1.1']:
+                            versions.add(version)
             except Exception as e:
                 print(f"Warning: Could not read {xsd_file}: {e}")
         
