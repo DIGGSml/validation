@@ -135,9 +135,9 @@ class DIGGSCompatibilityAnalyzer:
         schemas = []
         
         for xsd_file in schema_files:
-            # Determine namespace based on directory/filename
+            # Extract namespace from schema's targetNamespace attribute
             relative_path = xsd_file.relative_to(directory)
-            ns_label = self._infer_namespace(xsd_file)
+            ns_label = self._extract_namespace_label(xsd_file)
             
             schema = parse_schema(str(xsd_file), namespace_dict)
             if schema is not None:
@@ -158,22 +158,45 @@ class DIGGSCompatibilityAnalyzer:
         
         return schemas, all_types, all_attrs
     
-    def _infer_namespace(self, xsd_file: Path) -> str:
-        """Infer namespace label from file path/name"""
-        name = xsd_file.stem.lower()
-        
-        if 'geo' in name and 'deprecated' in name:
-            return 'diggs_geo'
-        elif 'geotechnical' in name:
-            return 'diggs_geo'
-        elif 'gml' in name:
-            return 'gml'
-        elif 'glr' in name and 'ov' in name:
-            return 'glrov'
-        elif 'glr' in name:
-            return 'glr'
-        else:
-            return 'diggs'
+    def _extract_namespace_label(self, xsd_file: Path) -> str:
+        """Extract namespace label from schema's targetNamespace attribute"""
+        try:
+            with open(xsd_file, 'r', encoding='utf-8') as f:
+                content = f.read(3000)  # Read first 3KB to get schema element
+                
+                # Find targetNamespace attribute
+                match = re.search(r'targetNamespace\s*=\s*["\']([^"\']+)["\']', content)
+                if not match:
+                    return 'unknown'
+                
+                target_ns = match.group(1)
+                
+                # Map targetNamespace to namespace label
+                if 'diggsml.org/schemas' in target_ns:
+                    if 'geotechnical' in target_ns:
+                        return 'diggs_geo'
+                    else:
+                        return 'diggs'
+                elif 'energistics.org/energyml/data/commonv2' in target_ns:
+                    return 'eml'
+                elif 'energistics.org/energyml/data/witsmlv2' in target_ns:
+                    return 'witsml'
+                elif 'opengis.net/gml' in target_ns:
+                    if '/lrov' in target_ns:
+                        return 'glrov'
+                    elif '/lr' in target_ns:
+                        return 'glr'
+                    else:
+                        return 'gml'
+                else:
+                    # For unknown namespaces, try to extract a reasonable label
+                    # from the last part of the namespace
+                    parts = target_ns.rstrip('/').split('/')
+                    return parts[-1] if parts else 'unknown'
+                    
+        except Exception as e:
+            print(f"Warning: Could not extract namespace from {xsd_file}: {e}")
+            return 'unknown'
     
     def normalize_type_name(self, type_name: str) -> str:
         """Remove namespace prefixes and normalize type names"""
