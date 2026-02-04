@@ -52,29 +52,37 @@ class DIGGSCompatibilityAnalyzer:
         """Detect DIGGS version from schema files in directory"""
         versions = set()
         
-        # Pattern to find schema element's version attribute (not XML declaration)
-        schema_version_pattern = re.compile(
-            r'<schema[^>]+version\s*=\s*["\']([^"\']+)["\']',
-            re.IGNORECASE | re.DOTALL
-        )
-        
         for xsd_file in directory.rglob('*.xsd'):
             try:
                 with open(xsd_file, 'r', encoding='utf-8') as f:
                     content = f.read(5000)  # Read first 5KB to ensure we get schema element
-                    match = schema_version_pattern.search(content)
-                    if match:
-                        version = match.group(1)
-                        # Skip if it looks like XML declaration version (1.0, 1.1)
-                        if version not in ['1.0', '1.1']:
-                            versions.add(version)
+                    
+                    # Find schema element(s)
+                    schema_pattern = re.compile(r'<schema[^>]*>', re.IGNORECASE | re.DOTALL)
+                    matches = schema_pattern.finditer(content)
+                    
+                    for match in matches:
+                        schema_tag = match.group(0)
+                        
+                        # Only process schemas with diggsml.org in targetNamespace
+                        if 'diggsml.org' in schema_tag:
+                            # Extract version from this schema element
+                            version_match = re.search(r'version\s*=\s*["\']([^"\']+)["\']', schema_tag)
+                            if version_match:
+                                version = version_match.group(1)
+                                # Skip XML declaration versions (1.0, 1.1)
+                                if version not in ['1.0', '1.1']:
+                                    versions.add(version)
+                                    break  # Found DIGGS version in this file
+                                    
             except Exception as e:
                 print(f"Warning: Could not read {xsd_file}: {e}")
         
         if len(versions) == 0:
-            raise ValueError(f"No version information found in {directory}")
+            raise ValueError(f"No DIGGS schema version found in {directory}. "
+                           f"Make sure directory contains .xsd files with targetNamespace='...diggsml.org...'")
         elif len(versions) > 1:
-            print(f"Warning: Multiple versions found in {directory}: {versions}")
+            print(f"Warning: Multiple DIGGS versions found in {directory}: {versions}")
             print(f"Using version: {sorted(versions)[0]}")
         
         return sorted(versions)[0]
