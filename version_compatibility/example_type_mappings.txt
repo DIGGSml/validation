@@ -88,4 +88,4 @@ eml:VolumePerTimeMeasure	VolumePerTimeMeasureType
 eml:VolumePerTimeMeasureExt	VolumePerTimeMeasureType
 eml:VolumePerVolumeMeasure	VolumePerVolumeMeasureType
 eml:VolumePerVolumeMeasureExt	VolumePerVolumeMeasureType
-eml:generalMeasureType	GenericMeasureType
+eml:generalMeasureType	xs:double
