@@ -33,6 +33,7 @@ NS_PREFIX_TO_LABEL = {
     'glr': 'glr',
     'glrov': 'glrov',
     'xs': 'xs',  # XML Schema built-in types
+    'xml': 'xml',  # XML namespace (for xml:lang, xml:id, etc.)
 }
 
 def parse_schema(filepath, namespaces):
@@ -112,10 +113,14 @@ def get_base_type_name(complex_type, namespaces):
     
     return None
 
-def extract_elements_from_node(node, namespaces):
+def extract_elements_from_node(node, namespaces, schema_namespace='diggs'):
     """
     Recursively extract all elements from a node, handling nested sequences and choices.
-    This is the key fix - it traverses nested structures properly.
+    
+    Args:
+        node: The XML node to extract from
+        namespaces: Namespace dict for XPath
+        schema_namespace: The namespace label (e.g., 'diggs', 'gml') for qualifying inline elements
     """
     elements = []
     
@@ -123,8 +128,17 @@ def extract_elements_from_node(node, namespaces):
     for seq in node.findall('.//xs:sequence', namespaces):
         # Get direct element children of this sequence
         for elem in seq.findall('xs:element', namespaces):
+            # Get element name - either from name attribute (inline) or ref attribute (reference)
+            elem_name = elem.get('name')
+            if elem_name:
+                # Inline definition - name never has prefix, always qualify it
+                elem_name = f"{schema_namespace}:{elem_name}"
+            else:
+                # Reference - ref ALWAYS has prefix in XSD, use as-is
+                elem_name = clean_type_name(elem.get('ref', ''))
+            
             elem_info = {
-                'name': elem.get('name') or clean_type_name(elem.get('ref', '')),
+                'name': elem_name,
                 'type': clean_type_name(elem.get('type', '')),
                 'minOccurs': elem.get('minOccurs', '1'),
                 'maxOccurs': elem.get('maxOccurs', '1'),
@@ -136,8 +150,16 @@ def extract_elements_from_node(node, namespaces):
     # Get all choices at any level
     for choice in node.findall('.//xs:choice', namespaces):
         for elem in choice.findall('xs:element', namespaces):
+            elem_name = elem.get('name')
+            if elem_name:
+                # Inline definition - name never has prefix, always qualify it
+                elem_name = f"{schema_namespace}:{elem_name}"
+            else:
+                # Reference - ref ALWAYS has prefix in XSD, use as-is
+                elem_name = clean_type_name(elem.get('ref', ''))
+            
             elem_info = {
-                'name': elem.get('name') or clean_type_name(elem.get('ref', '')),
+                'name': elem_name,
                 'type': clean_type_name(elem.get('type', '')),
                 'minOccurs': elem.get('minOccurs', '1'),
                 'maxOccurs': elem.get('maxOccurs', '1'),
@@ -147,8 +169,14 @@ def extract_elements_from_node(node, namespaces):
     
     return elements
 
-def extract_local_elements(complex_type, namespaces):
-    """Extract elements defined locally in this type"""
+def extract_local_elements(complex_type, namespaces, schema_namespace='diggs'):
+    """Extract elements defined locally in this type
+    
+    Args:
+        complex_type: The complexType element
+        namespaces: Namespace dict for XPath
+        schema_namespace: The namespace label for qualifying inline elements
+    """
     # Check for extension or restriction
     extension = complex_type.find('.//xs:extension', namespaces)
     is_extension = extension is not None
@@ -157,42 +185,75 @@ def extract_local_elements(complex_type, namespaces):
     
     # Extract from the appropriate content model
     if extension is not None:
-        elements = extract_elements_from_node(extension, namespaces)
+        elements = extract_elements_from_node(extension, namespaces, schema_namespace)
     elif restriction is not None:
-        elements = extract_elements_from_node(restriction, namespaces)
+        elements = extract_elements_from_node(restriction, namespaces, schema_namespace)
     else:
-        elements = extract_elements_from_node(complex_type, namespaces)
+        elements = extract_elements_from_node(complex_type, namespaces, schema_namespace)
     
     return elements, is_extension
 
 def resolve_attribute_ref(attr_ref, all_attrs, namespaces):
-    attr_name = attr_ref.replace('gml:', '').replace('diggs:', '').replace('xml:', '')
+    """Resolve an attribute reference to its definition
     
-    if attr_name in all_attrs:
-        attr_def = all_attrs[attr_name]
+    Args:
+        attr_ref: Qualified attribute reference like "gml:id" or "xml:lang"
+        all_attrs: Dictionary of attribute definitions (with bare names as keys)
+        namespaces: Namespace dict
+        
+    Returns:
+        Dict with attribute info including the qualified name
+    """
+    # attr_ref is already qualified (e.g., "gml:id", "xml:lang")
+    # For lookup in all_attrs, we need the bare name
+    bare_name = attr_ref.split(':')[-1] if ':' in attr_ref else attr_ref
+    
+    if bare_name in all_attrs:
+        attr_def = all_attrs[bare_name]
         return {
-            'name': attr_ref,
+            'name': attr_ref,  # Use the qualified reference as the name
             'type': clean_type_name(attr_def.get('type', '')),
             'use': 'optional',
         }
     
-    return None
+    # Attribute not found - might be from external schema
+    # Return a placeholder so we don't lose track of it
+    return {
+        'name': attr_ref,
+        'type': '',
+        'use': 'optional',
+    }
 
-def extract_local_attributes(complex_type, all_attrs, namespaces):
+def extract_local_attributes(complex_type, all_attrs, namespaces, schema_namespace='diggs'):
+    """Extract attributes from a complex type
+    
+    Args:
+        complex_type: The complexType element
+        all_attrs: Dictionary of global attribute definitions
+        namespaces: Namespace dict for XPath
+        schema_namespace: The namespace label for qualifying inline attributes
+    """
     attributes = []
     
     for attr in complex_type.findall('.//xs:attribute', namespaces):
         ref = attr.get('ref')
         if ref:
-            resolved_attr = resolve_attribute_ref(clean_type_name(ref), all_attrs, namespaces)
+            # Attribute reference - ref ALWAYS has prefix in XSD, use as-is
+            attr_ref = clean_type_name(ref)
+            resolved_attr = resolve_attribute_ref(attr_ref, all_attrs, namespaces)
             if resolved_attr:
                 use_override = attr.get('use')
                 if use_override:
                     resolved_attr['use'] = use_override
                 attributes.append(resolved_attr)
         else:
+            # Inline attribute definition - name never has prefix, always qualify it
+            attr_name = attr.get('name')
+            if attr_name:
+                attr_name = f"{schema_namespace}:{attr_name}"
+            
             attr_info = {
-                'name': attr.get('name'),
+                'name': attr_name,
                 'type': clean_type_name(attr.get('type', '')),
                 'use': attr.get('use', 'optional'),
             }
@@ -232,9 +293,22 @@ def resolve_content_model(type_name, all_types, all_attrs, namespaces, visited=N
         # Type not found - might be from external schema we don't have
         return {}, {}
     
+    # Extract schema namespace from qualified type name for element qualification
+    if ':' in type_name:
+        schema_namespace = type_name.split(':')[0]
+    else:
+        # Type name has no namespace prefix - this shouldn't happen but handle it
+        schema_namespace = 'diggs'
+        print(f"Warning: Type '{type_name}' has no namespace prefix, defaulting to 'diggs'")
+    
+    # Validate we got a reasonable namespace
+    if not schema_namespace or schema_namespace in ['', 'unknown']:
+        schema_namespace = 'diggs'
+        print(f"Warning: Invalid namespace extracted from '{type_name}', defaulting to 'diggs'")
+    
     base_type_name = get_base_type_name(complex_type, namespaces)
-    local_elements, is_extension = extract_local_elements(complex_type, namespaces)
-    local_attributes = extract_local_attributes(complex_type, all_attrs, namespaces)
+    local_elements, is_extension = extract_local_elements(complex_type, namespaces, schema_namespace)
+    local_attributes = extract_local_attributes(complex_type, all_attrs, namespaces, schema_namespace)
     
     elements_dict = OrderedDict()
     attributes_dict = OrderedDict()

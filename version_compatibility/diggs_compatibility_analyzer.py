@@ -141,6 +141,10 @@ class DIGGSCompatibilityAnalyzer:
             relative_path = xsd_file.relative_to(directory)
             ns_label = self._extract_namespace_label(xsd_file)
             
+            if not ns_label or ns_label == 'unknown':
+                print(f"  ⚠ Warning: Could not extract namespace from {relative_path}, defaulting to 'diggs'")
+                ns_label = 'diggs'
+            
             schema = parse_schema(str(xsd_file), namespace_dict)
             if schema is not None:
                 schemas_with_ns.append((schema, ns_label))
@@ -151,6 +155,11 @@ class DIGGSCompatibilityAnalyzer:
         all_simpletypes = {}
         
         for schema, ns_label in schemas_with_ns:
+            # Ensure we have a valid namespace label
+            if not ns_label or ns_label == 'unknown':
+                # Default to 'diggs' if namespace extraction failed
+                ns_label = 'diggs'
+            
             # Collect complexTypes with namespace prefix
             for ct in schema.findall('.//xs:complexType', namespace_dict):
                 name = ct.get('name')
