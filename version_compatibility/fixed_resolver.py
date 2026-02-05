@@ -231,14 +231,18 @@ def extract_local_attributes(complex_type, all_attrs, namespaces, schema_namespa
         complex_type: The complexType element
         all_attrs: Dictionary of global attribute definitions
         namespaces: Namespace dict for XPath
-        schema_namespace: The namespace label for qualifying inline attributes
+        schema_namespace: The namespace label (NOT used for inline attributes per XML spec)
+    
+    Note: Per XML specification, attributes are unqualified by default.
+    Only attribute references with explicit namespace prefixes are qualified.
     """
     attributes = []
     
     for attr in complex_type.findall('.//xs:attribute', namespaces):
         ref = attr.get('ref')
         if ref:
-            # Attribute reference - ref ALWAYS has prefix in XSD, use as-is
+            # Attribute reference - ref has explicit prefix if qualified, use as-is
+            # Examples: "xml:lang" (qualified), "gml:id" (qualified)
             attr_ref = clean_type_name(ref)
             resolved_attr = resolve_attribute_ref(attr_ref, all_attrs, namespaces)
             if resolved_attr:
@@ -247,13 +251,12 @@ def extract_local_attributes(complex_type, all_attrs, namespaces, schema_namespa
                     resolved_attr['use'] = use_override
                 attributes.append(resolved_attr)
         else:
-            # Inline attribute definition - name never has prefix, always qualify it
+            # Inline attribute definition - attributes are UNQUALIFIED by default per XML spec
+            # Example: name="uom" stays as "uom" (not "diggs:uom" or "eml:uom")
             attr_name = attr.get('name')
-            if attr_name:
-                attr_name = f"{schema_namespace}:{attr_name}"
             
             attr_info = {
-                'name': attr_name,
+                'name': attr_name,  # Keep unqualified!
                 'type': clean_type_name(attr.get('type', '')),
                 'use': attr.get('use', 'optional'),
             }
