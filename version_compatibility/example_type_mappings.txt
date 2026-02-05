@@ -36,6 +36,7 @@ GroutingTimeSeriesBaseType	TemporalResultType
 InjectionTimeSeriesBaseType	TemporalResultType
 VolumeOrMassLossMeasure	VolumeOrMassLossMeasureType
 WaterContentType	WaterContentMeasureType
+DiggsStringType	xs:string
 	
 "# WITSML type mappings (v2.6 used external WITSML types, v3.0 internalized them)"	
 witsml:AziRef	AziRefEnumType
@@ -186,7 +187,6 @@ eml:InductanceMeasure	InductanceMeasureType
 eml:InductanceMeasureExt	InductanceMeasureType
 eml:IsothermalCompressibilityMeasure	IsothermalCompressibilityMeasureType
 eml:IsothermalCompressibilityMeasureExt	IsothermalCompressibilityMeasureType
-eml:JaggedArray	#VALUE!
 eml:KinematicViscosityMeasure	KinematicViscosityMeasureType
 eml:KinematicViscosityMeasureExt	KinematicViscosityMeasureType
 eml:LengthMeasure	LengthMeasureType
