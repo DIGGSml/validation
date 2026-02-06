@@ -567,6 +567,11 @@ class DIGGSCompatibilityAnalyzer:
     def compare_simpletype(self, qualified_name: str, mapped_name: Optional[str] = None) -> Dict:
         """Compare a simple type between old and new versions
         
+        Analyzes:
+        - Enumerations: Checks if old enumerations are preserved in new version
+        - Patterns: Detects pattern changes (full analysis is complex)
+        - Base type: Checks if base type changed
+        
         Args:
             qualified_name: Qualified name like "diggs:SomeSimpleType" or "eml:UnitlessMeasure"
             mapped_name: Optional mapped/renamed qualified name in new version
@@ -575,7 +580,9 @@ class DIGGSCompatibilityAnalyzer:
             'name': qualified_name,  # Now includes namespace prefix
             'type_removed': '',
             'base_changed': '',
-            'restriction_changed': '',
+            'enumerations_removed': [],
+            'enumerations_added': [],
+            'pattern_changed': '',
             'notes': '',
             'compatible': 'Yes'
         }
@@ -595,18 +602,101 @@ class DIGGSCompatibilityAnalyzer:
             result['type_removed'] = f'Renamed to: {mapped_name}'
             result['notes'] = f'SimpleType renamed from {qualified_name} to {mapped_name}'
         
-        # For simple types, we check if the base type or restrictions changed
-        # Use xml.etree.ElementTree (standard library) for serialization
-        import xml.etree.ElementTree as ET
+        # Extract enumerations
+        old_enums = self._extract_enumerations(st_old)
+        new_enums = self._extract_enumerations(st_new)
         
-        old_str = ET.tostring(st_old, encoding='unicode') if st_old is not None else ''
-        new_str = ET.tostring(st_new, encoding='unicode') if st_new is not None else ''
+        if old_enums or new_enums:
+            # Check for removed enumerations (incompatible)
+            removed_enums = old_enums - new_enums
+            if removed_enums:
+                result['enumerations_removed'] = sorted(list(removed_enums))
+                result['compatible'] = 'No'
+                count = len(removed_enums)
+                sample = ', '.join(sorted(list(removed_enums))[:3])
+                if count > 3:
+                    sample += f'... (+{count-3} more)'
+                result['notes'] += f'; Removed enumerations: {sample}' if result['notes'] else f'Removed enumerations: {sample}'
+            
+            # Check for added enumerations (compatible - expands options)
+            added_enums = new_enums - old_enums
+            if added_enums:
+                result['enumerations_added'] = sorted(list(added_enums))
+                count = len(added_enums)
+                sample = ', '.join(sorted(list(added_enums))[:3])
+                if count > 3:
+                    sample += f'... (+{count-3} more)'
+                note = f'Added enumerations: {sample}'
+                result['notes'] += f'; {note}' if result['notes'] else note
         
-        if old_str != new_str:
-            result['restriction_changed'] = 'Yes'
-            result['notes'] += '; Restriction or base type changed' if result['notes'] else 'Restriction or base type changed'
+        # Extract patterns
+        old_pattern = self._extract_pattern(st_old)
+        new_pattern = self._extract_pattern(st_new)
+        
+        if old_pattern != new_pattern:
+            if old_pattern and new_pattern:
+                result['pattern_changed'] = f'Changed from "{old_pattern}" to "{new_pattern}"'
+                result['notes'] += '; Pattern changed (review for compatibility)' if result['notes'] else 'Pattern changed (review for compatibility)'
+            elif old_pattern and not new_pattern:
+                result['pattern_changed'] = f'Removed: "{old_pattern}"'
+                result['notes'] += '; Pattern removed (may expand valid values)' if result['notes'] else 'Pattern removed (may expand valid values)'
+            elif not old_pattern and new_pattern:
+                result['pattern_changed'] = f'Added: "{new_pattern}"'
+                result['compatible'] = 'No'
+                result['notes'] += f'; Pattern added: "{new_pattern}" (restricts values)' if result['notes'] else f'Pattern added: "{new_pattern}" (restricts values)'
+        
+        # Check base type
+        old_base = self._extract_simpletype_base(st_old)
+        new_base = self._extract_simpletype_base(st_new)
+        
+        if old_base != new_base:
+            result['base_changed'] = f'{new_base} (was: {old_base})'
+            # Base type change could be incompatible, but depends on context
+            result['notes'] += f'; Base type changed from {old_base} to {new_base}' if result['notes'] else f'Base type changed from {old_base} to {new_base}'
         
         return result
+    
+    def _extract_enumerations(self, simpletype) -> set:
+        """Extract enumeration values from a simpleType"""
+        if simpletype is None:
+            return set()
+        
+        enums = set()
+        # Look for enumeration facets
+        for enum in simpletype.findall('.//{http://www.w3.org/2001/XMLSchema}enumeration'):
+            value = enum.get('value')
+            if value:
+                enums.add(value)
+        
+        return enums
+    
+    def _extract_pattern(self, simpletype) -> str:
+        """Extract pattern facet from a simpleType"""
+        if simpletype is None:
+            return ''
+        
+        # Look for pattern facet
+        pattern = simpletype.find('.//{http://www.w3.org/2001/XMLSchema}pattern')
+        if pattern is not None:
+            return pattern.get('value', '')
+        
+        return ''
+    
+    def _extract_simpletype_base(self, simpletype) -> str:
+        """Extract base type from a simpleType"""
+        if simpletype is None:
+            return ''
+        
+        # Look for restriction element
+        restriction = simpletype.find('.//{http://www.w3.org/2001/XMLSchema}restriction')
+        if restriction is not None:
+            base = restriction.get('base', '')
+            if base:
+                from fixed_resolver import clean_type_name
+                return clean_type_name(base)
+        
+        return ''
+    
     
     def analyze(self) -> List[Dict]:
         """Run the full compatibility analysis"""
@@ -888,8 +978,9 @@ class DIGGSCompatibilityAnalyzer:
         ws4 = wb.create_sheet('SimpleTypes')
         
         st_headers = [
-            'Simple Type Name', 'Type Removed',
-            'Base/Restriction Changed', 'Notes', 'Backward Compatible'
+            'Simple Type Name', 'Type Removed', 'Base Type Changed',
+            'Enumerations Removed', 'Enumerations Added', 
+            'Pattern Changed', 'Notes', 'Backward Compatible'
         ]
         
         for col, header in enumerate(st_headers, 1):
@@ -902,24 +993,48 @@ class DIGGSCompatibilityAnalyzer:
         for row_idx, r in enumerate(simpletype_results, 2):
             ws4.cell(row_idx, 1).value = r['name']  # Now includes namespace prefix
             ws4.cell(row_idx, 2).value = r['type_removed']
-            ws4.cell(row_idx, 3).value = r['restriction_changed']
-            ws4.cell(row_idx, 4).value = r['notes']
-            ws4.cell(row_idx, 5).value = r['compatible']
+            ws4.cell(row_idx, 3).value = r['base_changed']
             
-            compat_cell = ws4.cell(row_idx, 5)
+            # Enumerations removed (incompatible)
+            removed_enums = r.get('enumerations_removed', [])
+            if removed_enums:
+                ws4.cell(row_idx, 4).value = '\n'.join(removed_enums[:20])  # Show up to 20
+                if len(removed_enums) > 20:
+                    current = ws4.cell(row_idx, 4).value
+                    ws4.cell(row_idx, 4).value = current + f'\n... (+{len(removed_enums)-20} more)'
+            
+            # Enumerations added (compatible - expands options)
+            added_enums = r.get('enumerations_added', [])
+            if added_enums:
+                ws4.cell(row_idx, 5).value = '\n'.join(added_enums[:20])  # Show up to 20
+                if len(added_enums) > 20:
+                    current = ws4.cell(row_idx, 5).value
+                    ws4.cell(row_idx, 5).value = current + f'\n... (+{len(added_enums)-20} more)'
+            
+            # Pattern changes
+            ws4.cell(row_idx, 6).value = r.get('pattern_changed', '')
+            
+            # Notes and compatibility
+            ws4.cell(row_idx, 7).value = r['notes']
+            ws4.cell(row_idx, 8).value = r['compatible']
+            
+            compat_cell = ws4.cell(row_idx, 8)
             if r['compatible'] == 'No':
                 compat_cell.fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')
             else:
                 compat_cell.fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')
             
-            for col in range(1, 6):
+            for col in range(1, 9):
                 ws4.cell(row_idx, col).alignment = Alignment(wrap_text=True, vertical='top')
         
         ws4.column_dimensions['A'].width = 50
         ws4.column_dimensions['B'].width = 25
         ws4.column_dimensions['C'].width = 25
-        ws4.column_dimensions['D'].width = 50
-        ws4.column_dimensions['E'].width = 18
+        ws4.column_dimensions['D'].width = 30
+        ws4.column_dimensions['E'].width = 30
+        ws4.column_dimensions['F'].width = 40
+        ws4.column_dimensions['G'].width = 50
+        ws4.column_dimensions['H'].width = 18
         ws4.freeze_panes = 'A2'
         
         wb.save(output_file)
