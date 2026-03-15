@@ -482,11 +482,11 @@ background-color: var(--color-highlight-bg) !important;
          </div>
          <div class="validation-summary">
             <div class="file-info"><strong>Document: </strong><span>PorePressureDissipation%20Example.xml</span></div>
-            <div class="summary-badges"><span class="severity-badge error">1 Errors</span><span class="severity-badge warning">1
+            <div class="summary-badges"><span class="severity-badge error">0 Errors</span><span class="severity-badge warning">0
                   Warnings</span><span class="severity-badge info">0 Info</span></div>
-            <div class="timestamp-info"><strong>Timestamp: </strong>2026-01-23T12:18:35.214353-08:00</div>
+            <div class="timestamp-info"><strong>Timestamp: </strong>2026-03-12T15:00:44.052477-07:00</div>
          </div>
-         <div class="summary-banner error">Result: Fail. Correct errors and rescan.</div>
+         <div class="summary-banner success">Result: Success! No issues detected.</div>
          <div class="controls">
             <div class="filter-controls"><span class="section-title">Validation Report</span><label for="severity-filter">Filter by severity:</label><select id="severity-filter">
                   <option value="all">All</option>
@@ -506,36 +506,7 @@ background-color: var(--color-highlight-bg) !important;
                      <th>Element Value</th>
                   </tr>
                </thead>
-               <tbody>
-                  <tr class="warning">
-                     <td><span class="severity-badge warning">WARNING</span></td>
-                     <td>
-                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]</span></div>
-                     </td>
-                     <td>Dictionary Validation</td>
-                     <td>
-                        <pre class="source-xml">Check 12:
-Unable to validate unit of measure "bar/bar" for quantity class "pressure per pressure". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/pressure%20per%20pressure".</pre>
-                     </td>
-                     <td>
-                        <pre class="source-xml">Friction Ratio</pre>
-                     </td>
-                  </tr>
-                  <tr class="error">
-                     <td><span class="severity-badge error">ERROR</span></td>
-                     <td>
-                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]</span></div>
-                     </td>
-                     <td>Dictionary Validation</td>
-                     <td>
-                        <pre class="source-xml">Check 12:
-The unit of measure "cm2/min" is not valid for quantity class "area per time". Valid units include: cm2/s, ft2/h, ft2/s, in2/s, m2/d, m2/h, m2/s, mm2/s.</pre>
-                     </td>
-                     <td>
-                        <pre class="source-xml">Coefficient of Horizontal Consolidation (Ch)</pre>
-                     </td>
-                  </tr>
-               </tbody>
+               <tbody></tbody>
             </table>
          </div>
          <div class="editor-container">
@@ -543,7 +514,7 @@ The unit of measure "cm2/min" is not valid for quantity class "area per time". V
                <h3 class="editor-title">XML Editor</h3>
                <div class="editor-actions"><button class="editor-button" id="toggle-editor">Show/Hide Editor</button><button class="editor-button" id="save-xml">Save XML</button><button class="editor-button" id="format-xml">Format XML</button><button class="editor-button" id="find-xml">Find</button></div>
             </div>
-            <div class="editor-body" id="editor-body"><textarea id="xml-editor" style="display: none;">&lt;Diggs xmlns="http://diggsml.org/schemas/3" xmlns:diggs="http://diggsml.org/schemas/3" xmlns:glr="http://www.opengis.net/gml/3.3/lr" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://diggsml.org/schemas/3 https://diggsml.org/schema-dev/Diggs.xsd" gml:id="bcd"&gt;
+            <div class="editor-body" id="editor-body"><textarea id="xml-editor" style="display: none;">&lt;Diggs xmlns="http://diggsml.org/schemas/3" xmlns:diggs="http://diggsml.org/schemas/3" xmlns:glr="http://www.opengis.net/gml/3.3/lr" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://diggsml.org/schemas/3 https://diggsml.org/schemas/3.0.0/Diggs.xsd" gml:id="bcd"&gt;
 
     &lt;documentInformation&gt;
         &lt;DocumentInformation gml:id="d1"&gt;
@@ -808,38 +779,38 @@ The unit of measure "cm2/min" is not valid for quantity class "area per time". V
                                 &lt;PropertyParameters gml:id="mTrRsPPP1"&gt;
                                     &lt;properties&gt;
                                         &lt;Property index="1" gml:id="DIGGS-01-p1"&gt;
-                                            &lt;propertyName&gt;qc (bar)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;qc&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#tip_resistance"&gt;Tip Resistance&lt;/propertyClass&gt;
                                             &lt;uom&gt;bar&lt;/uom&gt;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                         &lt;Property index="2" gml:id="DIGGS-01-p2"&gt;
-                                            &lt;propertyName&gt;qt (bar)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;qt&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#tip_resistance_corrected"&gt;Corrected Tip Resistance&lt;/propertyClass&gt;
                                             &lt;uom&gt;bar&lt;/uom&gt;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                         &lt;Property index="3" gml:id="DIGGS-01-p3"&gt;
-                                            &lt;propertyName&gt;fs (bar)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;fs&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#sleeve_friction"&gt;Sleeve Friction&lt;/propertyClass&gt;
                                             &lt;uom&gt;bar&lt;/uom&gt;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                         &lt;Property index="4" gml:id="DIGGS-01-p4"&gt;
-                                            &lt;propertyName&gt;u (kPa)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;u2&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#pore_pressure_u2"&gt;Pore Water Pressure (U2)&lt;/propertyClass&gt;
                                             &lt;uom&gt;kPa&lt;/uom&gt;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                         &lt;Property index="5" gml:id="DIGGS-01-p5"&gt;
-                                            &lt;propertyName&gt;Rf (%)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;Rf&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#friction_ratio"&gt;Friction Ratio&lt;/propertyClass&gt;
-                                            &lt;uom&gt;bar/bar&lt;/uom&gt;
+                                            &lt;uom&gt;%&lt;/uom&gt;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                     &lt;/properties&gt;
