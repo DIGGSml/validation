@@ -482,11 +482,12 @@ background-color: var(--color-highlight-bg) !important;
          </div>
          <div class="validation-summary">
             <div class="file-info"><strong>Document: </strong><span>PorePressureDissipation%20Example.xml</span></div>
-            <div class="summary-badges"><span class="severity-badge error">0 Errors</span><span class="severity-badge warning">0
+            <div class="summary-badges"><span class="severity-badge error">0 Errors</span><span class="severity-badge warning">11
                   Warnings</span><span class="severity-badge info">0 Info</span></div>
-            <div class="timestamp-info"><strong>Timestamp: </strong>2026-03-12T15:00:44.052477-07:00</div>
+            <div class="timestamp-info"><strong>Timestamp: </strong>2026-03-16T16:53:09.528728-07:00</div>
          </div>
-         <div class="summary-banner success">Result: Success! No issues detected.</div>
+         <div class="summary-banner warning">Result: Possible Incompatibilities. Evaluate
+            warnings and address potential interoperability issues.</div>
          <div class="controls">
             <div class="filter-controls"><span class="section-title">Validation Report</span><label for="severity-filter">Filter by severity:</label><select id="severity-filter">
                   <option value="all">All</option>
@@ -506,7 +507,162 @@ background-color: var(--color-highlight-bg) !important;
                      <th>Element Value</th>
                   </tr>
                </thead>
-               <tbody></tbody>
+               <tbody>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "bar" for quantity class "pressure". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/pressure".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Tip Resistance</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[2]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[2]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "bar" for quantity class "pressure". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/pressure".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Corrected Tip Resistance</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[3]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[3]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "bar" for quantity class "pressure". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/pressure".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Sleeve Friction</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[4]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[4]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "kPa" for quantity class "pressure". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/pressure".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Pore Water Pressure (U2)</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[1]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "%" for quantity class "dimensionless". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/dimensionless".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Friction Ratio</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "kPa" for quantity class "pressure". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/pressure".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Equilibrium Pore Water Pressure (U0)</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[2]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[2]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "m" for quantity class "length". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/length".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Water Depth</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[3]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[3]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "kPa" for quantity class "pressure". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/pressure".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">U50</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[4]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[4]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "s" for quantity class "time". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/time".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">T50</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[2]/Test[1]/outcome[1]/TestResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[5]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "cm2/min" for quantity class "area per time". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/area%20per%20time".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Coefficient of Horizontal Consolidation (Ch)</pre>
+                     </td>
+                  </tr>
+                  <tr class="warning">
+                     <td><span class="severity-badge warning">WARNING</span></td>
+                     <td>
+                        <div class="tooltip"><span class="xpath-link" data-xpath="/Diggs[1]/measurement[2]/Test[1]/procedure[1]/PorePressureDissipationTest[1]/dissipationTimeSeries[1]/TemporalResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]"> View Element </span><span class="tooltiptext">/Diggs[1]/measurement[2]/Test[1]/procedure[1]/PorePressureDissipationTest[1]/dissipationTimeSeries[1]/TemporalResult[1]/results[1]/ResultSet[1]/parameters[1]/PropertyParameters[1]/properties[1]/Property[1]/propertyClass[1]</span></div>
+                     </td>
+                     <td>Dictionary Validation</td>
+                     <td>
+                        <pre class="source-xml">Check 12:
+Unable to validate unit of measure "kPa" for quantity class "pressure". The units API could not be accessed at "https://diggs.geosetta.org/api/units/classes/pressure".</pre>
+                     </td>
+                     <td>
+                        <pre class="source-xml">Pore Water Pressure (U2)</pre>
+                     </td>
+                  </tr>
+               </tbody>
             </table>
          </div>
          <div class="editor-container">
@@ -589,10 +745,10 @@ background-color: var(--color-highlight-bg) !important;
                         &lt;LinearReferencingMethod gml:id="md_m"&gt;
                             &lt;gml:description&gt;Absolute measured depth from top of borehole or sounding in meters. Measurements are cumulative 3D distance along the borehole/sounding centerline from the first coordinate (typically top of hole or rig datum) proceeding downward through the hole. Suitable for vertical, slanted, and deviated boreholes and soundings.&lt;/gml:description&gt;
                             &lt;gml:identifier codeSpace="https://diggsml.org/def/authorities.xml#DIGGS"&gt;https://diggsml.org/def/crs/DIGGS/0.1/lrm.xml#md_m&lt;/gml:identifier&gt;
-                            &lt;diggs:name&gt;trueMeters&lt;/diggs:name&gt;
-                            &lt;diggs:type&gt;absolute&lt;/diggs:type&gt;
-                            &lt;diggs:units&gt;m&lt;/diggs:units&gt;
-                            &lt;diggs:positiveDirection&gt;downward&lt;/diggs:positiveDirection&gt;
+                            &lt;name&gt;trueMeters&lt;/name&gt;
+                            &lt;type&gt;absolute&lt;/type&gt;
+                            &lt;units&gt;m&lt;/units&gt;
+                            &lt;positiveDirection&gt;downward&lt;/positiveDirection&gt;
                         &lt;/LinearReferencingMethod&gt;
                     &lt;/lrm&gt;
                 &lt;/LinearSpatialReferenceSystem&gt;
@@ -2230,9 +2386,12 @@ background-color: var(--color-highlight-bg) !important;
                             &lt;internalIdentifier codeSpace="conetec"&gt;571:T1500F15U500&lt;/internalIdentifier&gt;
                         &lt;/Equipment&gt;
                     &lt;/testProcedureEquipment&gt;
-                    &lt;netAreaRatioCorrection&gt;0.8&lt;/netAreaRatioCorrection&gt;
-                    &lt;tipArea uom="cm2"&gt;15.0&lt;/tipArea&gt;
-                &lt;/StaticConePenetrationTest&gt;
+                    &lt;penetrometerType&gt;piezocone&lt;/penetrometerType&gt;
+                    &lt;distanceTipToSleeve uom="cm"&gt;15&lt;/distanceTipToSleeve&gt;
+                    &lt;diggs:netAreaRatioCorrection&gt;0.8&lt;/diggs:netAreaRatioCorrection&gt;
+                    &lt;penetrationRate uom="cm/s"&gt;1&lt;/penetrationRate&gt;
+                    &lt;tipArea uom="cm2"&gt;15&lt;/tipArea&gt;
+                    &lt;/StaticConePenetrationTest&gt;
             &lt;/procedure&gt;
         &lt;/Test&gt;
     &lt;/measurement&gt;
@@ -2261,14 +2420,14 @@ background-color: var(--color-highlight-bg) !important;
                                 &lt;PropertyParameters gml:id="ppd1pp"&gt;
                                     &lt;properties&gt;
                                         &lt;Property index="1" gml:id="ppd1-p1"&gt;
-                                            &lt;propertyName&gt;Ueq (kPa)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;Ueq&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#pore_pressure_equil"&gt;Equilibrium Pore Water Pressure (U0)&lt;/propertyClass&gt;
                                             &lt;uom&gt;kPa&lt;/uom&gt;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                         &lt;Property index="2" gml:id="ppd1-p2"&gt;
-                                            &lt;propertyName&gt;Apparent WT (m)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;Apparent WT&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#water_depth"&gt;Water Depth&lt;/propertyClass&gt;
                                             &lt;uom&gt;m&lt;/uom&gt;
@@ -2276,21 +2435,21 @@ background-color: var(--color-highlight-bg) !important;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                         &lt;Property index="3" gml:id="ppd1-p3"&gt;
-                                            &lt;propertyName&gt;U50 (kPa)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;u50&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#u50"&gt;U50&lt;/propertyClass&gt;
                                             &lt;uom&gt;kPa&lt;/uom&gt;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                         &lt;Property index="4" gml:id="ppd1-p4"&gt;
-                                            &lt;propertyName&gt;t50 (s)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;t50&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#t50"&gt;T50&lt;/propertyClass&gt;
                                             &lt;uom&gt;s&lt;/uom&gt;
                                             &lt;reportable&gt;true&lt;/reportable&gt;
                                         &lt;/Property&gt;
                                         &lt;Property index="5" gml:id="ppd1-p5"&gt;
-                                            &lt;propertyName&gt;ch (cm2/min)&lt;/propertyName&gt;
+                                            &lt;propertyName&gt;ch&lt;/propertyName&gt;
                                             &lt;typeData&gt;double&lt;/typeData&gt;
                                             &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#coef_consolidation_horiz"&gt;Coefficient of Horizontal Consolidation (Ch)&lt;/propertyClass&gt;
                                             &lt;uom&gt;cm2/min&lt;/uom&gt;
@@ -2362,7 +2521,7 @@ background-color: var(--color-highlight-bg) !important;
                                         &lt;PropertyParameters gml:id="ppd1-pp1"&gt;
                                             &lt;properties&gt;
                                                 &lt;Property index="1" gml:id="ppd1-pp1-p1"&gt;
-                                                  &lt;propertyName&gt;u (kPa)&lt;/propertyName&gt;
+                                                  &lt;propertyName&gt;u&lt;/propertyName&gt;
                                                   &lt;typeData&gt;double&lt;/typeData&gt;
                                                     &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml#pore_pressure_u2"&gt;Pore Water Pressure (U2)&lt;/propertyClass&gt;
                                                   &lt;uom&gt;kPa&lt;/uom&gt;
