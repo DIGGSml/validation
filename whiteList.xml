@@ -60,6 +60,14 @@
     </resource>
 
     <!-- ***************************************************************************** -->
+    
+    
+    <!-- *********  Patterns to access raw.github access resource ********** -->
+    
+    <resource>
+        <pattern>https://raw.githubusercontent.com/DIGGSml/</pattern>
+        <description>Raw Github content (eg. schema-dev branches</description>
+    </resource>
 
     <!-- Example pattern to add other resource
         
