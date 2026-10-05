@@ -649,7 +649,15 @@
                         
                     </xsl:when>
                     <xsl:otherwise>
-                        <!-- No error: property is unitless and has no uom element -->
+                        <!-- No error: property is unitless and has no uom element - continue to Step 14 -->
+                        <xsl:apply-templates select="." mode="step14">
+                            <xsl:with-param name="elementPath" select="$elementPath"/>
+                            <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
+                            <xsl:with-param name="baseUrl" select="$baseUrl"/>
+                            <xsl:with-param name="definitionNode" select="$definitionNode"/>
+                            <xsl:with-param name="whiteList" select="$whiteList"/>
+                            <xsl:with-param name="definitionName" select="$definitionName"/>
+                        </xsl:apply-templates>
                     </xsl:otherwise>
                 </xsl:choose>
                 <!-- Terminate processing if quantityClass is empty/missing, regardless of error or not -->
@@ -938,7 +946,7 @@
         </xsl:choose>
     </xsl:template>
     
-    <!-- Placeholder for Step 14 (if needed) -->
+    <!-- Step 14: Check that the values in the dataValues of every result set using this property are terms of the code list named by the definition's valueCodeSpace -->
     <xsl:template match="*" mode="step14">
         <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
@@ -950,9 +958,71 @@
         <xsl:param name="quantityClass"/>
         <xsl:param name="definitionName"/>
         <xsl:param name="siblingUom"/>
-        
-        <!-- All validation steps have passed successfully -->
-        <!-- This template can be expanded in the future if additional validation steps are needed -->
+
+        <xsl:variable name="currentElement" select="."/>
+        <xsl:variable name="valueCodeSpace" select="normalize-space(string(($definitionNode//*[local-name() = 'valueCodeSpace'])[1]))"/>
+
+        <!-- A definition without valueCodeSpace leaves its values uncontrolled -->
+        <xsl:if test="$valueCodeSpace != ''">
+            <xsl:variable name="codeListUrl" select="if (contains($valueCodeSpace, '#')) then substring-before($valueCodeSpace, '#') else $valueCodeSpace"/>
+            <xsl:choose>
+                <xsl:when test="not(diggs:isWhitelisted($codeListUrl, $whiteList))">
+                    <xsl:sequence select="diggs:createMessage(
+                        'WARNING',
+                        $elementPath,
+                        concat('Check 13:&#10;The values of &quot;', $definitionName, '&quot; come from the code list &quot;', $codeListUrl, '&quot;, which is not on the white list of approved URL''s, so the values were not checked.'),
+                        $currentElement
+                        )"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:variable name="codeList" select="diggs:getResource($codeListUrl, base-uri(/))"/>
+                    <xsl:choose>
+                        <xsl:when test="empty($codeList)">
+                            <xsl:sequence select="diggs:createMessage(
+                                'WARNING',
+                                $elementPath,
+                                concat('Check 13:&#10;The code list &quot;', $codeListUrl, '&quot; for the values of &quot;', $definitionName, '&quot; could not be accessed, so the values were not checked.'),
+                                $currentElement
+                                )"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:variable name="allowed" as="xs:string*" select="for $id in $codeList//*[local-name() = 'Definition']/@*[local-name() = 'id'] return string($id)"/>
+                            <xsl:variable name="property" select=".."/>
+                            <xsl:variable name="column" select="xs:integer($property/@index)"/>
+                            <xsl:variable name="nullText" select="normalize-space(string(($property/*[local-name() = 'nullValue'])[1]))"/>
+                            <xsl:variable name="parametersObject" select="ancestor::*[local-name() = 'PropertyParameters'][1]"/>
+                            <xsl:variable name="parametersId" select="string($parametersObject/@*[local-name() = 'id'])"/>
+                            <!-- The result set that contains the parameters, and every result set that cites them by xlink:href -->
+                            <xsl:variable name="resultSets" select="($parametersObject/ancestor::*[local-name() = 'ResultSet'][1],
+                                if ($parametersId != '') then //*[local-name() = 'ResultSet'][*[local-name() = 'parameters']/@*[local-name() = 'href'] = concat('#', $parametersId)] else ())"/>
+                            <xsl:variable name="values" as="xs:string*">
+                                <xsl:for-each select="$resultSets/*[local-name() = 'dataValues']">
+                                    <xsl:variable name="cs" select="if (@cs != '') then string(@cs) else ','"/>
+                                    <xsl:variable name="ts" select="if (@ts != '') then string(@ts) else ' '"/>
+                                    <xsl:variable name="csPattern" select="replace($cs, '([\\.|^$?*+()\[\]{}])', '\\$1')"/>
+                                    <xsl:variable name="tsPattern" select="if (normalize-space($ts) = '') then '\s+' else replace($ts, '([\\.|^$?*+()\[\]{}])', '\\$1')"/>
+                                    <xsl:for-each select="tokenize(normalize-space(string(.)), $tsPattern)[. != '']">
+                                        <xsl:variable name="fields" select="tokenize(., $csPattern)"/>
+                                        <xsl:if test="count($fields) ge $column">
+                                            <xsl:sequence select="normalize-space($fields[$column])"/>
+                                        </xsl:if>
+                                    </xsl:for-each>
+                                </xsl:for-each>
+                            </xsl:variable>
+                            <xsl:variable name="invalid" as="xs:string*" select="distinct-values($values[. != ''][. != $nullText][not(. = $allowed)])"/>
+                            <xsl:if test="exists($invalid)">
+                                <xsl:sequence select="diggs:createMessage(
+                                    'ERROR',
+                                    $elementPath,
+                                    concat('Check 13:&#10;', count($invalid), ' value(s) of &quot;', $definitionName, '&quot; are not terms of the code list &quot;', $codeListUrl, '&quot;: ', string-join(for $v in subsequence($invalid, 1, 5) return concat('&quot;', $v, '&quot;'), ', '), if (count($invalid) gt 5) then ' ...' else '', '. Valid terms: ', string-join($allowed, ', '), '.'),
+                                    $currentElement
+                                    )"/>
+                            </xsl:if>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
     </xsl:template>
     
 </xsl:stylesheet>
