@@ -61,6 +61,9 @@
     <!-- Import coordinate-validation.xsl -->
     <xsl:import href="modules/coordinate-validation.xsl"/>
     
+    <!-- Import deprecation-validation module -->
+    <xsl:import href="modules/deprecation-validation.xsl"/>
+    
     <!-- Import other modules here once they are developed -->
     
     <!-- Main template -->
@@ -123,6 +126,11 @@
                     
                     <!-- Run coordinate validation -->
                     <xsl:call-template name="coordinateValidation">
+                        <xsl:with-param name="sourceDocument" select="$originalXml"/>
+                    </xsl:call-template>
+                        
+                    <!-- Run deprecation validation (reads the DIGGS deprecation registry) -->
+                    <xsl:call-template name="deprecationValidation">
                         <xsl:with-param name="sourceDocument" select="$originalXml"/>
                     </xsl:call-template>
                         

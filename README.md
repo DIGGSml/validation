@@ -108,6 +108,10 @@ This module checks that the srsName returns a valid GML formatted coordinate ref
 
 This module evaluates the coordinates reported in &lt;gml:pos&gt; and &lt;gml:posList&gt; are consistent with the srsDimension. For example, for srsDimension of 3, the  &lt;gml:pos&gt; element should contain exactly 3 coordinates, whereas &lt;gml:posList&gt; must contain a minimu of 6 coordinates in multiples of 3. ***COMPLETED***
 
+#### Deprecation validation
+
+Reports every place in the file where something deprecated or removed from the DIGGS schema is used. It reads the DIGGS deprecation registry (`deprecated/DeprecationRegistry.xml` in the schema, generated from the schema itself) and evaluates each entry's instance XPath against the file. Deprecated items are reported as a WARNING that says since which release the item is deprecated and what to use instead; items removed from the schema are reported as an ERROR that says in which release they were removed and what replaced them. Where the registry marks an entry `exact="false"`, a live use of the same names shares the path, so the message says the match may be a valid use of the name. The registry is read from the first available location in the `deprecationRegistryUri` stylesheet parameter (default: the schema-dev site, then the schema-dev repository on GitHub); override the parameter to use a local copy or another release. If no location can be read the module reports one INFO message and checks nothing. ***COMPLETED***
+
 
 #### xlink:href validation
 
