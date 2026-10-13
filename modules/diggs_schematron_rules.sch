@@ -163,4 +163,35 @@
     </rule>
     
   </pattern>
+
+  <!-- Remedial designs and the non-conformances they respond to (AbstractProgramDesignType/nonConformanceRef).
+       Local-name tests are used so the rules fire on any DIGGS 3.x namespace. -->
+  <pattern id="NC-ref-placement-errors">
+    <rule context="*[local-name() = 'nonConformanceRef'][starts-with(@xlink:href, '#')]" role="error">
+      <let name="target" value="(//*[@gml:id = substring(current()/@xlink:href, 2)])[1]"/>
+      <let name="designId" value="string(../@gml:id)"/>
+      <assert test="exists($target)">nonConformanceRef '<value-of select="@xlink:href"/>' does not resolve to an object in this file.</assert>
+      <assert test="empty($target) or local-name($target) = 'NonConformance'">nonConformanceRef '<value-of select="@xlink:href"/>' must cite a NonConformance, but it cites a <value-of select="local-name($target)"/>.</assert>
+      <!-- A design cannot respond to a finding on work built to that same design: the design precedes the work. -->
+      <assert test="empty($target) or $designId = '' or not(
+          some $f in $target/*[local-name() = 'samplingFeatureRef']/@xlink:href
+          satisfies (//*[@gml:id = substring($f, 2)])[1]//*[local-name() = 'programDesignRef'][@xlink:href = concat('#', $designId)])">nonConformanceRef '<value-of select="@xlink:href"/>' is on design '<value-of select="$designId"/>', which the non-conforming work cited by that NonConformance was built to. A remedial design responds to a finding made after its predecessor was built; this looks like a reference on an original design.</assert>
+    </rule>
+  </pattern>
+
+  <pattern id="NC-ref-disposition-warnings">
+    <rule context="*[local-name() = 'nonConformanceRef'][starts-with(@xlink:href, '#')]" role="warning">
+      <let name="target" value="(//*[@gml:id = substring(current()/@xlink:href, 2)])[1]"/>
+      <let name="code" value="substring-after(string($target/*[local-name() = 'disposition']/@codeSpace), '#')"/>
+      <assert test="not($code = ('accept_as_is', 'reject'))">nonConformanceRef '<value-of select="@xlink:href"/>' cites a NonConformance whose disposition is '<value-of select="$code"/>', which does not call for a remedial design.</assert>
+    </rule>
+  </pattern>
+
+  <pattern id="NC-disposition-needs-design">
+    <rule context="*[local-name() = 'NonConformance'][@gml:id]" role="warning">
+      <let name="id" value="string(@gml:id)"/>
+      <let name="code" value="substring-after(string(*[local-name() = 'disposition']/@codeSpace), '#')"/>
+      <assert test="not($code = ('repair', 'rework', 'replace', 'redesign')) or exists(//*[local-name() = 'nonConformanceRef'][@xlink:href = concat('#', $id)])">NonConformance '<value-of select="$id"/>' has disposition '<value-of select="$code"/>', but no design cites it through nonConformanceRef.</assert>
+    </rule>
+  </pattern>
 </schema>
