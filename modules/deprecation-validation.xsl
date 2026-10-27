@@ -16,6 +16,8 @@
 
            deprecated  ->  WARNING   still valid; says since which release and what to use instead
            removed     ->  ERROR     no longer in the schema; says in which release it went and what replaced it
+           retyped     ->  ERROR     still in the schema but with another type; the match is the form the older release
+                                     accepted, and the message says what the element holds now
 
          An entry flagged exact="false" is matched by element names only and a live use of the same names
          shares the path, so the message says the match may be a valid use.
@@ -73,7 +75,7 @@
                         </xsl:variable>
                         <xsl:for-each select="$matches">
                             <xsl:sequence select="diggs:createMessage(
-                                if ($entry/@status = 'removed') then 'ERROR' else 'WARNING',
+                                if ($entry/@status = ('removed', 'retyped')) then 'ERROR' else 'WARNING',
                                 diggs:deprecationPath(.),
                                 diggs:deprecationText($entry),
                                 .[. instance of element()])"/>
@@ -117,7 +119,12 @@
             else ''"/>
 
         <xsl:sequence select="
-            if ($entry/@status = 'removed') then
+            if ($entry/@status = 'retyped') then
+                concat($what, ' changed type in ', $entry/@changedIn,
+                    if ($entry/@replacedBy) then concat('; use ', $instead, '.')
+                    else concat('. ', $note),
+                    $exactness)
+            else if ($entry/@status = 'removed') then
                 concat($what, ' was removed in ', $entry/@removedIn,
                     if ($entry/@replacedBy) then concat('; use ', $instead, '.')
                     else concat('. ', $note))
