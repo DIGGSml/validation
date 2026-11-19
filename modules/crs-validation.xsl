@@ -19,12 +19,18 @@
             <xsl:variable name="elementsWithSrsName" select="
                 $sourceDocument//*[@*[local-name() = 'srsName']]"/>
             
-            <!-- Process each element with srsName attribute -->
+            <!-- Check each distinct srsName value once; a value is typically repeated on many elements -->
+            <xsl:variable name="crsResults" as="map(xs:string, item()*)" select="
+                map:merge(
+                    for $value in distinct-values($elementsWithSrsName/@*[local-name() = 'srsName'] ! string(.))
+                    return map:entry($value, diggs:isCRS($value, $sourceDocument, $whiteList))
+                )"/>
+            
+            <!-- Report on each element with srsName attribute, in document order -->
             <xsl:for-each select="$elementsWithSrsName">
                 <xsl:call-template name="validateSrsName">
                     <xsl:with-param name="element" select="."/>
-                    <xsl:with-param name="sourceDocument" select="$sourceDocument"/>
-                    <xsl:with-param name="whiteList" select="$whiteList"/>
+                    <xsl:with-param name="crsResults" select="$crsResults"/>
                 </xsl:call-template>
             </xsl:for-each>
         </messageSet>
@@ -33,15 +39,14 @@
     <!-- Template to validate individual srsName attribute -->
     <xsl:template name="validateSrsName">
         <xsl:param name="element"/>
-        <xsl:param name="sourceDocument"/>
-        <xsl:param name="whiteList" as="node()?"/>
+        <xsl:param name="crsResults" as="map(xs:string, item()*)"/>
         
         <xsl:variable name="elementName" select="local-name($element)"/>
         <xsl:variable name="elementPath" select="diggs:get-path($element)"/>
         <xsl:variable name="srsNameValue" select="$element/@*[local-name() = 'srsName']"/>
         
-        <!-- Call isCRS function to validate the srsName value -->
-        <xsl:variable name="crsResult" select="diggs:isCRS($srsNameValue, $sourceDocument, $whiteList)"/>
+        <!-- Result of the isCRS check for this srsName value -->
+        <xsl:variable name="crsResult" select="map:get($crsResults, string($srsNameValue))"/>
         
         <!-- Extract CRS definition and message from the result -->
         <xsl:variable name="crsDefinition" select="$crsResult[1]"/>

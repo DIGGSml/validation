@@ -612,7 +612,7 @@
         </xsl:if>
     </xsl:function>
     <!-- Function to access and validate CRS definitions-->
-    <xsl:function name="diggs:isCRS" as="item()*">
+    <xsl:function name="diggs:isCRS" as="item()*" cache="yes">
         <xsl:param name="inputURI" as="xs:string"/>
         <xsl:param name="sourceDocument" as="node()"/>
         <xsl:param name="whiteList" as="node()"/>
