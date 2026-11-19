@@ -464,9 +464,13 @@
                 </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
+                <!-- A procedure given by reference (xlink:href to a procedure object elsewhere in the document)
+                     satisfies a condition on the procedure type if the object it points to does. -->
+                <xsl:variable name="effectiveXPath" select="diggs:followProcedureReference($xpathExpression)"/>
+                
                 <!-- For relative paths, convert to local-name() based expressions for reliability -->
                 <xsl:variable name="localizedXPath">
-                    <xsl:analyze-string select="$xpathExpression" regex="(ancestor::|parent::|child::|//|/)?([a-zA-Z0-9_]+):([a-zA-Z0-9_]+)">
+                    <xsl:analyze-string select="$effectiveXPath" regex="(ancestor::|parent::|child::|//|/)?([a-zA-Z0-9_]+):([a-zA-Z0-9_]+)">
                         <xsl:matching-substring>
                             <xsl:value-of select="regex-group(1)"/>
                             <xsl:text>*[local-name()='</xsl:text>
@@ -532,6 +536,34 @@
                         </xsl:try>
                     </xsl:catch>
                 </xsl:try>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    
+    <!-- 
+    Function to widen a conditionalElementXpath of the form P//diggs:procedure/X[...] so that it also accepts a
+    procedure given by reference.
+    Parameters:
+      - xpath: the conditionalElementXpath
+    Returns:
+      - (P//diggs:procedure/X...) | (the objects that the xlink:href of P//diggs:procedure[@xlink:href] point to,
+        restricted to X...); the xpath unchanged if it has no procedure step.
+  -->
+    <xsl:function name="diggs:followProcedureReference" as="xs:string">
+        <xsl:param name="xpath" as="xs:string"/>
+        
+        <xsl:variable name="parts" select="analyze-string($xpath, '^(.*?//diggs:procedure)/([A-Za-z0-9_]+:[A-Za-z0-9_]+.*)$', 's')"/>
+        <xsl:variable name="prefix" select="string($parts//*:group[@nr = 1])"/>
+        <xsl:variable name="rest" select="string($parts//*:group[@nr = 2])"/>
+        <xsl:choose>
+            <xsl:when test="$prefix != '' and $rest != ''">
+                <xsl:sequence select="concat(
+                    '(', $xpath, ') | (',
+                    $prefix, '[@xlink:href]/(for $h in substring-after(@xlink:href, ''#'') return root(.)//*[@gml:id = $h])',
+                    '/self::', $rest, ')')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$xpath"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
