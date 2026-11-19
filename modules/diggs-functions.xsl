@@ -816,7 +816,26 @@
             </xsl:choose>
         </xsl:variable>
         
+        <!-- A compound CRS URL joins numbered components (1=...&2=...) with & (&amp; in XML) or %26 (already
+             normalized to & above). The OGC server accepts other connectors and returns a one-component
+             CompoundCRS, so the form is checked here before the request is sent. -->
+        <xsl:variable name="compoundParams" select="
+            if (contains($baseUrl, '/def/crs-compound?'))
+            then tokenize(substring-after($baseUrl, '/def/crs-compound?'), '&amp;')
+            else ()"/>
+        <xsl:variable name="isMalformedCompound" select="
+            contains($baseUrl, '/def/crs-compound?')
+            and not(
+                count($compoundParams) ge 2
+                and (every $i in 1 to count($compoundParams) satisfies
+                        matches($compoundParams[$i], concat('^', $i, '=https?://[^?&amp;=\s]+$')))
+            )"/>
+        
         <xsl:choose>
+            <xsl:when test="$isMalformedCompound">
+                <crsDefinition></crsDefinition>
+                <message><xsl:value-of select="concat('The CRS URL &quot;', $baseUrl, '&quot; has an improperly encoded connector between its components. A compound CRS URL has two or more components, numbered 1=, 2=, ..., each a CRS URL, joined by &quot;&amp;&quot; (written &quot;&amp;amp;&quot; in XML) or &quot;%26&quot;.')"/></message>
+            </xsl:when>
             <xsl:when test="$isWhitelisted = false()">
                 <crsDefinition></crsDefinition>
                 <message><xsl:value-of select="concat('The srsName reference: &quot;', $baseUrl, '&quot; is either malformed or is not on the white list of approved URLs. If this is a reference to a linear reference system within the DIGGS instance, be sure to preface the value with &quot;#&quot;. Otherwise, choose an OGC CRS definition or add this URL to a whiteList.xml parameter file and validate locally.')"/></message>
