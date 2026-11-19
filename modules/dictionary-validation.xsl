@@ -420,14 +420,10 @@
             </xsl:when>
             <xsl:otherwise>
                 <!-- Check each XPath -->
-                <xsl:variable name="matchResults" as="xs:boolean*">
-                     <xsl:for-each select="$conditionalXPaths">
-                         <xsl:variable name="xpath" select="string(.)"/>
-                        <xsl:sequence select="diggs:evaluateXPathMatch($documentRoot, $xpath, $currentElement, true())"/>
-                    </xsl:for-each>
-                </xsl:variable>
-                
-                <xsl:variable name="isValidLocation" select="some $result in $matchResults satisfies $result"/>
+                <!-- Stops at the first condition that matches -->
+                <xsl:variable name="isValidLocation" as="xs:boolean" select="
+                    some $xpath in $conditionalXPaths satisfies
+                    diggs:evaluateXPathMatch($documentRoot, string($xpath), $currentElement, true())"/>
                 
                 <xsl:choose>
                     <!-- Failure case: conditionalElementXpaths exist but none match -->
