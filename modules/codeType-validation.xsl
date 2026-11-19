@@ -49,7 +49,6 @@
                             <!-- Step 4: Check each selected element -->
                             <xsl:for-each select="$selectedElements">
                                 <xsl:variable name="currentElement" select="."/>
-                                <xsl:variable name="elementPath" select="diggs:get-path(.)"/>
                                 <xsl:variable name="elementName" select="name()"/>
                                 <xsl:variable name="codeSpaceValue" select="@codeSpace"/>
                                 <xsl:variable name="codeSpaceDict" select="
@@ -73,7 +72,7 @@
                                         <xsl:sequence select="
                                                 diggs:createMessage(
                                                 'ERROR',
-                                                $elementPath,
+                                                diggs:get-path(.),
                                                 concat('&lt;', $elementName, '&gt; should reference a DIGGS Standard code list dictionary using the codeSpace attribute. Use one of these dictionaries to maximize interoperability:', $dictionaryList),
                                                 $currentElement
                                                 )"/>
@@ -97,7 +96,7 @@
                                                 <xsl:sequence select="
                                                         diggs:createMessage(
                                                         'WARNING',
-                                                        $elementPath,
+                                                        diggs:get-path(.),
                                                         concat('&lt;', $elementName, '&gt; references a custom dictionary (&quot;', $codeSpaceDict, '&quot;) which may limit interoperability. If possible, use a DIGGS Standard code list dictionary:', $dictionaryList),
                                                         $currentElement
                                                         )"

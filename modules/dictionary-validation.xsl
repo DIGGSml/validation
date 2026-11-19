@@ -33,7 +33,6 @@
         <xsl:variable name="codeSpaceValue" select="@codeSpace"/>
         <xsl:variable name="elementName" select="name()"/>
         <xsl:variable name="elementValue" select="."/>
-        <xsl:variable name="elementPath" select="diggs:get-path(.)"/>
         
         <xsl:variable name="isValidUrl" as="xs:boolean" select="
             (starts-with($codeSpaceValue, 'http:') or
@@ -49,7 +48,7 @@
                 <!-- Using the helper function for message creation -->
                 <xsl:sequence select="diggs:createMessage(
                     'INFO',
-                    $elementPath,
+                    diggs:get-path(.),
                     concat('Check 1:&#10;The value of ', $elementName, ' cannot be validated against a code list dictionary. If &quot;', $codeSpaceValue, '&quot; references an authority, be sure that the value &quot;', $elementValue, '&quot; is a valid term controlled by ', $codeSpaceValue, '.'),
                     $currentElement
                 )"/>
@@ -58,7 +57,6 @@
             <xsl:otherwise>
                 <!-- Step 1 passes - continue to Step 2 -->
                 <xsl:apply-templates select="." mode="step2">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="whiteList" select="$whiteList"/>
                 </xsl:apply-templates>
@@ -68,7 +66,6 @@
     
     <!-- Step 2: Check if codeSpace URL passes whitelist check -->
     <xsl:template match="*" mode="step2">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="whiteList" as="node()*"/>
         
@@ -82,7 +79,7 @@
                 <!-- Using the helper function for message creation -->
                 <xsl:sequence select="diggs:createMessage(
                     'WARNING',
-                    $elementPath,
+                    diggs:get-path(.),
                     concat('Check 2:&#10;The code list dictionary &quot;', $baseUrl, '&quot; is not on the white list of approved URL''s. Choose a DIGGS standard code list dictionary or add this URL to a whiteList.xml parameter file and validate locally.'),
                     $currentElement
                 )"/>
@@ -91,7 +88,6 @@
             <xsl:otherwise>
                 <!-- Step 2 passes - continue to Step 3 -->
                 <xsl:apply-templates select="." mode="step3">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="whiteList" select="$whiteList"/>
@@ -102,7 +98,6 @@
     
     <!-- Step 3: Check if dictionary file can be accessed -->
     <xsl:template match="*" mode="step3">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="whiteList" as="node()*"/>
@@ -117,7 +112,7 @@
                 <!-- Using the helper function for message creation -->
                 <xsl:sequence select="diggs:createMessage(
                     'WARNING',
-                    $elementPath,
+                    diggs:get-path(.),
                     concat('Check 3:&#10;The resource at &quot;', $baseUrl, '&quot; could not be accessed.'),
                     $currentElement
                 )"/>
@@ -126,7 +121,6 @@
             <xsl:otherwise>
                 <!-- Step 3 passes - continue to Step 4 -->
                 <xsl:apply-templates select="." mode="step4">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="dictionaryResource" select="$dictionaryResource"/>
@@ -138,7 +132,6 @@
     
     <!-- Step 4: Check that the resource is a dictionary file -->
     <xsl:template match="*" mode="step4">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="dictionaryResource"/>
@@ -154,7 +147,7 @@
                 <!-- Using the helper function for message creation -->
                 <xsl:sequence select="diggs:createMessage(
                     'ERROR',
-                    $elementPath,
+                    diggs:get-path(.),
                     concat('Check 4:&#10;The resource at &quot;', $baseUrl, '&quot; &#10; is not a DIGGS code list dictionary.'),
                     $currentElement
                     )"/>
@@ -163,7 +156,6 @@
             <xsl:otherwise>
                 <!-- Step 4 passes - continue to Step 5 -->
                 <xsl:apply-templates select="." mode="step5">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="dictionaryResource" select="$dictionaryResource"/>
@@ -175,7 +167,6 @@
     
     <!-- Step 5: Check if the codeSpace returns returns a definition object from the dictionary -->
     <xsl:template match="*" mode="step5">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="dictionaryResource"/>
@@ -196,7 +187,7 @@
                 <!-- Using the helper function for message creation -->
                 <xsl:sequence select="diggs:createMessage(
                     'ERROR',
-                    $elementPath,
+                    diggs:get-path(.),
                     concat('Check 5:&#10;Code &quot;', $fragment, '&quot; is not found in the code list dictionary at &quot;', $baseUrl, '&quot;.'),
                     $currentElement
                     )"/>
@@ -205,7 +196,6 @@
             <xsl:otherwise>
                 <!-- Step 5 passes - continue to Step 6 -->
                 <xsl:apply-templates select="." mode="step6">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -219,7 +209,6 @@
     
     <!-- Step 6: Check if any sourceElementXpath elements will match current element -->
     <xsl:template match="*" mode="step6">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -230,20 +219,17 @@
         <xsl:variable name="currentElement" select="."/>
         <xsl:variable name="elementName" select="local-name()"/>
         <xsl:variable name="elementValue" select="."/>
-        <xsl:variable name="currentPath" select="$elementPath"/>
+        <xsl:variable name="currentPath" select="diggs:get-path(.)"/>
         <xsl:variable name="documentRoot" select="root(.)"/>
         
         <!-- Get all sourceElementXpath values from the definition -->
         <xsl:variable name="sourceXPaths" select="$definitionNode/*[local-name()='occurrences']/*[local-name()='Occurrence']/*[local-name()='sourceElementXpath']"/>
         
         <!-- Check if current element matches any of the XPath expressions -->
-        <xsl:variable name="matchResults" as="xs:boolean*">
-            <xsl:for-each select="$sourceXPaths">
-                <xsl:sequence select="diggs:evaluateXPathMatch($documentRoot, string(.), $currentElement, false())"/>
-            </xsl:for-each>
-        </xsl:variable>
-        
-        <xsl:variable name="isValidLocation" select="some $result in $matchResults satisfies $result"/>
+        <!-- Stops at the first path that matches -->
+        <xsl:variable name="isValidLocation" as="xs:boolean" select="
+            some $xpath in $sourceXPaths satisfies
+            diggs:evaluateXPathMatch($documentRoot, string($xpath), $currentElement, false())"/>
         
         <!-- Format the list of allowed XPaths with proper indentation -->
         <xsl:variable name="formattedXPaths">
@@ -273,7 +259,7 @@
                 <!-- Call the helper function directly -->
                 <xsl:sequence select="diggs:createMessage(
                     'ERROR',
-                    $elementPath,
+                    diggs:get-path(.),
                     $errorMessage,
                     $currentElement
                     )"/>
@@ -283,7 +269,6 @@
             <xsl:otherwise>
                 <!-- Step 6 passes - continue to Step 7 -->
                 <xsl:apply-templates select="." mode="step7">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -297,7 +282,6 @@
     
     <!-- Step 7: Check if the current element's value matches any gml:name in the definition -->
     <xsl:template match="*" mode="step7">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -315,7 +299,6 @@
             <xsl:when test="$elementLocalName = 'propertyClass'">
                 <!-- Bypass the test for propertyClass and continue to Step 8 -->
                 <xsl:apply-templates select="." mode="step8">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -337,7 +320,7 @@
                         <!-- Using the helper function for message creation -->
                         <xsl:sequence select="diggs:createMessage(
                             'INFO',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 7:&#10;The value &quot;', $elementValue, '&quot; in &lt;', $elementName, 
                             '&gt; does not match any of the names assigned to its definition in &quot;', 
                             $baseUrl, '&quot;. Be sure that &quot;', $elementValue, '&quot; is a synonymous term.'),
@@ -348,7 +331,6 @@
                     <xsl:otherwise>
                         <!-- Step 7 passes - continue to Step 8 -->
                         <xsl:apply-templates select="." mode="step8">
-                            <xsl:with-param name="elementPath" select="$elementPath"/>
                             <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                             <xsl:with-param name="baseUrl" select="$baseUrl"/>
                             <xsl:with-param name="fragment" select="$fragment"/>
@@ -364,7 +346,6 @@
     
     <!-- Step 8: Check if the element is propertyClass, if so, continue to Step 9-->
     <xsl:template match="*" mode="step8">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -379,7 +360,6 @@
             <xsl:when test="$elementLocalName = 'propertyClass'">
                 <!-- Element is propertyClass, continue to Step 9 -->
                 <xsl:apply-templates select="." mode="step9">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -397,7 +377,6 @@
     
     <!-- Step 9: Check conditionalElementXpath for propertyClass elements -->
     <xsl:template match="*" mode="step9">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -429,7 +408,6 @@
             <!-- If no procedure is found in measurement ancestor, proceed to next step -->
             <xsl:when test="$noProcedure">
                 <xsl:apply-templates select="." mode="step10">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -493,7 +471,7 @@
                         
                         <xsl:sequence select="diggs:createMessage(
                             'ERROR',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 8:&#10;The property &quot;', $definitionName, 
                             '&quot; is invalid for this type of measurement. &quot;',  $definitionName, '&quot; is only allowed in the following types of measurements: ', $targetElementNames,'.'),
                             $currentElement
@@ -502,7 +480,6 @@
                     <xsl:otherwise>
                         <!-- All checks passed, continue to next step -->
                         <xsl:apply-templates select="." mode="step10">
-                            <xsl:with-param name="elementPath" select="$elementPath"/>
                             <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                             <xsl:with-param name="baseUrl" select="$baseUrl"/>
                             <xsl:with-param name="fragment" select="$fragment"/>
@@ -520,7 +497,6 @@
     
     <!-- Step 10: Check if the sibling dataType element matches the dataType in the definition -->
     <xsl:template match="*" mode="step10">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -544,7 +520,6 @@
             <xsl:when test="empty($siblingDataType)">
                 <!-- Bypass this test and continue to step 11 if needed -->
                 <xsl:apply-templates select="." mode="step11">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -559,7 +534,6 @@
             <xsl:when test="empty($definitionDataType)">
                 <!-- Bypass this test and continue to step 11 if needed -->
                 <xsl:apply-templates select="." mode="step11">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -583,7 +557,7 @@
                         <!-- Using the helper function for message creation -->
                         <xsl:sequence select="diggs:createMessage(
                             'ERROR',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 9:&#10;The data type for &quot;', $definitionName, '&quot; should be &quot;', $definitionDataTypeValue, 
                             '&quot;, but instead is defined as &quot;', $siblingDataTypeValue,
                             '&quot;. The value of the sibling &lt;typeData&gt; element should match the data type defined in the dictionary.'),
@@ -594,7 +568,6 @@
                     <xsl:otherwise>
                         <!-- Step 10 passes - continue to Step 11 if needed -->
                         <xsl:apply-templates select="." mode="step11">
-                            <xsl:with-param name="elementPath" select="$elementPath"/>
                             <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                             <xsl:with-param name="baseUrl" select="$baseUrl"/>
                             <xsl:with-param name="fragment" select="$fragment"/>
@@ -612,7 +585,6 @@
     
     <!-- Step 11: Check if definition is unitless and handle uom element accordingly -->
     <xsl:template match="*" mode="step11">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -642,7 +614,7 @@
                         <!-- Error: uom exists but property is unitless -->
                         <xsl:sequence select="diggs:createMessage(
                             'ERROR',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 10:&#10;&quot;', $definitionName,'&quot; is defined as unitless. The sibling &lt;uom&gt; element should be removed.'),
                             $currentElement
                             )"/>
@@ -651,7 +623,6 @@
                     <xsl:otherwise>
                         <!-- No error: property is unitless and has no uom element - continue to Step 14 -->
                         <xsl:apply-templates select="." mode="step14">
-                            <xsl:with-param name="elementPath" select="$elementPath"/>
                             <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                             <xsl:with-param name="baseUrl" select="$baseUrl"/>
                             <xsl:with-param name="definitionNode" select="$definitionNode"/>
@@ -665,7 +636,6 @@
             <xsl:otherwise>
                 <!-- quantityClass exists and is not empty - continue to Step 12 -->
                 <xsl:apply-templates select="." mode="step12">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -681,7 +651,6 @@
     
     <!-- Step 12: Check if uom element exists for a property with quantityClass -->
     <xsl:template match="*" mode="step12">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -705,7 +674,7 @@
                 <!-- Error: uom is missing but property has a quantityClass -->
                 <xsl:sequence select="diggs:createMessage(
                     'ERROR',
-                    $elementPath,
+                    diggs:get-path(.),
                     concat('Check 11:&#10;&quot;', $definitionName, '&quot; requires a unit of measure. Add a &lt;uom&gt; element following this &lt;propertyClass&gt;.'),
                     $currentElement
                     )"/>
@@ -714,7 +683,6 @@
             <xsl:otherwise>
                 <!-- uom element exists as required - continue to Step 13 -->
                 <xsl:apply-templates select="." mode="step13">
-                    <xsl:with-param name="elementPath" select="$elementPath"/>
                     <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                     <xsl:with-param name="baseUrl" select="$baseUrl"/>
                     <xsl:with-param name="fragment" select="$fragment"/>
@@ -732,7 +700,6 @@
     
     <!-- Step 13: Check if the uom value is a permitted unit symbol for the quantityClass -->
     <xsl:template match="*" mode="step13">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -767,7 +734,7 @@
                     <xsl:when test="not($isUserDefined) and empty($unitsDictionary)">
                         <xsl:sequence select="diggs:createMessage(
                             'WARNING',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 12:&#10;Unable to validate unit of measure &quot;', $uomValue, '&quot; for &quot;', $definitionName,
                             '&quot;. The DIGGS units dictionary could not be accessed.'),
                             $currentElement
@@ -776,7 +743,7 @@
                     <xsl:when test="not($isUserDefined) and not(exists($unitsDictionary//*[local-name() = 'unit'][*[local-name() = 'symbol'] = $uomValue]))">
                         <xsl:sequence select="diggs:createMessage(
                             'ERROR',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 12:&#10;The unit of measure &quot;', $uomValue, '&quot; is not a symbol in the DIGGS units dictionary.'),
                             $currentElement
                             )"/>
@@ -786,7 +753,7 @@
                 <xsl:if test="$isUserDefined or exists($unitsDictionary//*[local-name() = 'unit'][*[local-name() = 'symbol'] = $uomValue])">
                     <xsl:sequence select="diggs:createMessage(
                         'INFO',
-                        $elementPath,
+                        diggs:get-path(.),
                         concat('Check 13:&#10;The property &quot;', $definitionName, '&quot; can take units from more than one quantity class, so the unit &quot;',
                         $uomValue, '&quot; was not checked against a class. Confirm that &quot;', $uomValue, '&quot; is correct for this property in its context.'),
                         $currentElement
@@ -796,7 +763,6 @@
                 <!-- Continue to Step 14 unless the unit was rejected -->
                 <xsl:if test="$isUserDefined or empty($unitsDictionary) or exists($unitsDictionary//*[local-name() = 'unit'][*[local-name() = 'symbol'] = $uomValue])">
                     <xsl:apply-templates select="." mode="step14">
-                        <xsl:with-param name="elementPath" select="$elementPath"/>
                         <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                         <xsl:with-param name="baseUrl" select="$baseUrl"/>
                         <xsl:with-param name="fragment" select="$fragment"/>
@@ -846,14 +812,13 @@
                     <xsl:when test="empty($combinedAllowedUnits)">
                         <xsl:sequence select="diggs:createMessage(
                             'WARNING',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 12:&#10;Unable to validate unit of measure &quot;', $uomValue, '&quot; for quantity class &quot;', 
                             $quantityClassValue, '&quot;. The units API could not be accessed for either &quot;force per volume&quot; or &quot;mass per volume&quot;.'),
                             $currentElement
                             )"/>
                         <!-- Continue to Step 14 despite the warning -->
                         <xsl:apply-templates select="." mode="step14">
-                            <xsl:with-param name="elementPath" select="$elementPath"/>
                             <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                             <xsl:with-param name="baseUrl" select="$baseUrl"/>
                             <xsl:with-param name="fragment" select="$fragment"/>
@@ -883,7 +848,7 @@
                         <!-- Error: uom value is not in either list of allowed units -->
                         <xsl:sequence select="diggs:createMessage(
                             'ERROR',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 12:&#10;The unit of measure &quot;', $uomValue, '&quot; is not valid for quantity class &quot;', 
                             $quantityClassValue, '&quot;. Valid units include: ', $formattedAllowedUnits, '.'),
                             $currentElement
@@ -893,7 +858,6 @@
                     <xsl:otherwise>
                         <!-- uom value is in one of the lists of allowed units - continue to Step 14 -->
                         <xsl:apply-templates select="." mode="step14">
-                            <xsl:with-param name="elementPath" select="$elementPath"/>
                             <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                             <xsl:with-param name="baseUrl" select="$baseUrl"/>
                             <xsl:with-param name="fragment" select="$fragment"/>
@@ -938,14 +902,13 @@
                     <xsl:when test="empty($allowedUnits)">
                         <xsl:sequence select="diggs:createMessage(
                             'WARNING',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 12:&#10;Unable to validate unit of measure &quot;', $uomValue, '&quot; for quantity class &quot;', 
                             $quantityClassValue, '&quot;. The units API could not be accessed at &quot;', $apiUrl, '&quot;.'),
                             $currentElement
                             )"/>
                         <!-- Continue to Step 14 despite the warning -->
                         <xsl:apply-templates select="." mode="step14">
-                            <xsl:with-param name="elementPath" select="$elementPath"/>
                             <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                             <xsl:with-param name="baseUrl" select="$baseUrl"/>
                             <xsl:with-param name="fragment" select="$fragment"/>
@@ -975,7 +938,7 @@
                         <!-- Error: uom value is not in the list of allowed units -->
                         <xsl:sequence select="diggs:createMessage(
                             'ERROR',
-                            $elementPath,
+                            diggs:get-path(.),
                             concat('Check 12:&#10;The unit of measure &quot;', $uomValue, '&quot; is not valid for quantity class &quot;', 
                             $quantityClassValue, '&quot;. Valid units include: ', $formattedAllowedUnits, '.'),
                             $currentElement
@@ -985,7 +948,6 @@
                     <xsl:otherwise>
                         <!-- uom value is in the list of allowed units - continue to Step 14 -->
                         <xsl:apply-templates select="." mode="step14">
-                            <xsl:with-param name="elementPath" select="$elementPath"/>
                             <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
                             <xsl:with-param name="baseUrl" select="$baseUrl"/>
                             <xsl:with-param name="fragment" select="$fragment"/>
@@ -1004,7 +966,6 @@
     
     <!-- Step 14: Check that the values in the dataValues of every result set using this property are terms of the code list named by the definition's valueCodeSpace -->
     <xsl:template match="*" mode="step14">
-        <xsl:param name="elementPath"/>
         <xsl:param name="codeSpaceValue"/>
         <xsl:param name="baseUrl"/>
         <xsl:param name="fragment"/>
@@ -1025,7 +986,7 @@
                 <xsl:when test="not(diggs:isWhitelisted($codeListUrl, $whiteList))">
                     <xsl:sequence select="diggs:createMessage(
                         'WARNING',
-                        $elementPath,
+                        diggs:get-path(.),
                         concat('Check 13:&#10;The values of &quot;', $definitionName, '&quot; come from the code list &quot;', $codeListUrl, '&quot;, which is not on the white list of approved URL''s, so the values were not checked.'),
                         $currentElement
                         )"/>
@@ -1036,7 +997,7 @@
                         <xsl:when test="empty($codeList)">
                             <xsl:sequence select="diggs:createMessage(
                                 'WARNING',
-                                $elementPath,
+                                diggs:get-path(.),
                                 concat('Check 13:&#10;The code list &quot;', $codeListUrl, '&quot; for the values of &quot;', $definitionName, '&quot; could not be accessed, so the values were not checked.'),
                                 $currentElement
                                 )"/>
@@ -1069,7 +1030,7 @@
                             <xsl:if test="exists($invalid)">
                                 <xsl:sequence select="diggs:createMessage(
                                     'ERROR',
-                                    $elementPath,
+                                    diggs:get-path(.),
                                     concat('Check 13:&#10;', count($invalid), ' value(s) of &quot;', $definitionName, '&quot; are not terms of the code list &quot;', $codeListUrl, '&quot;: ', string-join(for $v in subsequence($invalid, 1, 5) return concat('&quot;', $v, '&quot;'), ', '), if (count($invalid) gt 5) then ' ...' else '', '. Valid terms: ', string-join($allowed, ', '), '.'),
                                     $currentElement
                                     )"/>

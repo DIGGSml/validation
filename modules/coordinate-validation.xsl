@@ -69,7 +69,6 @@
         <xsl:param name="parentPath"/>
         
         <xsl:variable name="coordinateElementName" select="local-name($coordinateElement)"/>
-        <xsl:variable name="coordinateElementPath" select="diggs:get-path($coordinateElement)"/>
         <xsl:variable name="coordinateText" select="normalize-space($coordinateElement)"/>
         
         <!-- Skip empty elements -->
@@ -86,7 +85,7 @@
                         <xsl:sequence select="
                             diggs:createMessage(
                             'ERROR',
-                            $coordinateElementPath,
+                            diggs:get-path($coordinateElement),
                             concat('The &lt;pos&gt; element contains ', $valueCount, ' coordinate values but the srsDimension attribute specifies ', $srsDimension, '. The number of coordinate values in a pos element must equal the srsDimension value.'),
                             $coordinateElement
                             )"/>
@@ -102,7 +101,7 @@
                             <xsl:sequence select="
                                 diggs:createMessage(
                                 'ERROR',
-                                $coordinateElementPath,
+                                diggs:get-path($coordinateElement),
                                 concat('The &lt;posList&gt; element contains ', $valueCount, ' coordinate values but requires a minimum of ', $minimumValues, ' values (2 × srsDimension of ', $srsDimension, ') to define at least one complete coordinate tuple.'),
                                 $coordinateElement
                                 )"/>
@@ -111,7 +110,7 @@
                             <xsl:sequence select="
                                 diggs:createMessage(
                                 'ERROR',
-                                $coordinateElementPath,
+                                diggs:get-path($coordinateElement),
                                 concat('The &lt;posList&gt; element contains ', $valueCount, ' coordinate values, which is not evenly divisible by the srsDimension value of ', $srsDimension, '. The number of coordinate values must be a multiple of srsDimension to form complete coordinate tuples.'),
                                 $coordinateElement
                                 )"/>

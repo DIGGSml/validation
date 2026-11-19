@@ -40,7 +40,6 @@
         <xsl:param name="element"/>
         
         <xsl:variable name="elementName" select="local-name($element)"/>
-        <xsl:variable name="elementPath" select="diggs:get-path($element)"/>
         
         <!-- Test 1: the geometry object carries both srsName and srsDimension -->
         <xsl:variable name="elementHasBoth" select="
@@ -57,7 +56,7 @@
                     <xsl:sequence select="
                         diggs:createMessage(
                         'WARNING',
-                        $elementPath,
+                        diggs:get-path($element),
                         concat('Geometry object &lt;', $elementName, '&gt; contains component geometry (&lt;', 
                         string-join(distinct-values($conflictingComponents ! local-name(.)), '&gt;, &lt;'), 
                         '&gt;) whose srsName or srsDimension differs from the values on the object (srsName &quot;', 
@@ -88,7 +87,7 @@
                                 <xsl:sequence select="
                                     diggs:createMessage(
                                     'WARNING',
-                                    $elementPath,
+                                    diggs:get-path($element),
                                     concat('Geometry object &lt;', $elementName, '&gt; should carry both srsName and srsDimension itself, but they are found only in child elements. Best practice is to place srsName and srsDimension on the top-level geometry object.'),
                                     $element
                                     )"/>
@@ -97,7 +96,7 @@
                                 <xsl:sequence select="
                                     diggs:createMessage(
                                     'ERROR',
-                                    $elementPath,
+                                    diggs:get-path($element),
                                     concat('Geometry object &lt;', $elementName, '&gt; is missing required srsName and srsDimension attributes. Both attributes must be present together in the object itself, or in a parent geometry object.'),
                                     $element
                                     )"/>

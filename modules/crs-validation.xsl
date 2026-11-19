@@ -42,7 +42,6 @@
         <xsl:param name="crsResults" as="map(xs:string, item()*)"/>
         
         <xsl:variable name="elementName" select="local-name($element)"/>
-        <xsl:variable name="elementPath" select="diggs:get-path($element)"/>
         <xsl:variable name="srsNameValue" select="$element/@*[local-name() = 'srsName']"/>
         
         <!-- Result of the isCRS check for this srsName value -->
@@ -72,7 +71,7 @@
                 <xsl:sequence select="
                     diggs:createMessage(
                     'ERROR',
-                    $elementPath,
+                    diggs:get-path($element),
                     $errorMessage,
                     $element
                     )"/>

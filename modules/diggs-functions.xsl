@@ -576,7 +576,7 @@
     Returns:
       - A sequence of string values
   -->
-    <xsl:function name="diggs:extractJsonValues" as="xs:string*">
+    <xsl:function name="diggs:extractJsonValues" as="xs:string*" cache="yes">
         <xsl:param name="url" as="xs:string"/>
         <xsl:param name="key" as="xs:string"/>
         <xsl:variable name="response">
