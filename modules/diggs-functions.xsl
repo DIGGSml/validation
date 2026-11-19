@@ -29,9 +29,6 @@
         <xsl:sequence select="$diggs:storedWhiteList"/>
     </xsl:function>
     
-    <!-- Cache for external resources -->
-    <xsl:variable name="resourceCache" select="map:merge(())"/>
-    
     <!-- Capture the original XML content as a string -->
     <xsl:variable name="originalXml">
         <xsl:copy-of select="/"/>
@@ -50,21 +47,13 @@
         <xsl:value-of select="concat('/', string-join($ancestors, '/'))"/>
     </xsl:function>
     
-    <!-- Helper function to get resources with document URI context -->
-    <xsl:function name="diggs:getResource" as="item()*">
+    <!-- Helper function to get resources with document URI context.
+         cache="yes": results are memoized per (url, sourceDocUri), so each external resource is fetched once per run. -->
+    <xsl:function name="diggs:getResource" as="item()*" cache="yes">
         <xsl:param name="url" as="xs:string"/>
         <xsl:param name="sourceDocUri" as="xs:string"/>
         
-        <!-- Check cache using the original URL as key -->
-        <xsl:variable name="cachedResource" select="map:get($resourceCache, $url)"/>
-        
-        <!-- If resource is in cache, return it immediately -->
-        <xsl:if test="exists($cachedResource)">
-            <xsl:sequence select="$cachedResource"/>
-        </xsl:if>
-        
-        <!-- If not in cache, proceed with resolution and loading -->
-        <xsl:if test="empty($cachedResource)">
+        <xsl:if test="true()">
             <!-- Split URL into path and fragment -->
             <xsl:variable name="fragment" select="
                 if (contains($url, '#')) then
@@ -233,10 +222,8 @@
                 </xsl:if>
             </xsl:variable>
             
-            <!-- Store in cache using original URL as key, and return the resource -->
             <xsl:choose>
                 <xsl:when test="exists($docResource/*)">
-                    <xsl:variable name="newCache" select="map:put($resourceCache, $url, $docResource)"/>
                     <xsl:sequence select="$docResource"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -836,7 +823,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <!-- Get resource -->
-                <xsl:variable name="crsResource" select="diggs:getResource($baseUrl, base-uri(/))"/>
+                <xsl:variable name="crsResource" select="diggs:getResource($baseUrl, base-uri($sourceDocument))"/>
                 
                 <xsl:choose>
                     <xsl:when test="not($crsResource) or $crsResource = ''">
