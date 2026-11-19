@@ -753,8 +753,64 @@
         <!-- Get the quantityClass value -->
         <xsl:variable name="quantityClassValue" select="string($quantityClass)"/>
         
-        <!-- Special case: handle "force or mass per volume" quantity class -->
+        <!-- Special cases: the quantity class "any" and the class "force or mass per volume" -->
         <xsl:choose>
+            <!-- "any": the property can take units from more than one quantity class, so the unit cannot be checked
+                 against a class. It must still be a symbol of the DIGGS units dictionary, and the user is asked to
+                 confirm it for the context. -->
+            <xsl:when test="$quantityClassValue = 'any'">
+                <xsl:variable name="unitsDictionary"
+                    select="diggs:getResource('https://diggsml.org/def/units/DiggsUomDictionary.xml', base-uri(/))"/>
+                <xsl:variable name="isUserDefined" select="starts-with($uomValue, 'Other:')"/>
+                
+                <xsl:choose>
+                    <xsl:when test="not($isUserDefined) and empty($unitsDictionary)">
+                        <xsl:sequence select="diggs:createMessage(
+                            'WARNING',
+                            $elementPath,
+                            concat('Check 12:&#10;Unable to validate unit of measure &quot;', $uomValue, '&quot; for &quot;', $definitionName,
+                            '&quot;. The DIGGS units dictionary could not be accessed.'),
+                            $currentElement
+                            )"/>
+                    </xsl:when>
+                    <xsl:when test="not($isUserDefined) and not(exists($unitsDictionary//*[local-name() = 'unit'][*[local-name() = 'symbol'] = $uomValue]))">
+                        <xsl:sequence select="diggs:createMessage(
+                            'ERROR',
+                            $elementPath,
+                            concat('Check 12:&#10;The unit of measure &quot;', $uomValue, '&quot; is not a symbol in the DIGGS units dictionary.'),
+                            $currentElement
+                            )"/>
+                    </xsl:when>
+                </xsl:choose>
+                
+                <xsl:if test="$isUserDefined or exists($unitsDictionary//*[local-name() = 'unit'][*[local-name() = 'symbol'] = $uomValue])">
+                    <xsl:sequence select="diggs:createMessage(
+                        'INFO',
+                        $elementPath,
+                        concat('Check 13:&#10;The property &quot;', $definitionName, '&quot; can take units from more than one quantity class, so the unit &quot;',
+                        $uomValue, '&quot; was not checked against a class. Confirm that &quot;', $uomValue, '&quot; is correct for this property in its context.'),
+                        $currentElement
+                        )"/>
+                </xsl:if>
+                
+                <!-- Continue to Step 14 unless the unit was rejected -->
+                <xsl:if test="$isUserDefined or empty($unitsDictionary) or exists($unitsDictionary//*[local-name() = 'unit'][*[local-name() = 'symbol'] = $uomValue])">
+                    <xsl:apply-templates select="." mode="step14">
+                        <xsl:with-param name="elementPath" select="$elementPath"/>
+                        <xsl:with-param name="codeSpaceValue" select="$codeSpaceValue"/>
+                        <xsl:with-param name="baseUrl" select="$baseUrl"/>
+                        <xsl:with-param name="fragment" select="$fragment"/>
+                        <xsl:with-param name="definitionNode" select="$definitionNode"/>
+                        <xsl:with-param name="dictionaryResource" select="$dictionaryResource"/>
+                        <xsl:with-param name="whiteList" select="$whiteList"/>
+                        <xsl:with-param name="quantityClass" select="$quantityClass"/>
+                        <xsl:with-param name="definitionName" select="$definitionName"/>
+                        <xsl:with-param name="siblingUom" select="$siblingUom"/>
+                    </xsl:apply-templates>
+                </xsl:if>
+            </xsl:when>
+            
+            <!-- Special case: handle "force or mass per volume" quantity class -->
             <xsl:when test="$quantityClassValue = 'force or mass per volume'">
                 <!-- Check against both "force per volume" and "mass per volume" -->
                 <xsl:variable name="encodedForcePerVolume" select="'force%20per%20volume'"/>
